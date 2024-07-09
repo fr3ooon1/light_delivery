@@ -1,20 +1,17 @@
 import frappe
 from frappe import _
 from frappe import _,auth
-from frappe.auth import LoginManager
-from frappe.exceptions import AuthenticationError
 
 
 
-
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def login(usr, pwd):
     try:
-        login_manager = LoginManager()
+        login_manager = frappe.auth.LoginManager()
         login_manager.authenticate(user=usr, pwd=pwd)
         login_manager.post_login()
         
-    except frappe.AuthenticationError as e:
+    except frappe.exceptions.AuthenticationError as e:
         frappe.local.response['http_status_code'] = 401
         return {
             'message': 'Login failed',
