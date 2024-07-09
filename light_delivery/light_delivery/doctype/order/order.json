@@ -1,0 +1,75 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format: Order-{#####}",
+ "creation": "2024-07-09 13:22:59.171435",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "full_name",
+  "phone_number",
+  "address",
+  "order_type",
+  "zone_address",
+  "invoice"
+ ],
+ "fields": [
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "label": "Full Name"
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Data",
+   "label": "Address"
+  },
+  {
+   "fieldname": "order_type",
+   "fieldtype": "Link",
+   "label": "Order Type",
+   "options": "Order Type"
+  },
+  {
+   "fieldname": "zone_address",
+   "fieldtype": "Link",
+   "label": "Zone Address",
+   "options": "Zone Address"
+  },
+  {
+   "fieldname": "invoice",
+   "fieldtype": "Attach",
+   "label": "Invoice"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-07-09 13:25:20.900176",
+ "modified_by": "Administrator",
+ "module": "Light Delivery",
+ "name": "Order",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

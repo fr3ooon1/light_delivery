@@ -17,7 +17,7 @@ def get_all_suppliers(user = None):
     try:
         roles = frappe.get_roles(user)
         if 'Accounts User' in roles:
-            all_suppliers = frappe.get_list("Supplier" , filters = {"disabled" : 0})
+            all_suppliers = frappe.get_list("Supplier" , filters = {"disabled" : 0} , pluck = 'name')
             res = {}
             if all_suppliers:
                 res = {
