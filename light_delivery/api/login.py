@@ -1,35 +1,40 @@
 import frappe
 from frappe import _
 from frappe import _,auth
+from frappe.auth import LoginManager
+from frappe.exceptions import AuthenticationError
 
 
 
-@frappe.whitelist(allow_guest=True)
-def login(usr,pwd):
+
+@frappe.whitelist()
+def login(usr, pwd):
     try:
-        login_manager = frappe.auth.LoginManager()
-        login_manager.authenticate(user=usr,pwd=pwd)
+        login_manager = LoginManager()
+        login_manager.authenticate(user=usr, pwd=pwd)
         login_manager.post_login()
-    except frappe.exceptions.AuthenticationError:
-        frappe.clear_messages()
-        frappe.local.response["message"] = {
-            "success_key": 401,
-            "message":"Invalide Username or Password"
+        
+    except frappe.AuthenticationError as e:
+        frappe.local.response['http_status_code'] = 401
+        return {
+            'message': 'Login failed',
+            'error': str(e)
         }
-        return
-    api_generate = generate_keys(usr)
-    user = frappe.get_doc('User',frappe.session.user)
 
-    frappe.response["message"] = {
-        "status_code":200,
-        "message":"Auhentication success",
-        "sid":frappe.session.sid,
-        "api_key":api_generate.get('api_key'),
-        "api_secret":api_generate.get('api_secret'),
-        "username":user.username,
-        "email":user.email,
-        "first_name":user.first_name
-    }        
+    
+    api_generate = generate_keys(usr)
+    user = frappe.get_doc('User', frappe.session.user)
+
+    frappe.local.response["message"] = {
+        "status_code": 200,
+        "message": "Authentication success",
+        "sid": frappe.session.sid,
+        "api_key": api_generate.get('api_key'),
+        "api_secret": api_generate.get('api_secret'),
+        "username": user.username,
+        "email": user.email,
+        "first_name": user.first_name
+    }     
 
 def generate_keys(user):
     user_details = frappe.get_doc('User', user)
