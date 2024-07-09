@@ -17,29 +17,37 @@ def login(usr,pwd):
             "message":"Invalide Username or Password"
         }
         return
-    api_generate = generate_keys(frappe.session.user)
+    api_generate = generate_keys(usr)
     user = frappe.get_doc('User',frappe.session.user)
 
     frappe.response["message"] = {
-        "success_key":1,
+        "status_code":200,
         "message":"Auhentication success",
         "sid":frappe.session.sid,
-        "api_key":user.api_key,
-        "api_secret":api_generate,
+        "api_key":api_generate.get('api_key'),
+        "api_secret":api_generate.get('api_secret'),
         "username":user.username,
         "email":user.email,
         "first_name":user.first_name
     }        
 
 def generate_keys(user):
-    user_details = frappe.get_doc('User',user)
+    user_details = frappe.get_doc('User', user)
     api_secret = frappe.generate_hash(length=15)
+
     if not user_details.api_key:
         api_key = frappe.generate_hash(length=15)
         user_details.api_key = api_key
+    else:
+        api_key = user_details.api_key
+
     user_details.api_secret = api_secret
     user_details.save()
-    return api_secret
+
+    return {
+        'api_key': api_key,
+        'api_secret': api_secret
+    }
 
 
 @frappe.whitelist()
