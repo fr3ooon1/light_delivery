@@ -1,4 +1,5 @@
 import frappe
+from frappe import _
 from frappe import _,auth
 
 
@@ -12,8 +13,8 @@ def login(usr,pwd):
     except frappe.exceptions.AuthenticationError:
         frappe.clear_messages()
         frappe.local.response["message"] = {
-            "success_key":0,
-            "message":"Baio"
+            "success_key": 500,
+            "message":"Invalide Username or Password"
         }
         return
     api_generate = generate_keys(frappe.session.user)
@@ -40,7 +41,13 @@ def generate_keys(user):
     user_details.save()
     return api_secret
 
-# @frappe.whitelist(allow_guest=True)
-# def customer():
-#     c = frappe.get_list("Customer",fields=['customer_name','customer_type','customer_group','territory','default_price_list'])
-#     return c
+
+@frappe.whitelist()
+def get_user_permissions(user):
+    user_permissions = frappe.get_all('User Permission', filters={'user': user}, fields=['allow', 'for_value'])
+    permissions_dict = {}
+    for perm in user_permissions:
+        if perm['allow'] not in permissions_dict:
+            permissions_dict[perm['allow']] = []
+        permissions_dict[perm['allow']].append(perm['for_value'])
+    return permissions_dict
