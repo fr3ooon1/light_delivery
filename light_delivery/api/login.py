@@ -13,7 +13,7 @@ def login(usr,pwd):
     except frappe.exceptions.AuthenticationError:
         frappe.clear_messages()
         frappe.local.response["message"] = {
-            "success_key": 500,
+            "success_key": 401,
             "message":"Invalide Username or Password"
         }
         return
