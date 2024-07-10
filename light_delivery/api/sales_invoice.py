@@ -1,15 +1,16 @@
 import frappe
 from frappe import _
 
-@frappe.whitelist(allow_guest = True)
+@frappe.whitelist()
 def get_invoices():
 	try:
+
 		sales_invoice = frappe.get_list("Sales Invoice" , fields = ['*'])
 		res = {}
 		if sales_invoice:
 			res = {
 				'status_code' : 200 ,
-				'message' : _('All Orders') ,
+				'message' : _('All Sales Invoice') ,
 				'data' : sales_invoice
 			}
 			return res
