@@ -1,6 +1,7 @@
 import frappe
 from frappe import _
-from frappe import _,auth
+
+from frappe.core.doctype.user.user import generate_keys
 
 
 
@@ -19,38 +20,20 @@ def login(usr, pwd):
         }
 
     
-    api_generate = generate_keys(usr)
-    user = frappe.get_doc('User', frappe.session.user)
+    user = frappe.get_doc('User', usr)
+    api_secret = generate_keys(user=usr).get('api_secret')
+    frappe.db.commit()
 
     frappe.local.response["message"] = {
         "status_code": 200,
         "message": "Authentication success",
         "sid": frappe.session.sid,
-        "api_key": api_generate.get('api_key'),
-        "api_secret": api_generate.get('api_secret'),
+        "api_key": user.api_key,
+        "api_secret": api_secret,
         "username": user.username,
         "email": user.email,
         "first_name": user.first_name
     }     
-
-def generate_keys(user):
-    user_details = frappe.get_doc('User', user)
-    api_secret = frappe.generate_hash(length=15)
-
-    if not user_details.api_key:
-        api_key = frappe.generate_hash(length=15)
-        user_details.api_key = api_key
-    else:
-        api_key = user_details.api_key
-
-    user_details.api_secret = api_secret
-    user_details.save()
-
-    return {
-        'api_key': api_key,
-        'api_secret': api_secret
-    }
-
 
 @frappe.whitelist()
 def get_user_permissions(user):

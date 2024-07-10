@@ -1,10 +1,13 @@
 import frappe
 from frappe import _
+import requests
 
 
 @frappe.whitelist()
-def get_orders(user):
+def get_orders(user , api_token = None):
     try:
+        headers = {"Authorization": f"token {api_token}"}
+        # user_response = requests.get(headers=headers)
         roles = frappe.get_roles(user)
         if 'Accounts User' in roles:
             all_orders = frappe.get_list("Order" , fields = ['name' , 'full_name' , 'phone_number' , 'address' , 'invoice'])
@@ -30,6 +33,7 @@ def get_orders(user):
             }
     except Exception as e:
         frappe.log_error(message=str(e), title=_('Error in get_orders'))
+        frappe.local.response['http_status_code'] = 500
         res = {
             "status_code": 500,
             "message": str(e)
@@ -64,6 +68,7 @@ def get_order(user , order):
             }
     except Exception as e:
         frappe.log_error(message=str(e), title=_('Error in get_order'))
+        frappe.local.response['http_status_code'] = 500
         res = {
             "status_code": 500,
             "message": str(e)
