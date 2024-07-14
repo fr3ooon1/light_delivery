@@ -4,7 +4,6 @@ from frappe import _
 @frappe.whitelist()
 def get_invoices():
 	try:
-
 		sales_invoice = frappe.get_list("Sales Invoice" , fields = ['*'])
 		res = {}
 		if sales_invoice:

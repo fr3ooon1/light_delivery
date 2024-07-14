@@ -11,7 +11,9 @@ def get_orders(user):
 			all_orders = frappe.get_list("Order" , fields = ['name' , 'full_name' , 'phone_number' , 'address' , 'invoice'])
 			for order in all_orders:
 				invoice = order.get("invoice")
-				print("invoice = " , invoice)
+				if invoice:
+					file = frappe.get_doc("File" , {"file_url" : invoice})
+					print("file = " , file)
 			res = {}
 			if all_orders:
 				res = {
