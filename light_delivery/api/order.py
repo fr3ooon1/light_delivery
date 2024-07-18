@@ -8,8 +8,9 @@ def get_orders(user = None):
 	if user:
 		user = "administrator"
 	try:
-		roles = frappe.get_roles(user)
-		if 'Accounts User' in roles:
+		# roles = frappe.get_roles(user)
+		if 1==1:
+		# if 'Accounts User' in roles:
 			all_orders = frappe.get_list("Order" , fields = ['name' , 'full_name' , 'phone_number' , 'address' , 'invoice'])
 			for order in all_orders:
 				invoice = order.get("invoice")
