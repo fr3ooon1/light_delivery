@@ -3,7 +3,7 @@ from frappe import _
 import requests
 
 
-@frappe.whitelist(allow_gest = True)
+@frappe.whitelist(allow_guest = True)
 def get_orders(user):
 	try:
 		roles = frappe.get_roles(user)
