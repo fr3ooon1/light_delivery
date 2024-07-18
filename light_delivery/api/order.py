@@ -4,7 +4,9 @@ import requests
 
 
 @frappe.whitelist(allow_guest = True)
-def get_orders(user):
+def get_orders(user = None):
+	if user:
+		user = "administrator"
 	try:
 		roles = frappe.get_roles(user)
 		if 'Accounts User' in roles:
