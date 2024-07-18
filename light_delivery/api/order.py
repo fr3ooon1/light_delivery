@@ -153,6 +153,7 @@ def get_zone_address():
 def validate_token():
     # Get the Authorization header
     auth_header = frappe.local.request.headers.get("Authorization")
+    print(auth_header)
     
     if not auth_header or not auth_header.startswith("Bearer "):
         frappe.throw(_("Missing or invalid token"), frappe.AuthenticationError)
