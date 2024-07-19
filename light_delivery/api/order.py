@@ -99,7 +99,7 @@ def get_order(user , order):
 		return res
 	
 @frappe.whitelist(allow_guest=True)
-def get_order_type():
+def get_order_type(user = None):
 	if not user:
 		user = "administrator"
 	try:
