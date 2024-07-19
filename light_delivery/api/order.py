@@ -132,7 +132,6 @@ def get_order(user , order):
 		return res
 	
 
-	
 import frappe
 from frappe import _
 
@@ -154,7 +153,7 @@ def get_zone_address(user=None):
 				return {
 					'status_code': 204,
 					'message': _('No Zone Address found'),
-					'data': zone_addresses
+					'data': []
 				}
 		else:
 			return {
