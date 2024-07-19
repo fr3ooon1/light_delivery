@@ -1,15 +1,22 @@
 import frappe
 from frappe import _
 import requests
+from light_delivery.utils import validate_token
+ 
 
-
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_orders(user=None):
     # Validate the token
-    validate_token()
+    # print("Hello")
+    # validate_token()
+	# url = "http://frappe.local:8000/api/method/frappe.auth.get_logged_user"
+	# headers = {
+    # 	'Authorization': "token <api_key>:<api_secret>"
+	# }
+	# response = requests.request("GET", url, headers=headers)
     
     if not user:
-        user = frappe.session.user
+        user = "administrator"
 
     try:
         # Check if the user has the required role
@@ -53,6 +60,7 @@ def get_orders(user=None):
             "message": str(e)
         }
         return res
+
 
 	
 @frappe.whitelist()
@@ -150,36 +158,4 @@ def get_zone_address():
 
 
 
-def validate_token():
-    # Get the Authorization header
-    auth_header = frappe.local.request.headers.get("Authorization")
-    print(auth_header)
-    
-    if not auth_header or not auth_header.startswith("Bearer "):
-        frappe.throw(_("Missing or invalid token"), frappe.AuthenticationError)
-    
-    # Extract the token from the Authorization header
-    token = auth_header.split("Bearer ")[-1]
-    
-    if not token:
-        frappe.throw(_("Missing token"), frappe.AuthenticationError)
-    
-    # Assuming you are using JWT for tokens
-    try:
-        decoded_token = frappe.jwt.decode(token, frappe.conf.secret)
-    except Exception as e:
-        frappe.throw(_("Invalid token: {0}").format(str(e)), frappe.AuthenticationError)
-    
-    user = decoded_token.get("user")
-    
-    if not user:
-        frappe.throw(_("Invalid token"), frappe.AuthenticationError)
-    
-    # Ensure user is active
-    user_doc = frappe.get_doc("User", user)
-    if not user_doc.enabled:
-        frappe.throw(_("User is disabled"), frappe.AuthenticationError)
-    
-    # Set the user for the current request
-    frappe.set_user(user)
 
