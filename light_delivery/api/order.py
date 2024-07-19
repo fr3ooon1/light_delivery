@@ -60,7 +60,40 @@ def get_orders(user=None):
 			"message": str(e)
 		}
 		return res
-
+	
+	
+@frappe.whitelist(allow_guest=True)
+def get_order_type(user = None):
+	if not user:
+		user = "administrator"
+	try:
+		roles = frappe.get_roles(user)
+		if 'Accounts User' in roles:
+			order_type = frappe.get_list("Order Type" , pluck ='name')
+			res = {}
+			if order_type:
+				res = {
+					'status_code' : 200 ,
+					'message' : _('All data of Order Types') ,
+					'data' : order_type
+				}
+				return res
+			else:
+				res = {
+					'status_code' : 204 ,
+					'message' : _('No Order Type Found'),
+					'data' : order_type
+				}
+				return res
+		
+	except Exception as e:
+		frappe.log_error(message=str(e), title=_('Error in get_order_type'))
+		frappe.local.response['http_status_code'] = 500
+		res = {
+			"status_code": 500,
+			"message": str(e)
+		}
+		return res
 
 	
 @frappe.whitelist(allow_guest=True)
@@ -98,38 +131,7 @@ def get_order(user , order):
 		}
 		return res
 	
-@frappe.whitelist(allow_guest=True)
-def get_order_type(user = None):
-	if not user:
-		user = "administrator"
-	try:
-		roles = frappe.get_roles(user)
-		if 'Accounts User' in roles:
-			order_type = frappe.get_list("Order Type" , pluck ='name')
-			res = {}
-			if order_type:
-				res = {
-					'status_code' : 200 ,
-					'message' : _('All data of Order Types') ,
-					'data' : order_type
-				}
-				return res
-			else:
-				res = {
-					'status_code' : 204 ,
-					'message' : _('No Order Type Found'),
-					'data' : order_type
-				}
-				return res
-		
-	except Exception as e:
-		frappe.log_error(message=str(e), title=_('Error in get_order_type'))
-		frappe.local.response['http_status_code'] = 500
-		res = {
-			"status_code": 500,
-			"message": str(e)
-		}
-		return res
+
 	
 @frappe.whitelist(allow_guest=True)
 def get_zone_address(user = None):
