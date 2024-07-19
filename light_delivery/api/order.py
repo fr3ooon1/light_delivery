@@ -63,7 +63,7 @@ def get_orders(user=None):
 
 
 	
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_order(user , order):
 	try:
 		roles = frappe.get_roles(user)
@@ -99,7 +99,7 @@ def get_order(user , order):
 		return res
 	
 @frappe.whitelist()
-def get_order_type():
+def get_order_type(allow_guest=True):
 	try:
 		order_type = frappe.get_list("Order Type" , pluck ='name')
 		res = {}
@@ -128,7 +128,7 @@ def get_order_type():
 		return res
 	
 @frappe.whitelist()
-def get_zone_address():
+def get_zone_address(allow_guest=True):
 	try:
 		zone_addres = frappe.get_list("Zone Address" , pluck ='name')
 		res = {}
