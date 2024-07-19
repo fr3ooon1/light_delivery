@@ -133,39 +133,38 @@ def get_order(user , order):
 	
 
 	
+import frappe
+from frappe import _
+
 @frappe.whitelist(allow_guest=True)
-def get_zone_address(user = None):
+def get_zone_address(user=None):
 	if not user:
 		user = "administrator"
 	try:
 		roles = frappe.get_roles(user)
 		if 'Accounts User' in roles:
-			zone_addres = frappe.get_list("Zone Address" , pluck ='name')
-			res = {}
-			if zone_addres:
-				res = {
-					'status_code' : 200 ,
-					'message' : _('All data of Zone Address') ,
-					'data' : zone_addres
+			zone_addresses = frappe.get_list("Zone Address", pluck='name')
+			if zone_addresses:
+				return {
+					'status_code': 200,
+					'message': _('All data of Zone Address'),
+					'data': zone_addresses
 				}
-				return res
 			else:
-				res = {
-					'status_code' : 204 ,
-					'message' : _('No zone address Type Found'),
-					'data' : zone_addres
+				return {
+					'status_code': 204,
+					'message': _('No Zone Address found'),
+					'data': zone_addresses
 				}
-				return res
-		
+		else:
+			return {
+				'status_code': 403,
+				'message': _('User does not have the required role'),
+				'data': []
+			}
 	except Exception as e:
 		frappe.log_error(message=str(e), title=_('Error in get_zone_address'))
-		frappe.local.response['http_status_code'] = 500
-		res = {
+		return {
 			"status_code": 500,
 			"message": str(e)
 		}
-		return res
-
-
-
-
