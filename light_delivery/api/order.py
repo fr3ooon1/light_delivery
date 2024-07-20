@@ -4,7 +4,7 @@ import requests
 from light_delivery.utils import validate_token
  
 @frappe.whitelist(allow_guest=True)
-def new_order(full_name , phone_number , address , order_type , zone_address , invoice):
+def new_order(full_name = None , phone_number = None, address = None, order_type = None, zone_address = None, invoice = None):
 	doc = frappe.new_doc("Order")
 	doc.full_name = full_name
 	doc.phone_number = phone_number
