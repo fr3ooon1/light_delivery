@@ -179,3 +179,56 @@ def get_zone_address(user=None):
 			"status_code": 500,
 			"message": str(e)
 		}
+	
+
+@frappe.whitelist(allow_guest=True)
+def get_order_state(user=None):
+	if not user:
+		user = "administrator"
+	try:
+		roles = frappe.get_roles(user)
+		if 'Accounts User' in roles:
+			
+			"""
+			Wait for Delivery
+			Confirmed
+			On The Way
+			Delivered
+			Refund
+			"""
+
+			wait_for_delivery = frappe.db.count('Order', {'status': 'Wait for Delivery'})
+			confirmed = frappe.db.count('Order', {'status': 'Confirmed'})
+			on_the_way = frappe.db.count('Order', {'status': 'On The Way'})
+			delivered = frappe.db.count('Order', {'status': 'Delivered'})
+			refund = frappe.db.count('Order', {'status': 'Refund'})
+			all_orders = frappe.db.count('Order')
+
+			frappe.local.response['http_status_code'] = 200
+			return {
+				'status_code': 200,
+				'message': _('Count of order status'),
+				'data': {
+					'wait_for_delivery':wait_for_delivery,
+					'confirmed':confirmed,
+					'on_the_way':on_the_way,
+					'delivered':delivered,
+					'refund':refund , 
+					'all_orders':all_orders
+				}
+			}
+
+				
+		else:
+			frappe.local.response['http_status_code'] = 403
+			return {
+				'status_code': 403,
+				'message': _('User does not have the required role'),
+				'data': []
+			}
+	except Exception as e:
+		frappe.log_error(message=str(e), title=_('Error in get_order_state'))
+		return {
+			"status_code": 500,
+			"message": str(e)
+		}

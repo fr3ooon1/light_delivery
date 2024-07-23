@@ -11,7 +11,8 @@
   "address",
   "order_type",
   "zone_address",
-  "invoice"
+  "invoice",
+  "status"
  ],
  "fields": [
   {
@@ -45,11 +46,17 @@
    "fieldname": "invoice",
    "fieldtype": "Attach",
    "label": "Invoice"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nWait for Delivery\nConfirmed\nOn The Way\nDelivered\nRefund"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-18 18:45:54.053131",
+ "modified": "2024-07-23 10:12:38.351922",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",
