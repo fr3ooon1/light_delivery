@@ -204,17 +204,63 @@ def get_order_state(user=None):
 			refund = frappe.db.count('Order', {'status': 'Refund'})
 			all_orders = frappe.db.count('Order')
 
+			order_states = {
+					'wait_for_delivery': wait_for_delivery,
+					'confirmed': confirmed,
+					'on_the_way': on_the_way,
+					'delivered': delivered,
+					'refund': refund , 
+					'all_orders': all_orders
+				}
+			
+			"""
+			Pending
+			Avaliable
+			Inorder
+			Offline
+			"""
+			pending = frappe.db.count('Delivery', {'status': 'Pending'})
+			avaliable = frappe.db.count('Delivery', {'status': 'Avaliable'})
+			Inorder = frappe.db.count('Delivery', {'status': 'Inorder'})
+			Offline = frappe.db.count('Delivery', {'status': 'Offline'})
+			all_delivery = frappe.db.count('Delivery')
+
+			delivery_states = {
+					'pending':pending,
+					'avaliable':avaliable,
+					'Inorder':Inorder,
+					'Offline':Offline,
+					'all_delivery':all_delivery , 
+				}
+			
+			
+			"""
+			Pending
+            Active
+            Inactive
+			"""
+
+			store_pending = frappe.db.count('Store', {'status': 'Pending'})
+			store_active = frappe.db.count('Store', {'status': 'Active'})
+			store_inactive = frappe.db.count('Store', {'status': 'Inactive'})
+			all_stores = frappe.db.count('Store')
+
+			stores_states = {
+				'store_pending': store_pending,
+				'store_active': store_active,
+				'store_inactive': store_inactive,
+				'all_stores': all_stores
+			}
+
+
 			frappe.local.response['http_status_code'] = 200
 			return {
 				'status_code': 200,
 				'message': _('Count of order status'),
 				'data': {
-					'wait_for_delivery':wait_for_delivery,
-					'confirmed':confirmed,
-					'on_the_way':on_the_way,
-					'delivered':delivered,
-					'refund':refund , 
-					'all_orders':all_orders
+					'order_states': order_states,
+					'delivery_states': delivery_states,
+					'stores_states':stores_states
 				}
 			}
 

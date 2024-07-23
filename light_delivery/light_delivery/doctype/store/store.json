@@ -1,0 +1,77 @@
+{
+ "actions": [],
+ "autoname": "format: {store_name}-{#####}",
+ "creation": "2024-07-23 16:02:30.101307",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "store_name",
+  "status",
+  "user",
+  "zone"
+ ],
+ "fields": [
+  {
+   "fieldname": "store_name",
+   "fieldtype": "Data",
+   "label": "Store Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nPending\nActive\nInactive"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User"
+  },
+  {
+   "fieldname": "zone",
+   "fieldtype": "Link",
+   "label": "Zone",
+   "options": "Zone Address"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-07-23 16:25:18.069415",
+ "modified_by": "Administrator",
+ "module": "Light Delivery",
+ "name": "Store",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Guest",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
