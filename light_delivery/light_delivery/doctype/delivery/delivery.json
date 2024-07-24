@@ -7,7 +7,8 @@
  "engine": "InnoDB",
  "field_order": [
   "delivery_name",
-  "status"
+  "status",
+  "user"
  ],
  "fields": [
   {
@@ -20,11 +21,17 @@
    "fieldtype": "Select",
    "label": "Status",
    "options": "\nPending\nAvaliable\nInorder\nOffline"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-23 16:19:25.466612",
+ "modified": "2024-07-24 10:18:50.765826",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Delivery",

@@ -2,6 +2,8 @@ import frappe
 from frappe import _
 import requests
 from light_delivery.utils import validate_token
+from frappe.utils import nowdate , get_first_day_of_week , get_first_day
+
  
 @frappe.whitelist(allow_guest=True)
 def new_order(full_name = None , phone_number = None, address = None, order_type = None, zone_address = None, invoice = None):
@@ -181,6 +183,50 @@ def get_zone_address(user=None):
 		}
 	
 
+@frappe.whitelist(alllow_guest=True)
+def get_order_history(status = None):
+
+	try:
+		orders = []
+		if status:
+			orders = frappe.get_list("Order" , filter = {'status':status} ,  fields=['name', 'creation', 'status'])
+		elif status == None or status == "All" or status == "ALL":
+			orders = frappe.get_list("Order" ,  fields=['name', 'creation', 'status'])
+		
+
+		today = nowdate()
+		count_today = frappe.db.count('Sales Invoice', filters={'creation': ['>=', today]})
+
+		start_of_week = get_first_day_of_week(today)
+		count_this_week = frappe.db.count('Sales Invoice', filters={'creation': ['>=', start_of_week]})
+
+		start_of_month = get_first_day(today)
+		count_this_month = frappe.db.count('Sales Invoice', filters={'creation': ['>=', start_of_month]})
+
+
+
+
+
+		frappe.local.response['http_status_code'] = 200
+		return {
+			'status_code': 200,
+			'message': _('Order History'),
+			'data': {
+				'orders': orders,
+				'count_today':count_today ,
+				'count_this_week' :count_this_week,
+				'count_this_month': count_this_month
+			}
+		}
+	except Exception as e:
+		frappe.log_error(message=str(e), title=_('Error in get_order_history'))
+		return {
+			"status_code": 500,
+			"message": str(e)
+		}
+
+
+
 @frappe.whitelist(allow_guest=True)
 def get_order_state(user=None):
 	if not user:
@@ -259,7 +305,7 @@ def get_order_state(user=None):
 				'message': _('Count of order status'),
 				'data': {
 					'order_states': order_states,
-					'delivery_states': delivery_states,
+					# 'delivery_states': delivery_states,
 					'stores_states':stores_states
 				}
 			}
