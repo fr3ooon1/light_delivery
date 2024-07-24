@@ -183,9 +183,8 @@ def get_zone_address(user=None):
 		}
 	
 
-@frappe.whitelist(alllow_guest=True)
+@frappe.whitelist(allow_guest=True)
 def get_order_history(status = None):
-
 	try:
 		orders = []
 		if status:
