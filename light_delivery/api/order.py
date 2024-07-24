@@ -194,13 +194,13 @@ def get_order_history(status = None):
 		
 
 		today = nowdate()
-		count_today = frappe.db.count('Sales Invoice', filters={'creation': ['>=', today]})
+		count_today = frappe.db.count('Order', filters={'creation': ['>=', today]})
 
 		start_of_week = get_first_day_of_week(today)
-		count_this_week = frappe.db.count('Sales Invoice', filters={'creation': ['>=', start_of_week]})
+		count_this_week = frappe.db.count('Order', filters={'creation': ['>=', start_of_week]})
 
 		start_of_month = get_first_day(today)
-		count_this_month = frappe.db.count('Sales Invoice', filters={'creation': ['>=', start_of_month]})
+		count_this_month = frappe.db.count('Order', filters={'creation': ['>=', start_of_month]})
 
 
 
