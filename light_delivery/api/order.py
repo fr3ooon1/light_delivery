@@ -4,7 +4,7 @@ import requests
 from light_delivery.utils import validate_token
 from frappe.utils import nowdate , get_first_day_of_week , get_first_day , getdate
 from datetime import datetime
-
+import json
  
 @frappe.whitelist(allow_guest=True)
 def new_order(full_name = None , phone_number = None, address = None, order_type = None, zone_address = None, invoice = None):
@@ -184,15 +184,20 @@ def get_zone_address(user=None):
 		}
 	
 
+
 @frappe.whitelist(allow_guest=True)
 def get_order_history(status = None):
+	# status = status.split(",")
+
+	# return status
 	try:
 		orders = []
 
 		if status == None or status == "All" or status == "ALL" or status == "all":
 			orders = frappe.get_list("Order" ,  fields=['name', 'creation', 'status', 'total_order'])
 		else:
-			orders = frappe.get_list("Order" , filters = {'status':status} ,  fields=['name', 'creation', 'status' , 'total_order'])
+			status = status.strip("[]").split(",")
+			orders = frappe.get_list("Order" , filters = {'status':['in', status]} ,  fields=['name', 'creation', 'status' , 'total_order'])
 		
 		
 		for order in orders:
@@ -200,7 +205,6 @@ def get_order_history(status = None):
 				order['creation'] = order.get('creation').strftime('%Y-%m-%d %H:%M:%S')
 			else:
 				order['creation'] = datetime.strptime(order.get('creation'), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
-
 			
 		today = nowdate()
 		count_today = frappe.db.count('Order', filters={'creation': ['>=', today]})
@@ -210,10 +214,6 @@ def get_order_history(status = None):
 
 		start_of_month = get_first_day(today)
 		count_this_month = frappe.db.count('Order', filters={'creation': ['>=', start_of_month]})
-
-
-
-
 
 		frappe.local.response['http_status_code'] = 200
 		return {
