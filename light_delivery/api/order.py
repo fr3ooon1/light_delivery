@@ -188,10 +188,12 @@ def get_zone_address(user=None):
 def get_order_history(status = None):
 	try:
 		orders = []
-		if status:
-			orders = frappe.get_list("Order" , filters = {'status':status} ,  fields=['name', 'creation', 'status' , 'total_order'])
-		elif status == None or status == "All" or status == "ALL" or status == "all":
+
+		if status == None or status == "All" or status == "ALL" or status == "all":
 			orders = frappe.get_list("Order" ,  fields=['name', 'creation', 'status', 'total_order'])
+		else:
+			orders = frappe.get_list("Order" , filters = {'status':status} ,  fields=['name', 'creation', 'status' , 'total_order'])
+		
 		
 		for order in orders:
 			if isinstance(order.get('creation'), datetime):
