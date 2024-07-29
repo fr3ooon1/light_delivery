@@ -311,8 +311,8 @@ def get_order_state(user=None):
 				'message': _('Count of order status'),
 				'data': {
 					'order_states': order_states,
-					# 'delivery_states': delivery_states,
-					'stores_states':stores_states
+					'delivery_states': delivery_states,
+					# 'stores_states':stores_states
 				}
 			}
 
