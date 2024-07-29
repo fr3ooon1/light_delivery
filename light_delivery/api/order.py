@@ -189,7 +189,7 @@ def get_order_history(status = None):
 	try:
 		orders = []
 		if status:
-			orders = frappe.get_list("Order" , filters = {'status':status} ,  fields=['name', 'creation', 'status'])
+			orders = frappe.get_list("Order" , filters = {'status':status} ,  fields=['name', 'creation', 'status' , 'total_order'])
 		elif status == None or status == "All" or status == "ALL":
 			orders = frappe.get_list("Order" ,  fields=['name', 'creation', 'status'])
 		

@@ -12,7 +12,8 @@
   "order_type",
   "zone_address",
   "invoice",
-  "status"
+  "status",
+  "total_order"
  ],
  "fields": [
   {
@@ -52,11 +53,16 @@
    "fieldtype": "Select",
    "label": "Status",
    "options": "\nWait for Delivery\nConfirmed\nOn The Way\nDelivered\nRefund"
+  },
+  {
+   "fieldname": "total_order",
+   "fieldtype": "Float",
+   "label": "Total"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-23 10:12:38.351922",
+ "modified": "2024-07-29 12:14:41.694635",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",
