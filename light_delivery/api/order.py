@@ -2,7 +2,8 @@ import frappe
 from frappe import _
 import requests
 from light_delivery.utils import validate_token
-from frappe.utils import nowdate , get_first_day_of_week , get_first_day
+from frappe.utils import nowdate , get_first_day_of_week , get_first_day , getdate
+from datetime import datetime
 
  
 @frappe.whitelist(allow_guest=True)
@@ -188,11 +189,17 @@ def get_order_history(status = None):
 	try:
 		orders = []
 		if status:
-			orders = frappe.get_list("Order" , filter = {'status':status} ,  fields=['name', 'creation', 'status'])
+			orders = frappe.get_list("Order" , filters = {'status':status} ,  fields=['name', 'creation', 'status'])
 		elif status == None or status == "All" or status == "ALL":
 			orders = frappe.get_list("Order" ,  fields=['name', 'creation', 'status'])
 		
+		for order in orders:
+			if isinstance(order.get('creation'), datetime):
+				order['creation'] = order.get('creation').strftime('%Y-%m-%d %H:%M:%S')
+			else:
+				order['creation'] = datetime.strptime(order.get('creation'), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
 
+			
 		today = nowdate()
 		count_today = frappe.db.count('Order', filters={'creation': ['>=', today]})
 
@@ -281,8 +288,8 @@ def get_order_state(user=None):
 			
 			"""
 			Pending
-            Active
-            Inactive
+			Active
+			Inactive
 			"""
 
 			store_pending = frappe.db.count('Store', {'status': 'Pending'})
