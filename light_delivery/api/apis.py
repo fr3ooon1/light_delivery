@@ -3,8 +3,11 @@ from frappe import _
 
 
 def get_url():
-	url = frappe.utils.get_url()
-	return url
+	base_url = frappe.utils.get_url()
+	site_config = frappe.get_site_config()
+	port = site_config.get('webserver_port') 
+	url_with_port = f"{base_url}:{port}"
+	return url_with_port
 
 @frappe.whitelist(allow_guest=True)
 def get_store_state(user=None):
