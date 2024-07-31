@@ -41,14 +41,15 @@ def get_orders(user=None):
 			all_orders = frappe.get_list("Order", fields=['name', 'full_name', 'phone_number', 'address', 'invoice' , 'total_order' , 'creation'])
 
 			for order in all_orders:
+				if isinstance(order.get('creation'), datetime):
+					order['creation'] = order.get('creation').strftime('%Y-%m-%d %H:%M:%S')
+				else:
+					order['creation'] = datetime.strptime(order.get('creation'), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
 				invoice = order.get("invoice")
 				if invoice:
 					file = frappe.get_doc("File", {"file_url": invoice})
 					order['file'] = "http://84.247.182.89:81"+file.file_url
-					if isinstance(order.get('creation'), datetime):
-						order['creation'] = order.get('creation').strftime('%Y-%m-%d %H:%M:%S')
-					else:
-						order['creation'] = datetime.strptime(order.get('creation'), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
+					
 
 			# Construct response
 			res = {}
