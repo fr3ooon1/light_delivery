@@ -3,7 +3,7 @@ from frappe import _
 
 
 def get_url():
-	url = "http://84.247.182.89:81/"
+	url = frappe.utils.get_url()
 	return url
 
 @frappe.whitelist(allow_guest=True)
