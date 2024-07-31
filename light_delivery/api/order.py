@@ -49,8 +49,8 @@ def get_orders(user=None):
 				invoice = order.get("invoice")
 				if invoice:
 					file = frappe.get_doc("File", {"file_url": invoice})
-					# url = get_url()
-					# order['invoice'] = url + file.file_url
+					url = get_url()
+					order['invoice'] = url + file.file_url
 					
 
 			# Construct response
