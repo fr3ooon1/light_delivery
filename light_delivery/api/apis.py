@@ -3,7 +3,6 @@ from frappe import _
 
 
 def get_url():
-	
     base_url = get_url()
     site_config = frappe.get_site_config()
     port = site_config.get('nginx_port', 8002)  
