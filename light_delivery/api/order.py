@@ -5,6 +5,7 @@ from light_delivery.utils import validate_token
 from frappe.utils import nowdate , get_first_day_of_week , get_first_day , getdate
 from datetime import datetime
 import json
+from light_delivery.api.apis import get_url
  
 @frappe.whitelist(allow_guest=True)
 def new_order(full_name = None , phone_number = None, address = None, order_type = None, zone_address = None, invoice = None):
@@ -48,7 +49,8 @@ def get_orders(user=None):
 				invoice = order.get("invoice")
 				if invoice:
 					file = frappe.get_doc("File", {"file_url": invoice})
-					order['invoice'] = "http://84.247.182.89:81"+file.file_url
+					url = get_url()
+					order['invoice'] = url + file.file_url
 					
 
 			# Construct response

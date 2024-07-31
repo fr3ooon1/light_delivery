@@ -2,6 +2,10 @@ import frappe
 from frappe import _
 
 
+def get_url():
+	url = "http://84.247.182.89:81/"
+	return url
+
 @frappe.whitelist(allow_guest=True)
 def get_store_state(user=None):
 	if not user:
