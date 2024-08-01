@@ -339,3 +339,46 @@ def get_order_state(user=None):
 			"status_code": 500,
 			"message": str(e)
 		}
+	
+
+
+@frappe.whitelist()
+def post_zones():
+	zones = {
+	"MasrElgedidaZones": [
+		{ "en": "Korba", "ar": "الكوربة" },
+		{ "en": "Roxy", "ar": "روكسي" },
+		{ "en": "Heliopolis", "ar": "هيليوبوليس" },
+		{ "en": "Almazah", "ar": "الماظة" },
+		{ "en": "Alf Maskan", "ar": "ألف مسكن" },
+		{ "en": "Midan El-Gama'a", "ar": "ميدان الجامعة" },
+		{ "en": "Saint Fatima", "ar": "سانت فاتيما" },
+		{ "en": "Ard El-Golf", "ar": "أرض الجولف" },
+		{ "en": "Al-Mirghani", "ar": "المرغني" },
+		{ "en": "Salah El-Din Square", "ar": "ميدان صلاح الدين" }
+	],
+	"NasrCityZones": [
+		{ "en": "1st District", "ar": "الحي الأول" },
+		{ "en": "2nd District", "ar": "الحي الثاني" },
+		{ "en": "3rd District", "ar": "الحي الثالث" },
+		{ "en": "4th District", "ar": "الحي الرابع" },
+		{ "en": "5th District", "ar": "الحي الخامس" },
+		{ "en": "6th District", "ar": "الحي السادس" },
+		{ "en": "7th District", "ar": "الحي السابع" },
+		{ "en": "8th District", "ar": "الحي الثامن" },
+		{ "en": "9th District", "ar": "الحي التاسع" },
+		{ "en": "10th District", "ar": "الحي العاشر" },
+		{ "en": "Madinet Nasr", "ar": "مدينة نصر" },
+		{ "en": "Makram Ebeid", "ar": "مكرم عبيد" },
+		{ "en": "Tayaran Street", "ar": "شارع الطيران" },
+		{ "en": "Abbas El-Akkad Street", "ar": "شارع عباس العقاد" }
+	]
+	}
+
+	masrElgedidaZones = zones.get("MasrElgedidaZones")
+	for i in masrElgedidaZones:
+		doc = frappe.new_doc("Zone Address")
+		doc.zone = i.get("en")
+		doc.name_in_arabic = i.get("ar")
+		doc.save(ignore_permissions = True)
+		frappe.db.commit()
