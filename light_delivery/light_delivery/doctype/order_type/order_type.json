@@ -6,7 +6,8 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "type"
+  "type",
+  "name_in_arabic"
  ],
  "fields": [
   {
@@ -16,11 +17,16 @@
    "label": "Type",
    "reqd": 1,
    "unique": 1
+  },
+  {
+   "fieldname": "name_in_arabic",
+   "fieldtype": "Data",
+   "label": "Name in Arabic"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-19 09:35:20.534714",
+ "modified": "2024-08-01 10:53:13.027086",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order Type",

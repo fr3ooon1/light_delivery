@@ -6,7 +6,8 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "zone"
+  "zone",
+  "name_in_arabic"
  ],
  "fields": [
   {
@@ -14,11 +15,16 @@
    "fieldtype": "Data",
    "label": "Zone",
    "unique": 1
+  },
+  {
+   "fieldname": "name_in_arabic",
+   "fieldtype": "Data",
+   "label": "Name In Arabic"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-19 09:52:27.668452",
+ "modified": "2024-08-01 10:53:34.195454",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Zone Address",
