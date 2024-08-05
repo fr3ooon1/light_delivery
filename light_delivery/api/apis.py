@@ -1,5 +1,7 @@
 import frappe
 from frappe import _
+import os
+import base64
 
 
 def get_url():
@@ -19,6 +21,31 @@ def get_url():
 		url = f"{base_url}:{port}"
 
 	return url
+
+
+def download_image(image):
+
+	filename = image.filename
+
+	site_path = frappe.get_site_path('public', 'files')
+	file_path = os.path.join(site_path, filename)
+
+	with open(file_path, 'wb') as f:
+		f.write(image.read())
+
+	with open(file_path, 'rb') as image_file:
+		encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+	new_file = frappe.get_doc({
+		"doctype": "File",
+		"file_name": filename,
+		"is_private": 0,
+		"filedata": encoded_string,
+		"file_url": f"/files/{filename}"
+	})
+	new_file.insert(ignore_permissions=True)
+	frappe.db.commit()
+	return new_file
+
 
 @frappe.whitelist(allow_guest=True)
 def get_store_state(user=None):

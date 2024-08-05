@@ -1,54 +1,41 @@
 import frappe
 from frappe import _
-import requests
-from light_delivery.utils import validate_token
 from frappe.utils import nowdate , get_first_day_of_week , get_first_day , getdate , get_site_base_path
 from datetime import datetime
-import json
 from light_delivery.api.apis import get_url
-from frappe.utils.file_manager import save_file
-import base64
-from PIL import Image
-import requests
-import os
+from light_delivery.api.apis import download_image
 
-@frappe.whitelist(allow_guest=False)
+
+@frappe.whitelist(allow_guest=1)
 def new_order():
-
-	invoice = frappe.request.files
-	data = frappe.form_dict
-	return data
 	try:
-		file_url = None
-		print('invoice = ' , type(invoice))
-		print(invoice)
-		decoded_invoice = base64.b64decode(invoice)
-		print('decoded_invoice = ' , type(decoded_invoice))
-			
-		file_doc = save_file(file_name, decoded_invoice, dt=None, dn=None, folder='Home', is_private=0)
-		file_url = file_doc.file_url
-		
-		# Create a new Order document
-		doc = frappe.new_doc("Order")
-		doc.full_name = full_name
-		doc.phone_number = phone_number
-		doc.address = address
-		doc.order_type = order_type
-		doc.zone_address = zone_address
-		doc.invoice = file_url
-		
-		# Insert and save the document
+		# Get the file from the request
+		files = frappe.request.files.get('invoice')
+		data = frappe.form_dict
+
+		image = download_image(files)
+
+		file_url = image.file_url
+
+		doc = frappe.get_doc({
+			"doctype": "Order",
+			"full_name": data.get('full_name'),
+			"phone_number": data.get('phone_number'),
+			"address": data.get('address'),
+			"order_type": data.get('order_type'),
+			"zone_address": data.get('zone_address'),
+			"invoice": file_url,
+			"image":file_url,
+			"total_order": data.get('total_order')
+		})
 		doc.insert()
-		doc.save()
 		frappe.db.commit()
-		
+
 		return {"status": "success", "message": "Order created successfully", "order_name": doc.name}
-	
+
 	except Exception as e:
 		frappe.log_error(frappe.get_traceback(), "new_order API error")
 		return {"status": "error", "message": str(e)}
-
-
 
 @frappe.whitelist(allow_guest=True)
 def get_orders(user=None):
@@ -415,33 +402,33 @@ def post_zones():
 
 
  
-def download_image(url):
-  try:
-    site_path = os.path.abspath(os.getcwd()) + get_site_base_path()[1::]+"/public/files"
-    access_token = frappe.db.get_single_value('DMS Settings', 'response')
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json"
-    }
+# def download_image(url):
+# 	try:
+# 		site_path = os.path.abspath(os.getcwd()) + get_site_base_path()[1::]+"/public/files"
+# 		access_token = frappe.db.get_single_value('DMS Settings', 'response')
+# 		headers = {
+# 			"Authorization": f"Bearer {access_token}",
+# 			"Content-Type": "application/json"
+# 		}
 
-    response = requests.get(url,headers=headers, stream=True)
-    response.raise_for_status()  # Raise an exception for error HTTP status codes
-    # Ensure the directory exists
-    image_name = url.split('/')
-    with open(os.path.join(site_path, f'{image_name[-1]}'), 'wb') as f:
-      for chunk in response.iter_content(1024):
-        f.write(chunk)
-    #create File To frappe 
-    with open(os.path.join(site_path, f'{image_name[-1]}'), 'rb') as image_file:
-        encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-    new_file = frappe.new_doc("File")
-    new_file.file_name = f'{image_name[-1]}'
-    new_file.is_private = 0 
-    new_file.filedata = encoded_string
-    new_file.file_url ="/files/"+ f'{image_name[-1]}'
-    new_file.save(ignore_permissions = True)
-    frappe.db.commit()
-    return new_file.name
-  except requests.exceptions.RequestException as e:
-    print(f"Error downloading image: {e}")
-    return False
+# 		response = requests.get(url,headers=headers, stream=True)
+# 		response.raise_for_status()  # Raise an exception for error HTTP status codes
+# 		# Ensure the directory exists
+# 		image_name = url.split('/')
+# 		with open(os.path.join(site_path, f'{image_name[-1]}'), 'wb') as f:
+# 			for chunk in response.iter_content(1024):
+# 				f.write(chunk)
+# 		#create File To frappe 
+# 		with open(os.path.join(site_path, f'{image_name[-1]}'), 'rb') as image_file:
+# 			encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+# 		new_file = frappe.new_doc("File")
+# 		new_file.file_name = f'{image_name[-1]}'
+# 		new_file.is_private = 0 
+# 		new_file.filedata = encoded_string
+# 		new_file.file_url ="/files/"+ f'{image_name[-1]}'
+# 		new_file.save(ignore_permissions = True)
+# 		frappe.db.commit()
+# 		return new_file.name
+# 	except requests.exceptions.RequestException as e:
+# 		print(f"Error downloading image: {e}")
+# 		return False
