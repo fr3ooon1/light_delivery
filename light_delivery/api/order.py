@@ -7,6 +7,7 @@ from datetime import datetime
 import json
 from light_delivery.api.apis import get_url
 from frappe.utils.file_manager import save_file
+import base64
  
 @frappe.whitelist(allow_guest=True)
 def new_order(full_name = None , phone_number = None, address = None, order_type = None, zone_address = None, invoice = None , file_name = None):
@@ -16,8 +17,8 @@ def new_order(full_name = None , phone_number = None, address = None, order_type
 	doc.address = address
 	doc.order_type = order_type
 	doc.zone_address = zone_address
-	# filedata = frappe.safe_decode(invoice)
-	file_doc = save_file(file_name, invoice, dt=None, dn=None, folder='Home', is_private=0)
+	filedata = base64.b64decode(invoice)
+	file_doc = save_file(file_name, filedata, dt=None, dn=None, folder='Home', is_private=0)
 	doc.invoice = file_doc.file_url
 	doc.insert()
 	doc.save()
