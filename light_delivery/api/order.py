@@ -8,20 +8,36 @@ import json
 from light_delivery.api.apis import get_url
 from frappe.utils.file_manager import save_file
 import base64
- 
+
 @frappe.whitelist(allow_guest=True)
-def new_order(full_name = None , phone_number = None, address = None, order_type = None, zone_address = None, invoice = None , file_name = None):
-	doc = frappe.new_doc("Order")
-	doc.full_name = full_name
-	doc.phone_number = phone_number
-	doc.address = address
-	doc.order_type = order_type
-	doc.zone_address = zone_address
-	filedata = base64.b64decode(invoice)
-	file_doc = save_file(file_name, filedata, dt=None, dn=None, folder='Home', is_private=0)
-	doc.invoice = file_doc.file_url
-	doc.insert()
-	doc.save()
+def new_order(full_name=None, phone_number=None, address=None, order_type=None, zone_address=None, invoice=None, file_name=None):
+    try:
+        # Decode the base64 invoice data
+        filedata = base64.b64decode(invoice)
+        
+        # Save the file
+        file_doc = save_file(file_name, filedata, dt=None, dn=None, folder='Home', is_private=0)
+        
+        # Create a new Order document
+        doc = frappe.new_doc("Order")
+        doc.full_name = full_name
+        doc.phone_number = phone_number
+        doc.address = address
+        doc.order_type = order_type
+        doc.zone_address = zone_address
+        doc.invoice = file_doc.file_url
+        
+        # Insert and save the document
+        doc.insert()
+        doc.save()
+        
+        return {"status": "success", "message": "Order created successfully", "order_name": doc.name}
+    
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "new_order API error")
+        return {"status": "error", "message": str(e)}
+
+
 
 
 @frappe.whitelist(allow_guest=True)
