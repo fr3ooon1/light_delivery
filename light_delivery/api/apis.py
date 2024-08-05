@@ -3,11 +3,22 @@ from frappe import _
 
 
 def get_url():
-    base_url = frappe.utils.get_url()
-    site_config = frappe.get_site_config()
-    port = site_config.get('nginx_port', 8002)  
-    url_with_port = f"{base_url}:{port}"
-    return url_with_port
+	base_url = frappe.utils.get_url()
+	site_config = frappe.get_site_config()
+	domains = site_config.get("domains", [])
+
+	url = ""
+
+	if isinstance(domains, list) and domains:
+
+		domain_info = domains[0]
+		url = domain_info.get("domain") if isinstance(domain_info, dict) else None
+	else:
+
+		port = site_config.get('nginx_port', 8002)  
+		url = f"{base_url}:{port}"
+
+	return url
 
 @frappe.whitelist(allow_guest=True)
 def get_store_state(user=None):
@@ -19,8 +30,8 @@ def get_store_state(user=None):
 			
 			"""
 			Pending
-            Active
-            Inactive
+			Active
+			Inactive
 			"""
 
 			pending = frappe.db.count('Store', {'status': 'Pending'})

@@ -8,7 +8,8 @@
   "store_name",
   "status",
   "user",
-  "zone"
+  "zone",
+  "address"
  ],
  "fields": [
   {
@@ -34,11 +35,16 @@
    "fieldtype": "Link",
    "label": "Zone",
    "options": "Zone Address"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Data",
+   "label": "Address"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-23 16:25:18.069415",
+ "modified": "2024-08-05 10:14:09.528556",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Store",

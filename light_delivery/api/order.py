@@ -6,16 +6,19 @@ from frappe.utils import nowdate , get_first_day_of_week , get_first_day , getda
 from datetime import datetime
 import json
 from light_delivery.api.apis import get_url
+from frappe.utils.file_manager import save_file
  
 @frappe.whitelist(allow_guest=True)
-def new_order(full_name = None , phone_number = None, address = None, order_type = None, zone_address = None, invoice = None):
+def new_order(full_name = None , phone_number = None, address = None, order_type = None, zone_address = None, invoice = None , file_name = None):
 	doc = frappe.new_doc("Order")
 	doc.full_name = full_name
 	doc.phone_number = phone_number
 	doc.address = address
 	doc.order_type = order_type
 	doc.zone_address = zone_address
-	doc.invoice = invoice
+	filedata = frappe.safe_decode(invoice)
+	file_doc = save_file(file_name, filedata, dt=None, dn=None, folder='Home', is_private=0)
+	doc.invoice = file_doc.file_url
 	doc.insert()
 	doc.save()
 
