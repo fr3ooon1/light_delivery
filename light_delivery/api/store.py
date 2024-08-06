@@ -23,7 +23,7 @@ def get_category():
 		else:
 			res = {
 					'status_code': 204,
-					'message': _('No Orders Found'),
+					'message': _('No Categories Found'),
 					'data': categories
 				}
 
