@@ -48,9 +48,12 @@ def get_user_permissions(user):
 
 @frappe.whitelist(allow_guest = True)
 def registration (*args , **kwargs):
+	regisater_create_customer(**kwargs)
+	
+	
+	
+def regisater_create_customer(**kwargs):
 	if  frappe.db.exists("User",{"phone":kwargs.get("phone"),"email":kwargs.get("email")}):
 		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = _("Employee With Email And Phone Number Already Exist")
 		return
-	
-	
