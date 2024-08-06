@@ -3,7 +3,15 @@ from frappe import _
 
 @frappe.whitelist(allow_guest = 1)
 def get_category():
-	categories = frappe.get_list("Store Category" , fields = ['name' , 'category_name_in_arabic'])
+	sql = """
+			SELECT
+				name as id,
+				category_name as en,
+				category_name_in_arabic as ar
+			FROM
+				`tabStore Category`
+		"""
+	categories = frappe.db.sql(sql,as_dict =1)
 	res = {}
 	try:
 		if categories:
