@@ -102,28 +102,32 @@ def get_orders(user=None):
 	
 	
 @frappe.whitelist(allow_guest=True)
-def get_order_type(user = None):
-	if not user:
-		user = "administrator"
+def get_order_type():
 	try:
-		roles = frappe.get_roles(user)
-		if 'Accounts User' in roles:
-			order_type = frappe.get_list("Order Type" , pluck ='name')
-			res = {}
-			if order_type:
-				res = {
-					'status_code' : 200 ,
-					'message' : _('All data of Order Types') ,
-					'data' : order_type
-				}
-				return res
-			else:
-				res = {
-					'status_code' : 204 ,
-					'message' : _('No Order Type Found'),
-					'data' : order_type
-				}
-				return res
+		sql = """
+			SELECT
+				name as id,
+				type as en,
+				name_in_arabic as ar
+			FROM
+				`tabOrder Type`
+			"""
+		order_type = frappe.db.sql(sql,as_dict =1)
+		res = {}
+		if order_type:
+			res = {
+				'status_code' : 200 ,
+				'message' : _('All data of Order Types') ,
+				'data' : order_type
+			}
+			return res
+		else:
+			res = {
+				'status_code' : 204 ,
+				'message' : _('No Order Type Found'),
+				'data' : order_type
+			}
+			return res
 		
 	except Exception as e:
 		frappe.log_error(message=str(e), title=_('Error in get_order_type'))
@@ -175,31 +179,31 @@ import frappe
 from frappe import _
 
 @frappe.whitelist(allow_guest=True)
-def get_zone_address(user=None):
-	if not user:
-		user = "administrator"
+def get_zone_address():
+
 	try:
-		roles = frappe.get_roles(user)
-		if 'Accounts User' in roles:
-			zone_addresses = frappe.get_list("Zone Address", pluck='name')
-			if zone_addresses:
-				return {
-					'status_code': 200,
-					'message': _('All data of Zone Address'),
-					'data': zone_addresses
-				}
-			else:
-				return {
-					'status_code': 204,
-					'message': _('No Zone Address found'),
-					'data': []
-				}
+		sql = """
+			SELECT
+				name as id,
+				zone as en,
+				name_in_arabic as ar
+			FROM
+				`tabZone Address`
+			"""
+		zone_addresses = frappe.db.sql(sql,as_dict =1)
+		if zone_addresses:
+			return {
+				'status_code': 200,
+				'message': _('All data of Zone Address'),
+				'data': zone_addresses
+			}
 		else:
 			return {
-				'status_code': 403,
-				'message': _('User does not have the required role'),
+				'status_code': 204,
+				'message': _('No Zone Address found'),
 				'data': []
 			}
+
 	except Exception as e:
 		frappe.log_error(message=str(e), title=_('Error in get_zone_address'))
 		return {
