@@ -61,6 +61,7 @@ def registration (*args , **kwargs):
 			store_cover = download_image(files.get('store_cover'))
 
 			new_user = create_user_if_not_exists(**kwargs)
+			login(usr = new_user.email, pwd = kwargs.get('password'))
 			store_obj = frappe.new_doc("Store")
 			store_obj.store_name = data.store_name
 			store_obj.status = "Pending"
@@ -72,6 +73,7 @@ def registration (*args , **kwargs):
 			store_obj.store_cover = store_cover.file_url
 			store_obj.insert(ignore_permissions=True)
 			store_obj.save(ignore_permissions=True)
+			frappe.db.commit()
 
 			contact = frappe.new_doc('Contact')
 			contact.first_name = store_obj.store_name
@@ -90,7 +92,7 @@ def registration (*args , **kwargs):
 			})
 			contact.insert(ignore_permissions=True)
 			frappe.db.commit()
-			login(usr = new_user.email, pwd = kwargs.get('password'))
+			
 
 		except Exception as er:
 				frappe.local.response['http_status_code'] = 401
