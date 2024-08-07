@@ -10,7 +10,9 @@
   "user",
   "zone",
   "address",
-  "store_category"
+  "store_category",
+  "store_logo",
+  "store_cover"
  ],
  "fields": [
   {
@@ -47,11 +49,21 @@
    "fieldtype": "Link",
    "label": "Store Category",
    "options": "Store Category"
+  },
+  {
+   "fieldname": "store_logo",
+   "fieldtype": "Attach",
+   "label": "Store Logo"
+  },
+  {
+   "fieldname": "store_cover",
+   "fieldtype": "Attach",
+   "label": "Store Cover"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-06 10:23:47.137949",
+ "modified": "2024-08-07 10:24:24.563355",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Store",
