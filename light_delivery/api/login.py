@@ -33,7 +33,8 @@ def login(usr, pwd):
 		"api_secret": api_secret,
 		"username": user.username,
 		"email": user.email,
-		"first_name": user.first_name
+		"first_name": user.first_name,
+		"phone": user.mobile_no
 	}     
 
 @frappe.whitelist()
