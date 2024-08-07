@@ -51,14 +51,14 @@ def get_user_permissions(user):
 def registration (*args , **kwargs):
 	files = frappe.request.files
 	data = frappe.form_dict
-	if files.is_store == 1:
+	if data.is_store == 1:
 		if  frappe.db.exists("User",{"phone":kwargs.get("phone"),"email":kwargs.get("email")}):
 			frappe.local.response['http_status_code'] = 400
 			frappe.local.response['message'] = _("Employee With Email And Phone Number Already Exist")
 			return
 		try:
-			store_logo = download_image(frappe.request.files.get('store_logo'))
-			store_cover = download_image(frappe.request.files.get('store_cover'))
+			store_logo = download_image(files.get('store_logo'))
+			store_cover = download_image(files.get('store_cover'))
 
 			new_user = create_user_if_not_exists(**kwargs)
 			store_obj = frappe.new_doc("Store")
