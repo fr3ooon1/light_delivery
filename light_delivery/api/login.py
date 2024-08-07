@@ -47,12 +47,11 @@ def get_user_permissions(user):
 		permissions_dict[perm['allow']].append(perm['for_value'])
 	return permissions_dict
 
-
 @frappe.whitelist(allow_guest = True)
 def registration (*args , **kwargs):
 	files = frappe.request.files
 	data = frappe.form_dict
-	if data.is_store == 1:
+	if float(data.is_store) == 1:
 		if  frappe.db.exists("User",{"phone":kwargs.get("phone"),"email":kwargs.get("email")}):
 			frappe.local.response['http_status_code'] = 400
 			frappe.local.response['message'] = _("Employee With Email And Phone Number Already Exist")
@@ -128,6 +127,6 @@ def create_user_if_not_exists(**kwargs):
 	role = frappe.get_doc("Role Profile" , 'Purchase')
 	roles = [role.role for role in role.roles]
 	new_user.add_roles(*roles)
-	new_user.save()
+	new_user.save(ignore_permissions=True)
 	frappe.db.commit()
 	return new_user
