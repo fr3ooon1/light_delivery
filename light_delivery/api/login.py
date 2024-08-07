@@ -53,7 +53,7 @@ def registration (*args , **kwargs):
 	data = frappe.form_dict
 	if float(data.is_store) == 1:
 		if  frappe.db.exists("User",{"phone":kwargs.get("phone"),"email":kwargs.get("email")}):
-			frappe.local.response['http_status_code'] = 400
+			frappe.local.response['http_status_code'] = 200
 			frappe.local.response['message'] = _("Employee With Email And Phone Number Already Exist")
 			return
 		try:
@@ -117,7 +117,7 @@ def create_user_if_not_exists(**kwargs):
 			"user_type": "System User",
 			"first_name": kwargs.get('store_name'),
 			"email": kwargs.get('email'),
-			"enabled": 0,
+			"enabled": 1,
 			"phone": kwargs.get('phone'),
 			"mobile_no": kwargs.get('phone'),
 			"new_password":kwargs.get('password'),
