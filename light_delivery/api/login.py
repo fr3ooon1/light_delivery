@@ -15,7 +15,7 @@ def login(*args,**kwargs):
 		if kwargs.get("usr"):
 			filters = {"username":kwargs.get("usr")}
 		elif kwargs.get("phone"):
-			filters = {"phone":kwargs.get("phone")}
+			filters = {"mobile_no":kwargs.get("phone")}
 		elif kwargs.get("email"):
 			filters = {"email":kwargs.get("email")}
 		else:
