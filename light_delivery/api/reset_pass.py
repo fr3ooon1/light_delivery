@@ -67,21 +67,6 @@ def ask_for_forget_password(**kwargs):
 
 
 
-	# new_reset_pass_doc = frappe.new_doc('Reset Password')
-	# new_reset_pass_doc.update({
-	# 	'user':user_data[0].get("name")
-	# })
-	# new_reset_pass_doc.insert(ignore_permissions=True)
-	# frappe.db.commit()
-	# frappe.local.response['http_status_code'] = 200
-	# frappe.local.response["message"] = _("Password reset request Created")
-	# frappe.local.response["data"] = {
-	# 	"name" : new_reset_pass_doc.name , "code" : new_reset_pass_doc.name
-	# }
-
-	# return
-
-
 
 @frappe.whitelist(allow_guest=True)
 def validate_reset_request(**kwargs):
@@ -106,9 +91,7 @@ def reset_password(**kwargs):
 	# code=kwargs.get('code')
 	password=kwargs.get('password')
 	repeat_password=kwargs.get('repeat_password')
-	# rest_pass_doc = frappe.get_doc('Reset Password',code)
 	if password != repeat_password:
-	# if not rest_pass_doc or (password != repeat_password) or rest_pass_doc.docstatus == 1:
 		frappe.local.response['http_status_code'] = 400
 		frappe.response["message"] =_("Password Not Match")
 		return 
@@ -117,12 +100,7 @@ def reset_password(**kwargs):
 		user.new_password = password
 		user.save(ignore_permissions=True)
 		frappe.db.commit()
-		# rest_pass_doc.password = password
-		# rest_pass_doc.repeat_password = repeat_password
-		# rest_pass_doc.status= 'Valid'
-		# rest_pass_doc.save(ignore_permissions=True)
-		# rest_pass_doc.submit()
-		# frappe.db.commit()
+
 		close_other_reset_pass_doc(user.name)
 
 		frappe.local.response['http_status_code'] = 200
@@ -146,3 +124,29 @@ def close_other_reset_pass_doc(user):
 	Update `tabReset Password` Set docstatus=1 , status='Invalid' WHERE user='{user}' AND docstatus=0
 	""")
 	frappe.db.commit()
+
+
+@frappe.whitelist(allow_guest=0)
+def change_password(*args,**kwargs):
+	new_password = kwargs.get("new_password")
+	repeat_password = kwargs.get("repeat_password")
+	if new_password != repeat_password:
+		frappe.local.response['http_status_code'] = 400
+		frappe.response["message"] =_("Password Not Match")
+		return 
+	else:
+		try:
+			user = frappe.session.user
+			user = frappe.get_doc("User",user)
+			user.new_password = new_password
+			user.save(ignore_permissions=True)
+			
+			frappe.local.response['http_status_code'] = 200
+			frappe.response["message"] =_("Password Changed")
+			frappe.db.commit()
+		except Exception as er:
+			frappe.local.response['http_status_code'] = 400
+			frappe.response["message"] =_(f"Password Not Valid")
+			frappe.response["data"] = {
+				"error" : f"{er}"
+			}
