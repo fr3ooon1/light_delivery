@@ -81,7 +81,7 @@ def registration (*args , **kwargs):
 			store_cover = download_image(files.get('store_cover'))
 
 			new_user = create_user_if_not_exists(**kwargs)
-			login(usr = new_user.email, pwd = kwargs.get('password'))
+			login(email = new_user.email, pwd = kwargs.get('password'))
 			store_obj = frappe.new_doc("Store")
 			store_obj.store_name = data.store_name
 			store_obj.status = "Pending"
