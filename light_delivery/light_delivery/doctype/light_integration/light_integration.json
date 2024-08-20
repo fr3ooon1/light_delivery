@@ -1,0 +1,64 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-08-20 12:53:34.192541",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sms_url",
+  "username",
+  "password",
+  "sendername",
+  "message"
+ ],
+ "fields": [
+  {
+   "fieldname": "sms_url",
+   "fieldtype": "Data",
+   "label": "SMS URL"
+  },
+  {
+   "fieldname": "username",
+   "fieldtype": "Data",
+   "label": "Username"
+  },
+  {
+   "fieldname": "password",
+   "fieldtype": "Data",
+   "label": "Password"
+  },
+  {
+   "fieldname": "sendername",
+   "fieldtype": "Data",
+   "label": "Sender name"
+  },
+  {
+   "fieldname": "message",
+   "fieldtype": "Small Text",
+   "label": "Message"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-08-20 12:57:17.454296",
+ "modified_by": "Administrator",
+ "module": "Light Delivery",
+ "name": "Light Integration",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

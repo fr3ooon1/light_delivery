@@ -9,6 +9,7 @@ from light_delivery.api.apis import download_image
 @frappe.whitelist(allow_guest=True)
 def login(usr, pwd):
 	try:
+		
 		login_manager = frappe.auth.LoginManager()
 		login_manager.authenticate(user=usr, pwd=pwd)
 		login_manager.post_login()
@@ -34,7 +35,8 @@ def login(usr, pwd):
 		"username": user.username,
 		"email": user.email,
 		"first_name": user.first_name,
-		"phone": user.mobile_no
+		"phone": user.mobile_no,
+		"username":user.username,
 	}     
 
 @frappe.whitelist()
