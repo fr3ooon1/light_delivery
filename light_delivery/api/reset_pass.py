@@ -48,13 +48,13 @@ def ask_for_forget_password(**kwargs):
 			sendername = sms_obj.sendername
 			message = f"""Welcome to Dynamic\n your code: {code}\n app signature is : {signature}"""
 
-			t = sms_obj
-			mobile = "01141122335"
-			mobile_no = "0"+str(mobile_no)
-			print(mobile_no, mobile)
-			print(mobile_no is mobile)
-			print(mobile_no == mobile)
-			print(type(mobile_no),type(mobile))
+			# t = sms_obj
+			# mobile = "01141122335"
+			# mobile_no = "0"+str(mobile_no)
+			# print(mobile_no, mobile)
+			# print(mobile_no is mobile)
+			# print(mobile_no == mobile)
+			# print(type(mobile_no),type(mobile))
 
 			params = {
 				"username": username, 
@@ -64,14 +64,8 @@ def ask_for_forget_password(**kwargs):
 				"message": message,
 			}
 
-			r = requests.get(url=sms_url , params=params)
-			# r = requests.get(f'https://smssmartegypt.com/sms/api/?username={t.username}&password={t.password}&sendername={t.sendername}&mobiles=0{mobile_no}&message={message}')
-
-			print(r)
-			# r = requests.get(url)
-			print(r.status_code)
-			print(r.json())
-			# return r.status_code
+			r = requests.get(f"""https://smssmartegypt.com/sms/api/?username={username}&password={password}&sendername={sendername}&mobiles={mobile_no}&message={message}""")
+			# r = requests.get(url=sms_url , params=params)
 			frappe.local.response['http_status_code'] = 200
 			frappe.local.response["message"] = _("Message Sent")
 			frappe.response["data"] = message
