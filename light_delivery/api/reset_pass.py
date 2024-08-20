@@ -47,6 +47,12 @@ def ask_for_forget_password(**kwargs):
 			sendername = sms_obj.sendername
 			# return message
 			message = f"""Welcome to Dynamic\n your code: {code}\n app signature is : {signature}"""
+			# message = {
+			# 	'message':"Welcome To Dynamic",
+			# 	'code':code,
+			# 	'signature':signature,
+			# }
+			# return message
 
 			url = f"""https://smssmartegypt.com/sms/api/?username={username}&password={password}&sendername={sendername}&mobiles={mobile_no}&message={message}"""
 			r = requests.get(url)

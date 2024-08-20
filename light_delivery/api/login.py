@@ -7,12 +7,30 @@ from light_delivery.api.apis import download_image
 
 
 @frappe.whitelist(allow_guest=True)
-def login(usr, pwd):
+def login(*args,**kwargs):
 	try:
-		
+		password = kwargs.get('pwd')
+		filters = {}
+
+		if kwargs.get("usr"):
+			filters = {"username":kwargs.get("usr")}
+		elif kwargs.get("phone"):
+			filters = {"phone":kwargs.get("phone")}
+		elif kwargs.get("email"):
+			filters = {"email":kwargs.get("email")}
+		else:
+			frappe.local.response['http_status_code'] = 401
+			return {
+				'message': 'Login failed',
+				# 'error': str(e)
+			}
+		user_obj = frappe.get_doc("User",filters)
+
 		login_manager = frappe.auth.LoginManager()
-		login_manager.authenticate(user=usr, pwd=pwd)
+		login_manager.authenticate(user=user_obj.name, pwd=password)
 		login_manager.post_login()
+		
+			
 		
 	except frappe.exceptions.AuthenticationError as e:
 		frappe.local.response['http_status_code'] = 401
@@ -22,21 +40,21 @@ def login(usr, pwd):
 		}
 
 	
-	user = frappe.get_doc('User', usr)
-	api_secret = generate_keys(user=usr).get('api_secret')
+	# user = frappe.get_doc('User', usr)
+	api_secret = generate_keys(user=user_obj.name).get('api_secret')
 	frappe.db.commit()
 
 	frappe.local.response["message"] = {
 		"status_code": 200,
 		"message": "Authentication success",
 		"sid": frappe.session.sid,
-		"api_key": user.api_key,
+		"api_key": user_obj.api_key,
 		"api_secret": api_secret,
-		"username": user.username,
-		"email": user.email,
-		"first_name": user.first_name,
-		"phone": user.mobile_no,
-		"username":user.username,
+		"username": user_obj.username,
+		"email": user_obj.email,
+		"first_name": user_obj.first_name,
+		"phone": user_obj.mobile_no,
+		"username":user_obj.username,
 	}     
 
 @frappe.whitelist()
@@ -119,6 +137,7 @@ def create_user_if_not_exists(**kwargs):
 			"user_type": "System User",
 			"first_name": kwargs.get('store_name'),
 			"email": kwargs.get('email'),
+			"username": kwargs.get("store_name").lower().replace(" ","_"),
 			"enabled": 1,
 			"phone": kwargs.get('phone'),
 			"mobile_no": kwargs.get('phone'),
