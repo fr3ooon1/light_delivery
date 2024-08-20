@@ -65,10 +65,9 @@ def ask_for_forget_password(**kwargs):
 			}
 
 			r = requests.get(f"""https://smssmartegypt.com/sms/api/?username={username}&password={password}&sendername={sendername}&mobiles={mobile_no}&message={message}""")
-			# r = requests.get(url=sms_url , params=params)
 			frappe.local.response['http_status_code'] = 200
 			frappe.local.response["message"] = _("Message Sent")
-			frappe.response["data"] = message
+			frappe.response["data"] = r.json()
 			return 
 		except Exception as er:
 			frappe.local.response['http_status_code'] = 400
