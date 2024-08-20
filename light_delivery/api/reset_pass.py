@@ -35,24 +35,29 @@ def ask_for_forget_password(**kwargs):
 	else:
 		try:
 			code = kwargs.get('code')
+			signature = kwargs.get('signature')
 
 			mobile_no = user_data[0].get("mobile_no")
 
 			sms_obj = frappe.get_doc("Light Integration")
 			sms_url = sms_obj.sms_url
-			message = sms_obj.message + code
+			# message = sms_obj.message + code
 			username = sms_obj.username
 			password = sms_obj.password
 			sendername = sms_obj.sendername
+			# return message
+			message = f"""Welcome to Dynamic\n your code: {code}\n app signature is : {signature}"""
 
 			url = f"""https://smssmartegypt.com/sms/api/?username={username}&password={password}&sendername={sendername}&mobiles={mobile_no}&message={message}"""
 			r = requests.get(url)
 			frappe.local.response['http_status_code'] = 200
 			frappe.local.response["message"] = _("Message Sent")
+			frappe.response["data"] = message
 			return 
 		except Exception as er:
 			frappe.local.response['http_status_code'] = 400
 			frappe.response["message"] = er
+			
 
 
 
