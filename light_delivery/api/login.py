@@ -138,7 +138,7 @@ def create_user_if_not_exists(**kwargs):
 			"user_type": "System User",
 			"first_name": kwargs.get('store_name'),
 			"email": kwargs.get('email'),
-			"username": kwargs.get("store_name").lower().replace(" ","_"),
+			"username": kwargs.get("store_name").lower().replace(" ","_")+ frappe.generate_hash(length=4),
 			"enabled": 1,
 			"phone": kwargs.get('phone'),
 			"mobile_no": kwargs.get('phone'),
