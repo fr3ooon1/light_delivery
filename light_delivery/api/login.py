@@ -111,6 +111,7 @@ def registration (*args , **kwargs):
 				"is_primary":1
 			})
 			contact.insert(ignore_permissions=True)
+			contact.save(ignore_permissions=True)
 			frappe.db.commit()
 			
 
