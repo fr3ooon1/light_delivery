@@ -3,6 +3,7 @@ from frappe import _
 from frappe.utils.password import check_password
 from light_delivery.api import login
 import requests
+import json
 
 
 """
@@ -37,25 +38,40 @@ def ask_for_forget_password(**kwargs):
 			code = kwargs.get('code')
 			signature = kwargs.get('signature')
 
-			mobile_no = user_data[0].get("mobile_no")
+			mobile_no = int(user_data[0].get("mobile_no"))
+			# print(type(user_data[0].get("mobile_no")))
 
 			sms_obj = frappe.get_doc("Light Integration")
 			sms_url = sms_obj.sms_url
-			# message = sms_obj.message + code
 			username = sms_obj.username
 			password = sms_obj.password
 			sendername = sms_obj.sendername
-			# return message
 			message = f"""Welcome to Dynamic\n your code: {code}\n app signature is : {signature}"""
-			# message = {
-			# 	'message':"Welcome To Dynamic",
-			# 	'code':code,
-			# 	'signature':signature,
-			# }
-			# return message
 
-			url = f"""https://smssmartegypt.com/sms/api/?username={username}&password={password}&sendername={sendername}&mobiles={mobile_no}&message={message}"""
-			r = requests.get(url)
+			t = sms_obj
+			mobile = "01141122335"
+			mobile_no = "0"+str(mobile_no)
+			print(mobile_no, mobile)
+			print(mobile_no is mobile)
+			print(mobile_no == mobile)
+			print(type(mobile_no),type(mobile))
+
+			params = {
+				"username": username, 
+				"password": password,
+				"sendername": sendername,
+				"mobiles": mobile_no,
+				"message": message,
+			}
+
+			r = requests.get(url=sms_url , params=params)
+			# r = requests.get(f'https://smssmartegypt.com/sms/api/?username={t.username}&password={t.password}&sendername={t.sendername}&mobiles=0{mobile_no}&message={message}')
+
+			print(r)
+			# r = requests.get(url)
+			print(r.status_code)
+			print(r.json())
+			# return r.status_code
 			frappe.local.response['http_status_code'] = 200
 			frappe.local.response["message"] = _("Message Sent")
 			frappe.response["data"] = message
