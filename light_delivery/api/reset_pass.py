@@ -97,20 +97,14 @@ def validate_reset_request(**kwargs):
 		return 
 @frappe.whitelist(allow_guest=True)
 def reset_password(**kwargs):
-	# code=kwargs.get('code')
+
 	password=kwargs.get('password')
-	repeat_password=kwargs.get('repeat_password')
-	if password != repeat_password:
-		frappe.local.response['http_status_code'] = 400
-		frappe.response["message"] =_("Password Not Match")
-		return 
+
 	try:
 		user = frappe.get_doc('User',{"username":kwargs.get('username')})
 		user.new_password = password
 		user.save(ignore_permissions=True)
 		frappe.db.commit()
-
-		close_other_reset_pass_doc(user.name)
 
 		frappe.local.response['http_status_code'] = 200
 		frappe.response["message"] =_(f"Password Changed")
@@ -136,26 +130,38 @@ def close_other_reset_pass_doc(user):
 
 
 @frappe.whitelist(allow_guest=0)
-def change_password(*args,**kwargs):
-	new_password = kwargs.get("new_password")
-	repeat_password = kwargs.get("repeat_password")
-	if new_password != repeat_password:
-		frappe.local.response['http_status_code'] = 400
-		frappe.response["message"] =_("Password Not Match")
-		return 
-	else:
-		try:
-			user = frappe.session.user
-			user = frappe.get_doc("User",user)
-			user.new_password = new_password
-			user.save(ignore_permissions=True)
-			
-			frappe.local.response['http_status_code'] = 200
-			frappe.response["message"] =_("Password Changed")
-			frappe.db.commit()
-		except Exception as er:
-			frappe.local.response['http_status_code'] = 400
-			frappe.response["message"] =_(f"Password Not Valid")
-			frappe.response["data"] = {
-				"error" : f"{er}"
-			}
+def change_password(*args, **kwargs):
+    try:
+        user = frappe.session.user
+        old_password = kwargs.get("old_password")
+        new_password = kwargs.get("new_password") 
+
+        try:
+
+            check_password(user, old_password)
+
+
+            user_doc = frappe.get_doc("User", user)
+            user_doc.new_password = new_password
+            user_doc.save(ignore_permissions=True)
+            
+
+            frappe.db.commit()
+            frappe.local.response['http_status_code'] = 200
+            frappe.response["message"] = _("Password Changed")
+        
+        except Exception as e:
+
+            frappe.local.response['http_status_code'] = 400
+            frappe.response["message"] = _("Old password is not valid")
+            frappe.response["data"] = {
+                "error": str(e)
+            }
+
+    except Exception as er:
+
+        frappe.local.response['http_status_code'] = 400
+        frappe.response["message"] = _("Password not valid")
+        frappe.response["data"] = {
+            "error": str(er)
+        }
