@@ -6,9 +6,14 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "delivery_category",
   "delivery_name",
   "status",
-  "user"
+  "user",
+  "column_break_hfwd",
+  "national_id",
+  "date_of_joining",
+  "pointer"
  ],
  "fields": [
   {
@@ -26,12 +31,39 @@
    "fieldname": "user",
    "fieldtype": "Link",
    "label": "User",
-   "options": "User"
+   "options": "User",
+   "unique": 1
+  },
+  {
+   "fieldname": "delivery_category",
+   "fieldtype": "Link",
+   "label": "Delivery Category",
+   "options": "Delivery Category"
+  },
+  {
+   "fieldname": "column_break_hfwd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "national_id",
+   "fieldtype": "Data",
+   "label": "National ID",
+   "unique": 1
+  },
+  {
+   "fieldname": "date_of_joining",
+   "fieldtype": "Date",
+   "label": "Date Of Joining"
+  },
+  {
+   "fieldname": "pointer",
+   "fieldtype": "Data",
+   "label": "Pointer"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-24 10:18:50.765826",
+ "modified": "2024-08-29 11:45:21.216962",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Delivery",

@@ -11,8 +11,15 @@
   "zone",
   "address",
   "store_category",
+  "column_break_oynk",
   "store_logo",
-  "store_cover"
+  "store_cover",
+  "store_location",
+  "price_list_section",
+  "minimum_price",
+  "rate_of_km",
+  "column_break_rigx",
+  "store_discount"
  ],
  "fields": [
   {
@@ -59,11 +66,45 @@
    "fieldname": "store_cover",
    "fieldtype": "Attach",
    "label": "Store Cover"
+  },
+  {
+   "fieldname": "column_break_oynk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "price_list_section",
+   "fieldtype": "Section Break",
+   "label": "Price List"
+  },
+  {
+   "fieldname": "minimum_price",
+   "fieldtype": "Float",
+   "label": "Minimum Price"
+  },
+  {
+   "fieldname": "rate_of_km",
+   "fieldtype": "Float",
+   "label": "Rate of KM"
+  },
+  {
+   "fieldname": "store_location",
+   "fieldtype": "Geolocation",
+   "label": "Store Location"
+  },
+  {
+   "fieldname": "column_break_rigx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "store_discount",
+   "fieldtype": "Table",
+   "label": "Store Discount",
+   "options": "Store Discount"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-07 10:24:24.563355",
+ "modified": "2024-08-29 11:06:10.170878",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Store",

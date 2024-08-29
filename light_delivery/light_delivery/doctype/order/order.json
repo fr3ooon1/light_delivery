@@ -7,13 +7,27 @@
  "engine": "InnoDB",
  "field_order": [
   "full_name",
-  "phone_number",
-  "address",
   "order_type",
+  "address",
   "zone_address",
   "invoice",
+  "column_break_lheg",
   "status",
-  "total_order"
+  "phone_number",
+  "total_order",
+  "order_image",
+  "section_break_uelk",
+  "road",
+  "column_break_gwex",
+  "total_distance",
+  "delivery_fees",
+  "store_fees",
+  "discound",
+  "section_break_biyy",
+  "order_log",
+  "column_break_tpje",
+  "delivery",
+  "store"
  ],
  "fields": [
   {
@@ -52,17 +66,87 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nWait for Delivery\nConfirmed\nOn The Way\nDelivered\nRefund"
+   "options": "\nAccetped\nArrived\nPicked\nOut Of Delivery\nDelivered\nRetunred"
   },
   {
    "fieldname": "total_order",
    "fieldtype": "Float",
    "label": "Total"
+  },
+  {
+   "fieldname": "column_break_lheg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_uelk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "road",
+   "fieldtype": "Table",
+   "label": "Road",
+   "options": "Road"
+  },
+  {
+   "fieldname": "column_break_gwex",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_distance",
+   "fieldtype": "Float",
+   "label": "Total Distance"
+  },
+  {
+   "fieldname": "delivery_fees",
+   "fieldtype": "Float",
+   "label": "Delivery Fees"
+  },
+  {
+   "fieldname": "store_fees",
+   "fieldtype": "Float",
+   "label": "Store Fees"
+  },
+  {
+   "fieldname": "discound",
+   "fieldtype": "Float",
+   "label": "Discound"
+  },
+  {
+   "fieldname": "order_image",
+   "fieldtype": "Table",
+   "label": "Order Image",
+   "options": "Order Image"
+  },
+  {
+   "fieldname": "section_break_biyy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "order_log",
+   "fieldtype": "Table",
+   "label": "Order Log",
+   "options": "Order Log"
+  },
+  {
+   "fieldname": "delivery",
+   "fieldtype": "Link",
+   "label": "Delivery ",
+   "options": "User"
+  },
+  {
+   "fieldname": "column_break_tpje",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "store",
+   "fieldtype": "Link",
+   "label": "Store",
+   "options": "Store"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-29 12:14:41.694635",
+ "modified": "2024-08-29 10:58:02.534341",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",

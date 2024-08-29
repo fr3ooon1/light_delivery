@@ -5,8 +5,5 @@
 from frappe.model.document import Document
 
 
-class Store(Document):
+class StoreDiscount(Document):
 	pass
-
-
-
