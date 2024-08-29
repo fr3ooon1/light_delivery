@@ -1,0 +1,107 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{#######}",
+ "creation": "2024-08-29 17:15:56.973738",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_enj2",
+  "party",
+  "party_type",
+  "in",
+  "out",
+  "amended_from",
+  "balance",
+  "against",
+  "against_from",
+  "voucher"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_enj2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Transactions",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "party",
+   "fieldtype": "Select",
+   "label": "Party",
+   "options": "\nStore\nDelivery"
+  },
+  {
+   "fieldname": "party_type",
+   "fieldtype": "Dynamic Link",
+   "label": "Party Type",
+   "options": "party"
+  },
+  {
+   "fieldname": "in",
+   "fieldtype": "Float",
+   "label": "In"
+  },
+  {
+   "fieldname": "out",
+   "fieldtype": "Float",
+   "label": "Out"
+  },
+  {
+   "fieldname": "balance",
+   "fieldtype": "Float",
+   "label": "Balance"
+  },
+  {
+   "fieldname": "against",
+   "fieldtype": "Select",
+   "label": "Against",
+   "options": "\nStore\nDelivery"
+  },
+  {
+   "fieldname": "against_from",
+   "fieldtype": "Dynamic Link",
+   "label": "Against From",
+   "options": "against"
+  },
+  {
+   "fieldname": "voucher",
+   "fieldtype": "Select",
+   "label": "Voucher"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-08-29 19:15:42.721554",
+ "modified_by": "Administrator",
+ "module": "Light Delivery",
+ "name": "Transactions",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

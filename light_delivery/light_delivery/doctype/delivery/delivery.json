@@ -13,7 +13,10 @@
   "column_break_hfwd",
   "national_id",
   "date_of_joining",
-  "pointer"
+  "cash",
+  "column_break_xhtl",
+  "pointer_x",
+  "pointer_y"
  ],
  "fields": [
   {
@@ -56,14 +59,28 @@
    "label": "Date Of Joining"
   },
   {
-   "fieldname": "pointer",
+   "fieldname": "column_break_xhtl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pointer_x",
    "fieldtype": "Data",
-   "label": "Pointer"
+   "label": "Pointer X"
+  },
+  {
+   "fieldname": "pointer_y",
+   "fieldtype": "Data",
+   "label": "Pointer Y"
+  },
+  {
+   "fieldname": "cash",
+   "fieldtype": "Float",
+   "label": "Cash"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-29 11:45:21.216962",
+ "modified": "2024-08-29 17:04:07.883467",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Delivery",

@@ -1,0 +1,160 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-08-29 13:16:13.873478",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "cancelling_deduction_section",
+  "from",
+  "column_break_rwoc",
+  "to",
+  "column_break_gcur",
+  "rate",
+  "section_break_grsh",
+  "if_order_cancelled_from_store_after_delivery_arrived",
+  "if_order_cancelled_from_store_after_picked_up",
+  "store_deduction_section",
+  "pick_up_deduction",
+  "delivery_deduction_section",
+  "late_after_accept",
+  "late_in_delivery",
+  "column_break_uswt",
+  "rate_late_after_accept",
+  "rate_for_every_minute",
+  "compensation_section",
+  "time_of_waiting_customer_to_answer",
+  "column_break_sxvt",
+  "rate2"
+ ],
+ "fields": [
+  {
+   "fieldname": "cancelling_deduction_section",
+   "fieldtype": "Section Break",
+   "label": "Cancelling Deduction"
+  },
+  {
+   "fieldname": "from",
+   "fieldtype": "Float",
+   "label": "From "
+  },
+  {
+   "fieldname": "column_break_rwoc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "to",
+   "fieldtype": "Float",
+   "label": "To"
+  },
+  {
+   "fieldname": "column_break_gcur",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "rate",
+   "fieldtype": "Float",
+   "label": "Rate"
+  },
+  {
+   "fieldname": "delivery_deduction_section",
+   "fieldtype": "Section Break",
+   "label": "Delivery Deduction"
+  },
+  {
+   "fieldname": "late_after_accept",
+   "fieldtype": "Float",
+   "label": "Late After Accept"
+  },
+  {
+   "fieldname": "store_deduction_section",
+   "fieldtype": "Section Break",
+   "label": "Store Deduction"
+  },
+  {
+   "fieldname": "column_break_uswt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "rate_late_after_accept",
+   "fieldtype": "Float",
+   "label": "Rate"
+  },
+  {
+   "fieldname": "pick_up_deduction",
+   "fieldtype": "Table",
+   "label": "Pick Up Deduction",
+   "options": "Pick Up Deduction"
+  },
+  {
+   "fieldname": "section_break_grsh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "description": "The Store will Deduct with minimum rate of delivery",
+   "fieldname": "if_order_cancelled_from_store_after_delivery_arrived",
+   "fieldtype": "Check",
+   "label": "If Order Cancelled from Store after Delivery Arrived "
+  },
+  {
+   "default": "0",
+   "description": "The Store will Deduct with 1.5 minimum rate of delivery",
+   "fieldname": "if_order_cancelled_from_store_after_picked_up",
+   "fieldtype": "Check",
+   "label": "If Order Cancelled from Store after Picked up "
+  },
+  {
+   "fieldname": "compensation_section",
+   "fieldtype": "Section Break",
+   "label": "Delivery Compensation"
+  },
+  {
+   "fieldname": "time_of_waiting_customer_to_answer",
+   "fieldtype": "Float",
+   "label": "Time of waiting customer to answer "
+  },
+  {
+   "fieldname": "rate2",
+   "fieldtype": "Float",
+   "label": "Rate"
+  },
+  {
+   "fieldname": "column_break_sxvt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "late_in_delivery",
+   "fieldtype": "Float",
+   "label": "Late in delivery"
+  },
+  {
+   "fieldname": "rate_for_every_minute",
+   "fieldtype": "Float",
+   "label": "Rate for every minute"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-08-29 17:06:15.595274",
+ "modified_by": "Administrator",
+ "module": "Light Delivery",
+ "name": "Deductions",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

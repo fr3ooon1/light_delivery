@@ -7,24 +7,39 @@
  "engine": "InnoDB",
  "field_order": [
   "column_break_ribx",
-  "pointer"
+  "pointer_x",
+  "pointer_y",
+  "delivery"
  ],
  "fields": [
   {
-   "fieldname": "pointer",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Pointer"
-  },
-  {
    "fieldname": "column_break_ribx",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pointer_x",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Pointer X"
+  },
+  {
+   "fieldname": "pointer_y",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Pointer Y"
+  },
+  {
+   "fieldname": "delivery",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Delivery",
+   "options": "Delivery"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-29 10:18:11.100432",
+ "modified": "2024-08-29 16:37:17.060730",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Road",

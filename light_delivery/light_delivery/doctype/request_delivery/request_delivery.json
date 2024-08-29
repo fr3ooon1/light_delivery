@@ -7,23 +7,15 @@
  "field_order": [
   "section_break_ddxq",
   "number_of_order",
-  "amended_from",
+  "column_break_qnyl",
+  "request_status",
+  "section_break_oyzm",
   "order_request"
  ],
  "fields": [
   {
    "fieldname": "section_break_ddxq",
    "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Request Delivery",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
   },
   {
    "fieldname": "number_of_order",
@@ -35,12 +27,25 @@
    "fieldtype": "Table",
    "label": "Order Request",
    "options": "Order Request"
+  },
+  {
+   "fieldname": "column_break_qnyl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "request_status",
+   "fieldtype": "Select",
+   "label": "Request Status",
+   "options": "\nAccetped\nArrived\nPicked\nOut Of Delivery\nDelivered\nRetunred\nDelivery Cancel\nStore Cancel\nCancel"
+  },
+  {
+   "fieldname": "section_break_oyzm",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
- "is_submittable": 1,
  "links": [],
- "modified": "2024-08-29 11:51:35.768384",
+ "modified": "2024-08-29 14:04:03.935761",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Request Delivery",
@@ -56,7 +61,6 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
-   "submit": 1,
    "write": 1
   }
  ],
