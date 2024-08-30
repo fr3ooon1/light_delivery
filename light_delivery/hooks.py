@@ -133,23 +133,23 @@ app_license = "mit"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"light_delivery.tasks.all"
-# 	],
-# 	"daily": [
-# 		"light_delivery.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"light_delivery.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"light_delivery.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"light_delivery.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	# "all": [
+	# 	"light_delivery.tasks.all"
+	# ],
+	"daily": [
+		"light_delivery.light_delivery.doctype.delivery.delivery.update_delivery_category"
+	],
+	# "hourly": [
+	# 	"light_delivery.tasks.hourly"
+	# ],
+	# "weekly": [
+	# 	"light_delivery.tasks.weekly"
+	# ],
+	# "monthly": [
+	# 	"light_delivery.tasks.monthly"
+	# ],
+}
 
 # Testing
 # -------

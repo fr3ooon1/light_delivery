@@ -7,10 +7,13 @@
  "engine": "InnoDB",
  "field_order": [
   "categroy_name",
-  "minium_orders",
-  "maximum_orders",
-  "minium_rate",
+  "section_break_gvox",
+  "minimum_orders",
+  "minimum_rate",
   "rate_of_km",
+  "column_break_rpkn",
+  "maximum_orders",
+  "column_break_hshm",
   "maximum_order_by_request"
  ],
  "fields": [
@@ -21,19 +24,9 @@
    "unique": 1
   },
   {
-   "fieldname": "minium_orders",
-   "fieldtype": "Float",
-   "label": "Minium Orders"
-  },
-  {
    "fieldname": "maximum_orders",
    "fieldtype": "Float",
    "label": "Maximum Orders"
-  },
-  {
-   "fieldname": "minium_rate",
-   "fieldtype": "Float",
-   "label": "Minium Rate"
   },
   {
    "fieldname": "rate_of_km",
@@ -44,11 +37,33 @@
    "fieldname": "maximum_order_by_request",
    "fieldtype": "Float",
    "label": "Maximum Order by Request"
+  },
+  {
+   "fieldname": "minimum_orders",
+   "fieldtype": "Float",
+   "label": "Minimum Orders"
+  },
+  {
+   "fieldname": "minimum_rate",
+   "fieldtype": "Float",
+   "label": "Minimum Rate"
+  },
+  {
+   "fieldname": "section_break_gvox",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_rpkn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_hshm",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-28 16:18:47.581653",
+ "modified": "2024-08-30 12:50:18.608176",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Delivery Category",

@@ -12,6 +12,7 @@
   "zone_address",
   "invoice",
   "column_break_lheg",
+  "order_date",
   "status",
   "phone_number",
   "total_order",
@@ -142,11 +143,16 @@
    "fieldtype": "Link",
    "label": "Store",
    "options": "Store"
+  },
+  {
+   "fieldname": "order_date",
+   "fieldtype": "Date",
+   "label": "Order Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-29 16:37:39.607858",
+ "modified": "2024-08-30 12:34:49.256285",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",

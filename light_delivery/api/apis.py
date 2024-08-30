@@ -3,6 +3,57 @@ from frappe import _
 import os
 import base64
 import math
+import requests
+import json
+
+#from light_delivery.api.apis import
+
+@frappe.whitelist(allow_guest = False)
+def search_delivary(cash , user = None ):
+	if not user:
+		user = frappe.session.user
+	store = frappe.get_doc("Store" , {"user":user})
+	store_location = json.loads(store.store_location)
+	store_coord = store_location.get("features")[0].get("geometry").get("coordinates")
+
+	deliveries = frappe.db.sql(f"""select name , pointer_x , pointer_y from `tabDelivery` where cash >= {cash}""", as_dict=1)
+	distance = []
+	
+	for delivery in deliveries:
+		if delivery['pointer_x'] is not None and delivery['pointer_y'] is not None:
+			del_coord = [float(delivery['pointer_x']), float(delivery['pointer_y'])]
+			
+			temp = calculate_distance_and_duration(del_coord = del_coord, store_coord = store_coord)
+			temp['user'] = delivery.get('name')
+			distance.append(temp)
+	distance = distance.sort(key=lambda x: x['distance'])
+	return distance
+
+
+
+
+def calculate_distance_and_duration(del_coord , store_coord ):
+	coordinates = [del_coord,store_coord]
+	light_integration = frappe.get_doc("Light Integration")
+	url = light_integration.api_url
+	api_key = light_integration.api_key
+	headers = {
+    	     'Authorization': api_key,
+    	     'Content-Type': 'application/json; charset=utf-8'
+    	}
+	data = {
+    	     "coordinates": coordinates
+    	}
+	response = requests.post(url, json=data, headers=headers)
+	route_info = response.json()
+	distance = route_info['routes'][0]['summary']['distance']
+	duration = route_info['routes'][0]['summary']['duration']
+	res = {
+		"distance":distance,
+		"duration":duration
+		}
+	return res
+	
 
 def haversine(coord1, coord2):
     

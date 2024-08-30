@@ -7,7 +7,9 @@
  "engine": "InnoDB",
  "field_order": [
   "type",
-  "name_in_arabic"
+  "name_in_arabic",
+  "column_break_epof",
+  "purpose"
  ],
  "fields": [
   {
@@ -22,11 +24,21 @@
    "fieldname": "name_in_arabic",
    "fieldtype": "Data",
    "label": "Name in Arabic"
+  },
+  {
+   "fieldname": "column_break_epof",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "purpose",
+   "fieldtype": "Select",
+   "label": "Purpose",
+   "options": "\nDeliver\nRefund\nReplace"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-01 10:53:13.027086",
+ "modified": "2024-08-30 11:37:24.198773",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order Type",
