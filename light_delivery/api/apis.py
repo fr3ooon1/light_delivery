@@ -16,7 +16,13 @@ def search_delivary(cash , user = None ):
 	store_location = json.loads(store.store_location)
 	store_coord = store_location.get("features")[0].get("geometry").get("coordinates")
 
-	deliveries = frappe.db.sql(f"""select name , pointer_x , pointer_y from `tabDelivery` where cash >= {cash}""", as_dict=1)
+	deliveries = frappe.db.sql(f"""
+							select 
+								name, pointer_x , pointer_y 
+							from 
+								`tabDelivery` 
+							where 
+								status = 'Avaliable' and cash >= {cash} """, as_dict=1)
 	distance = []
 	
 	for delivery in deliveries:
@@ -27,7 +33,31 @@ def search_delivary(cash , user = None ):
 			temp['user'] = delivery.get('name')
 			distance.append(temp)
 	distance = distance.sort(key=lambda x: x['distance'])
-	return distance
+	for delivary in distance:
+		request = create_request_for_delivery(delivary=delivary.user)
+		temp = res_for_delivary(request , status)
+		pass
+	# return distance
+
+
+@frappe.whitelist()
+def create_request_for_delivery(delivary , name_request):
+	doc = frappe.new_doc("Request")
+	doc.delivery = delivary
+	doc.request = name_request
+	doc.save()
+	frappe.db.commit()
+	return doc.name
+
+
+@frappe.whitle_list(allow_guest=False)
+def res_for_delivary(req_del_name , status):
+	doc = frappe.get_doc("Request" , req_del_name)
+	doc.status = status
+	doc.save()
+	return doc
+
+	
 
 
 

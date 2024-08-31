@@ -7,10 +7,15 @@
  "field_order": [
   "section_break_ddxq",
   "number_of_order",
+  "column_break_shdb",
+  "delivery",
+  "column_break_zsov",
+  "store",
   "column_break_qnyl",
-  "request_status",
+  "status",
   "section_break_oyzm",
-  "order_request"
+  "order_request",
+  "request_log"
  ],
  "fields": [
   {
@@ -33,19 +38,45 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "request_status",
-   "fieldtype": "Select",
-   "label": "Request Status",
-   "options": "\nAccetped\nArrived\nPicked\nOut Of Delivery\nDelivered\nRetunred\nDelivery Cancel\nStore Cancel\nCancel"
-  },
-  {
    "fieldname": "section_break_oyzm",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "request_log",
+   "fieldtype": "Table",
+   "label": "Request Log",
+   "options": "Order Log"
+  },
+  {
+   "fieldname": "column_break_shdb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "delivery",
+   "fieldtype": "Link",
+   "label": "Delivery",
+   "options": "Delivery"
+  },
+  {
+   "fieldname": "column_break_zsov",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "store",
+   "fieldtype": "Link",
+   "label": "Store",
+   "options": "Store"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Pending\nAccepted\nArrived\nCollect Money\nPicked\nOn The Way\nDelivered\nPartially Deliverd\nTime Out\nDelivery Cancel\nStore Cancel\nCancel"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-29 14:04:03.935761",
+ "modified": "2024-08-31 17:24:18.432706",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Request Delivery",

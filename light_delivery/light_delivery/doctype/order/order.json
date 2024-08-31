@@ -67,7 +67,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nAccetped\nArrived\nPicked\nOut Of Delivery\nDelivered\nRetunred\nDelivery Cancel\nStore Cancel\nCancel"
+   "options": "Pending\nAccetped\nArrived\nPicked\nOn The Way\nArrived For Destination\nDelivered\nRetunred\nDelivery Cancel\nStore Cancel\nCancel"
   },
   {
    "fieldname": "total_order",
@@ -152,7 +152,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-30 12:34:49.256285",
+ "modified": "2024-08-31 17:15:15.956152",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",

@@ -32,7 +32,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nPending\nActive\nInactive"
+   "options": "Pending\nActive\nInactive"
   },
   {
    "fieldname": "user",
@@ -104,7 +104,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-29 11:06:10.170878",
+ "modified": "2024-08-31 16:57:46.302394",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Store",

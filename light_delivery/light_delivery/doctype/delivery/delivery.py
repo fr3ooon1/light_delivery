@@ -20,8 +20,8 @@ def update_delivery_category():
 	try:
 		today = now_datetime()
 		today_day = today.day
-		today_month = today.month
-		day_in_month_before = today.replace(month=today_month - 1, day=today_day + 1)
+		end = frappe.utils.add_months(today, -1)
+		day_in_month_before = frappe.utils.add_days(end, 1)
 
 		deliverys = frappe.db.sql(f"""
 			SELECT name
