@@ -6,7 +6,7 @@ from light_delivery.api.apis import download_image
 
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=False)
 def login(*args,**kwargs):
 	try:
 		password = kwargs.get('pwd')
@@ -50,6 +50,7 @@ def login(*args,**kwargs):
 		"sid": frappe.session.sid,
 		"api_key": user_obj.api_key,
 		"api_secret": api_secret,
+		"Auth":f"""token {user_obj.api_key}:{api_secret}""",
 		"username": user_obj.username,
 		"email": user_obj.email,
 		"first_name": user_obj.first_name,

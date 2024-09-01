@@ -31,13 +31,14 @@ def search_delivary(cash , user = None ):
 			
 			temp = calculate_distance_and_duration(del_coord = del_coord, store_coord = store_coord)
 			temp['user'] = delivery.get('name')
+			temp['coordination'] = del_coord
 			distance.append(temp)
 	distance = distance.sort(key=lambda x: x['distance'])
-	for delivary in distance:
-		request = create_request_for_delivery(delivary=delivary.user)
-		temp = res_for_delivary(request , status)
-		pass
-	# return distance
+	# for delivary in distance:
+	# 	request = create_request_for_delivery(delivary=delivary.user)
+	# 	temp = res_for_delivary(request , status)
+	# 	pass
+	return distance
 
 
 @frappe.whitelist()
