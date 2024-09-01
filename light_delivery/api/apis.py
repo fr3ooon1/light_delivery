@@ -10,35 +10,42 @@ import json
 
 @frappe.whitelist(allow_guest = False)
 def search_delivary(cash , user = None ):
-	if not user:
+	# if not user:
+	try:
 		user = frappe.session.user
-	store = frappe.get_doc("Store" , {"user":user})
-	store_location = json.loads(store.store_location)
-	store_coord = store_location.get("features")[0].get("geometry").get("coordinates")
+		if frappe.db.exists("Store",{'user':user}):
+			store = frappe.get_doc("Store" , {"user":user})
+			store_location = json.loads(store.store_location)
+			store_coord = store_location.get("features")[0].get("geometry").get("coordinates")
 
-	deliveries = frappe.db.sql(f"""
-							select 
-								name, pointer_x , pointer_y 
-							from 
-								`tabDelivery` 
-							where 
-								status = 'Avaliable' and cash >= {cash} """, as_dict=1)
-	distance = []
-	
-	for delivery in deliveries:
-		if delivery['pointer_x'] is not None and delivery['pointer_y'] is not None:
-			del_coord = [float(delivery['pointer_x']), float(delivery['pointer_y'])]
+			deliveries = frappe.db.sql(f"""
+									select 
+										name, pointer_x , pointer_y 
+									from 
+										`tabDelivery` 
+									where 
+										status = 'Avaliable' and cash >= {cash} """, as_dict=1)
+			distance = []
 			
-			temp = calculate_distance_and_duration(del_coord = del_coord, store_coord = store_coord)
-			temp['user'] = delivery.get('name')
-			temp['coordination'] = del_coord
-			distance.append(temp)
-	distance = distance.sort(key=lambda x: x['distance'])
-	# for delivary in distance:
-	# 	request = create_request_for_delivery(delivary=delivary.user)
-	# 	temp = res_for_delivary(request , status)
-	# 	pass
-	return distance
+			for delivery in deliveries:
+				if delivery['pointer_x'] is not None and delivery['pointer_y'] is not None:
+					del_coord = [float(delivery['pointer_x']), float(delivery['pointer_y'])]
+					
+					temp = calculate_distance_and_duration(del_coord = del_coord, store_coord = store_coord)
+					temp['user'] = delivery.get('name')
+					temp['coordination'] = del_coord
+					distance.append(temp)
+			distance = distance.sort(key=lambda x: x['distance'])
+			return distance
+		else:
+			frappe.local.response['http_status_code'] = 400
+			frappe.local.response['message'] = _(f"""Their are no store assign to this user: {user}""")
+	except Exception as e:
+		frappe.log_error(message=str(e), title=_('Error in search_delivary'))
+		return {
+			"status_code": 500,
+			"message": str(e)
+		}
 
 
 @frappe.whitelist()
@@ -116,6 +123,49 @@ def get_url():
 		url = f"{base_url}:{port}"
 
 	return url
+
+
+@frappe.whitelist(allow_guest=0)
+def upload_images(*args , **kwargs):
+	files = frappe.request.files
+	data = frappe.form_dict
+	try:
+		if frappe.db.exists("Order",data.get('order')):
+			order = frappe.get_doc("Order" , data.get('order'))
+			if files.get("first_image"):
+				first_image = download_image(files.get("first_image"))
+				order.append("order_image",{
+					"image":first_image.file_url
+				})
+			if files.get("secound_image"):
+				secound_image = download_image(files.get("secound_image"))
+				order.append("order_image",{
+					"image":secound_image.file_url
+				})
+			if files.get("third_image"):
+				third_image = download_image(files.get("third_image"))
+				order.append("order_image",{
+					"image":third_image.file_url
+				})
+			order.save()
+			frappe.db.commit()
+			frappe.local.response['http_status_code'] = 200
+			frappe.local.response['message'] = _(f"""The Images Updated in {data.get('order')}""")
+			
+			
+		else:
+			frappe.local.response['http_status_code'] = 400
+			frappe.local.response['message'] = _(f"""Their are no order like this {data.get('order')}""")
+
+	except Exception as e:
+		frappe.log_error(message=str(e), title=_('Error in upload_images'))
+		return {
+			"status_code": 500,
+			"message": str(e)
+		}
+
+
+
 
 
 @frappe.whitelist(allow_guest=True)

@@ -101,7 +101,7 @@ def get_orders(user=None):
 		return res
 	
 	
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=0)
 def get_order_type():
 	try:
 		sql = """
