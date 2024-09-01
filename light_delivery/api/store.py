@@ -39,3 +39,9 @@ def get_category():
 		}
 		return res
 	
+@frappe.whitelist(allow_guest = 0 )
+def get_price_list_for_store():
+	sql = f"select store_name ,minimum_price , rate_of_km from `tabStore` where user = '{frappe.session.user}' "
+	store = frappe.db.sql(sql , as_dict = 1)
+	return store 
+	

@@ -1,7 +1,7 @@
 import frappe
 from frappe import _
 
-from frappe.core.doctype.user.user import generate_keys
+# from frappe.core.doctype.user.user import generate_keys
 from light_delivery.api.apis import download_image
 
 
@@ -57,6 +57,27 @@ def login(*args,**kwargs):
 		"phone": user_obj.mobile_no,
 		"username":user_obj.username,
 	}     
+
+
+@frappe.whitelist()
+def generate_keys(user):
+    """
+    Generate API key and secret for the user.
+    :param user: Username
+    :return: API secret
+    """
+    user_details = frappe.get_doc("User", user , ignore_permissions=1)
+    api_secret = frappe.generate_hash(length=15)
+
+    if not user_details.api_key:
+        api_key = frappe.generate_hash(length=15)
+        user_details.api_key = api_key
+        user_details.save(ignore_permissions=1)
+        frappe.db.commit()
+
+    user_details.api_secret = api_secret
+    user_details.save()	
+    return {"api_secret": api_secret}
 
 @frappe.whitelist()
 def get_user_permissions(user):

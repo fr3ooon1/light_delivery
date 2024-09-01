@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:{delivery}-{store}-{###}",
  "creation": "2024-08-29 11:44:28.545931",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -76,10 +77,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-31 17:24:18.432706",
+ "modified": "2024-09-01 14:25:13.080949",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Request Delivery",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
