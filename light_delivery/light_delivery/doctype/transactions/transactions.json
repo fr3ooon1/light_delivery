@@ -13,8 +13,8 @@
   "out",
   "amended_from",
   "balance",
-  "against",
-  "against_from",
+  "aganist",
+  "aganist_from",
   "voucher"
  ],
  "fields": [
@@ -60,27 +60,28 @@
    "label": "Balance"
   },
   {
-   "fieldname": "against",
-   "fieldtype": "Select",
-   "label": "Against",
-   "options": "\nStore\nDelivery"
-  },
-  {
-   "fieldname": "against_from",
-   "fieldtype": "Dynamic Link",
-   "label": "Against From",
-   "options": "against"
-  },
-  {
    "fieldname": "voucher",
    "fieldtype": "Select",
-   "label": "Voucher"
+   "label": "Voucher",
+   "options": "Get Order\nPay Order\nPay Planty"
+  },
+  {
+   "fieldname": "aganist_from",
+   "fieldtype": "Dynamic Link",
+   "label": "Aganist From",
+   "options": "aganist"
+  },
+  {
+   "fieldname": "aganist",
+   "fieldtype": "Select",
+   "label": "Aganist",
+   "options": "\nStore\nDelivery"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-29 19:15:42.721554",
+ "modified": "2024-09-01 20:03:52.921482",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Transactions",
