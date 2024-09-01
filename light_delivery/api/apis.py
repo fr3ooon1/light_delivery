@@ -51,7 +51,7 @@ def create_request_for_delivery(delivary , name_request):
 	return doc.name
 
 
-@frappe.whitle_list(allow_guest=False)
+@frappe.whitelist(allow_guest=False)
 def res_for_delivary(req_del_name , status):
 	doc = frappe.get_doc("Request" , req_del_name)
 	doc.status = status
@@ -118,6 +118,7 @@ def get_url():
 	return url
 
 
+@frappe.whitelist(allow_guest=True)
 def download_image(image):
 
 	filename = image.filename

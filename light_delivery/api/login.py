@@ -6,7 +6,7 @@ from light_delivery.api.apis import download_image
 
 
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest=True)
 def login(*args,**kwargs):
 	try:
 		password = kwargs.get('pwd')
