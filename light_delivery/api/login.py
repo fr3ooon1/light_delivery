@@ -25,7 +25,6 @@ def login(*args,**kwargs):
 				# 'error': str(e)
 			}
 		user_obj = frappe.get_doc("User",filters)
-
 		login_manager = frappe.auth.LoginManager()
 		login_manager.authenticate(user=user_obj.name, pwd=password)
 		login_manager.post_login()

@@ -35,8 +35,8 @@ def search_delivary(cash , user = None ):
 					temp['user'] = delivery.get('name')
 					temp['coordination'] = del_coord
 					distance.append(temp)
-			distance = distance.sort(key=lambda x: x['distance'])
-			return distance
+			message = sorted(distance,key=lambda x: x['distance'])
+			return message
 		else:
 			frappe.local.response['http_status_code'] = 400
 			frappe.local.response['message'] = _(f"""Their are no store assign to this user: {user}""")
