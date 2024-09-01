@@ -35,6 +35,7 @@ def search_delivary(cash , user = None ):
 					temp['user'] = delivery.get('name')
 					temp['coordination'] = del_coord
 					distance.append(temp)
+			# return distance
 			message = sorted(distance,key=lambda x: x['distance'])
 			return message
 		else:
@@ -69,7 +70,7 @@ def res_for_delivary(req_del_name , status):
 
 
 
-
+@frappe.whitelist(allow_guest=1)
 def calculate_distance_and_duration(del_coord , store_coord ):
 	coordinates = [del_coord,store_coord]
 	light_integration = frappe.get_doc("Light Integration")
