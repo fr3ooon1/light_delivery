@@ -15,7 +15,8 @@
   "balance",
   "aganist",
   "aganist_from",
-  "voucher"
+  "voucher",
+  "reference"
  ],
  "fields": [
   {
@@ -76,12 +77,19 @@
    "fieldname": "in_wallet",
    "fieldtype": "Float",
    "label": "In"
+  },
+  {
+   "fieldname": "reference",
+   "fieldtype": "Link",
+   "label": "Reference",
+   "options": "Closing operations",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-09-02 11:44:38.801942",
+ "modified": "2024-09-02 14:44:56.178439",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Transactions",

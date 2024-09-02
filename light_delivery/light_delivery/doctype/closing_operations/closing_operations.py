@@ -20,4 +20,11 @@ class Closingoperations(Document):
 			doc.in_wallet = abs(self.amount)
 		doc.save(ignore_permissions=True)
 		doc.submit()
+
+
+		transactions = frappe.get_list("Transactions" , {"party_type":self.party_type})
+		if transactions:
+			for i in transactions:
+				if frappe.db.exists("Transactions" , i.name):
+					frappe.db.set_value("Transactions" , i.name , 'reference' , self.name)
 		frappe.db.commit()
