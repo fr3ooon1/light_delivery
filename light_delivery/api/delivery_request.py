@@ -101,7 +101,7 @@ def calculate_balane(party_type):
 	balance_data = frappe.db.sql(
 		f'''
 		SELECT
-		 	 SUM(`In`) - SUM(`out`) AS total 
+		 	 SUM(`in_wallet`) - SUM(`out`) AS total 
 		FROM 
 			`tabTransactions` 
 		WHERE 

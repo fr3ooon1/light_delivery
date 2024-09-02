@@ -13,6 +13,6 @@ class Transactions(Document):
 
 	def calculate_balance(self):
 		if self.get("in_wallet"):
-			self.balance =  float(calculate_balane(self.party_type)) + self.get('in_wallet')
+			self.balance =  float(calculate_balane(self.party_type) or 0) + self.get('in_wallet') or 0
 		if self.get("out"):
-			self.balance =  float(calculate_balane(self.party_type)) - self.get('out')
+			self.balance =  float(calculate_balane(self.party_type) or 0) - self.get('out') or 0

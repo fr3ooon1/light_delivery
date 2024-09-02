@@ -17,6 +17,7 @@ class Closingoperations(Document):
 		if float(self.amount) > 0 :
 			doc.out = self.amount
 		else:
-			doc.in_wallet = self.amount
+			doc.in_wallet = abs(self.amount)
 		doc.save(ignore_permissions=True)
+		doc.submit()
 		frappe.db.commit()

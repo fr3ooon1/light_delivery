@@ -6,6 +6,7 @@ from frappe.model.document import Document
 from frappe import _
 import json
 from frappe.utils import now_datetime
+from light_delivery.api.apis import calculate_distance_and_duration
 
 
 class Order(Document):
@@ -57,9 +58,55 @@ class Order(Document):
 
 
 	def draw_roads(self):
-		
+		temp = 0
+		total = 0
 		if self.status in ['Returned' , 'Delivered']:
 			road = self.get('road')
+			first_point = [float(road[0].get("pointer_x") ), float(road[0].get("pointer_y"))]
+			end_point = [float(road[-1].get("pointer_x") ), float(road[-1].get("pointer_y"))]
+			distance = calculate_distance_and_duration(first_point,end_point)
+			total_distance = float(distance.get("distance")) / 1000
+			self.total_distance = total_distance
+
+			if self.delivery:
+				if frappe.db.exists("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category')):
+					delivery_category = frappe.get_doc("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category'))
+					temp = total_distance * float(delivery_category.rate_of_km or 0) 
+					if delivery_category.minimum_rate > temp:
+						total = float(delivery_category.minimum_rate or 0)
+					else:
+						total = temp
+					self.delivery_fees = total
+
+					doc = frappe.new_doc("Transactions")
+					doc.party = "Delivery"
+					doc.party_type = self.delivery
+					doc.in_wallet = total
+					doc.aganist = "Store"
+					doc.aganist_from = self.store
+					doc.save(ignore_permissions=True)
+					doc.submit()
+			
+			if self.store:
+				store = frappe.get_doc("Store" , self.store)
+				temp = total_distance * float(store.rate_of_km or 0) 
+				if store.minimum_price > temp:
+					total = float(store.minimum_price or 0)
+				else:
+					total = temp
+				self.store_fees = total
+
+				doc = frappe.new_doc("Transactions")
+				doc.party = "Store"
+				doc.party_type = self.store
+				doc.out = total
+				doc.aganist = "Delivery"
+				doc.aganist_from = self.delivery
+				doc.save(ignore_permissions=True)
+				doc.submit()
+
+			frappe.db.commit()
+
 			coord = []
 			if road:
 				for i in road:

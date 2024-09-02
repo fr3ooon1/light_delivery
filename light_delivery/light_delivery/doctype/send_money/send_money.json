@@ -1,0 +1,99 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-09-02 12:15:46.955673",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_6bcq",
+  "amended_from",
+  "party",
+  "party_type",
+  "amount",
+  "against",
+  "against_type",
+  "column_break_xezl",
+  "due_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_6bcq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Send Money",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "party",
+   "fieldtype": "Select",
+   "label": "Party",
+   "options": "\nDelivery\nStore"
+  },
+  {
+   "fieldname": "party_type",
+   "fieldtype": "Dynamic Link",
+   "label": "Party Type",
+   "options": "party"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Float",
+   "label": "Amount"
+  },
+  {
+   "fieldname": "against",
+   "fieldtype": "Select",
+   "label": "Against",
+   "options": "\nDelivery\nStore"
+  },
+  {
+   "fieldname": "against_type",
+   "fieldtype": "Dynamic Link",
+   "label": "Against Type",
+   "options": "against"
+  },
+  {
+   "fieldname": "column_break_xezl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "due_date",
+   "fieldtype": "Date",
+   "label": "Due Date"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-09-02 12:17:52.282105",
+ "modified_by": "Administrator",
+ "module": "Light Delivery",
+ "name": "Send Money",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
