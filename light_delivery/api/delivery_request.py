@@ -76,6 +76,7 @@ def create_transaction(**kwargs):
 	transaction.voucher = kwargs.get('voucher')
 	transaction.save(ignore_permissions=True)
 	frappe.db.commit()
+	return transaction.name
 
 
 
