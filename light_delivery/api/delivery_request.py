@@ -29,7 +29,7 @@ def get_delivery_request():
 	return requests
 
 @frappe.whitelist(allow_guest = 0 )
-def delivery_cancel_request(request_id):
+def delivery_cancel_request(request_id , status):
 	user = frappe.db.sql(f"select name from `tabDelivery` where user = '{frappe.session.user}' " , as_dict = 1) 
 	if not user :
 		return "You don't have permision"
@@ -46,23 +46,44 @@ def delivery_cancel_request(request_id):
 			where 
 				d.name = '{request[0]["delivery"]}'  '''   , as_dict = 1)
 	fees = (minimum_rate[0]["minimum_rate"] * 50) / 100
-	balance = 0.0
-	balance_data = frappe.db.sql(f'''select balance 
-							from 
-							  	`tabTransactions` 
-							where 
-							  	party_type = '{request[0]["delivery"]}' and aganist_from = '{request[0]["store"]}'
-							ORDER BY creation DESC 
-							limit 1''' , as_dict = 1) 
-	if balance_data :
-		balance = balance_data[0]["balance"]
+
 	balance = balance - fees
 	frappe.db.sql(f""" UPDATE `tabOrder Log` 
 					SET status = "Delivery Cancel" 
 			   WHERE parent = '{request_id}' """)
 	frappe.db.commit()
 	create_transaction(party = "Delivery" , party_type = request[0]["delivery"],
-						In= 0.0 , Out = float(fees), balance = balance , aganist = "Store", aganist_from = request[0]["store"] ,  voucher = "Pay Planty")	
+						In= 0.0 , Out = float(fees), balance = balance , aganist = "Store", aganist_from = request[0]["store"] ,  voucher = "Pay Planty")
+
+
+
+
+	@frappe.whitelist(allow_guest = 0 )
+	def delivery_cancel_request(request_id , status):
+		user = frappe.db.sql(f"select name from `tabDelivery` where user = '{frappe.session.user}' " , as_dict = 1) 
+		if not user :
+			return "You don't have permision"
+		request = frappe.db.sql( f'''select delivery , store from `tabRequest Delivery` where name = '{request_id}'  ''' ,as_dict =1 )
+		minimum_rate = frappe.db.sql( 
+			f'''select  
+					c.minimum_rate , d.cash
+				from 
+					`tabDelivery Category` c
+				inner join 
+					`tabDelivery` d 
+				on 
+					d.delivery_category = c.name
+				where 
+					d.name = '{request[0]["delivery"]}'  '''   , as_dict = 1)
+		fees = (minimum_rate[0]["minimum_rate"] * 50) / 100
+
+		balance = balance - fees
+		frappe.db.sql(f""" UPDATE `tabOrder Log` 
+						SET status = "Delivery Cancel" 
+				WHERE parent = '{request_id}' """)
+		frappe.db.commit()
+		create_transaction(party = "Delivery" , party_type = request[0]["delivery"],
+							In= 0.0 , Out = float(fees), balance = balance , aganist = "Store", aganist_from = request[0]["store"] ,  voucher = "Pay Planty")	
 
 def create_transaction(**kwargs):
 	transaction = frappe.new_doc("Transactions")
@@ -75,9 +96,26 @@ def create_transaction(**kwargs):
 	transaction.aganist_from = kwargs.get('aganist_from')
 	transaction.voucher = kwargs.get('voucher')
 	transaction.save(ignore_permissions=True)
+	transaction.submit()
 	frappe.db.commit()
 
-
+@frappe.whitelist(allow_guest = 1)
+def calculate_balane(party_type):
+	balance = 0.0
+	balance_data = frappe.db.sql(
+		f'''
+		SELECT
+		 	 SUM(`In`) - SUM(`out`) AS total 
+		FROM 
+			`tabTransactions` 
+		WHERE 
+			party_type = '{party_type}'
+		''',  
+		as_dict=1
+	)
+	if balance_data :
+		balance = balance_data[0]["total"]
+	return balance
 
 @frappe.whitelist(allow_guest = 0 )
 def store_cancel_request(request_id):
@@ -85,6 +123,7 @@ def store_cancel_request(request_id):
 	if not user :
 		return "You don't have permision"
 	request = frappe.db.sql( f'''select delivery , store from `tabRequest Delivery` where name = '{request_id}'  ''' ,as_dict =1 )
+	return request
 	# minimum_rate = frappe.db.sql( 
 	# 	f'''select  
 	# 			c.minimum_rate , d.cash
