@@ -6,7 +6,7 @@ frappe.ui.form.on("Closing operations", {
         let party_type = frm.doc.party_type;
         if(party_type){
             frappe.call({
-                method:"dynamic.api.get_customer_branches",
+                method:"light_delivery.api.delivery_request.calculate_balane",
                 args:{
                     "party_type":party_type
                 },
