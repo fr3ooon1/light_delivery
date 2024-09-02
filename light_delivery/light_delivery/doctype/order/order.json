@@ -19,6 +19,7 @@
   "order_image",
   "section_break_uelk",
   "road",
+  "road_map",
   "column_break_gwex",
   "total_distance",
   "delivery_fees",
@@ -148,11 +149,16 @@
    "fieldname": "order_date",
    "fieldtype": "Date",
    "label": "Order Date"
+  },
+  {
+   "fieldname": "road_map",
+   "fieldtype": "Geolocation",
+   "label": "Road Map"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-31 17:15:15.956152",
+ "modified": "2024-09-02 06:13:23.899126",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",
