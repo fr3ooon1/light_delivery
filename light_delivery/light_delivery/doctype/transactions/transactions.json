@@ -9,7 +9,7 @@
   "section_break_enj2",
   "party",
   "party_type",
-  "in",
+  "in_wallet",
   "out",
   "amended_from",
   "balance",
@@ -45,11 +45,6 @@
    "options": "party"
   },
   {
-   "fieldname": "in",
-   "fieldtype": "Float",
-   "label": "In"
-  },
-  {
    "fieldname": "out",
    "fieldtype": "Float",
    "label": "Out"
@@ -76,12 +71,17 @@
    "fieldtype": "Select",
    "label": "Aganist",
    "options": "\nStore\nDelivery"
+  },
+  {
+   "fieldname": "in_wallet",
+   "fieldtype": "Float",
+   "label": "In"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-09-01 20:03:52.921482",
+ "modified": "2024-09-02 11:44:38.801942",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Transactions",
