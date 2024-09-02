@@ -69,6 +69,7 @@
    "fieldtype": "Select",
    "label": "Status",
    "options": "Pending\nAccepted\nArrived\nPicked\nOn The Way\nArrived For Destination\nDelivered\nRetunred\nDelivery Cancel\nStore Cancel\nCancel"
+
   },
   {
    "fieldname": "total_order",
