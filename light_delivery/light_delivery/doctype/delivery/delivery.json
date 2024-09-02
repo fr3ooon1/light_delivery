@@ -76,7 +76,17 @@
    "fieldname": "cash",
    "fieldtype": "Float",
    "label": "Cash"
-  }
+  },
+  {
+   "fieldname": "valuation",
+   "fieldtype": "Rating",
+   "label": "Rating"
+  },
+  {
+    "fieldname": "num_rates",
+    "fieldtype": "Int",
+    "label": "Number Of Rates"
+   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],

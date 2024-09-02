@@ -1,0 +1,42 @@
+{
+ "cards": [
+  {
+   "card": "Total Number of Orders"
+  },
+  {
+   "card": "Total Pending Orders-2"
+  },
+  {
+   "card": "Total Delivered Orders"
+  },
+  {
+   "card": "Total Cancelled Orders"
+  }
+ ],
+ "charts": [
+  {
+   "chart": "Order Status",
+   "width": "Half"
+  },
+  {
+   "chart": "Orders Types",
+   "width": "Half"
+  },
+  {
+   "chart": "Orders Over Time",
+   "width": "Full"
+  }
+ ],
+ "creation": "2024-09-02 13:35:24.722115",
+ "dashboard_name": "Business Performance Overview",
+ "docstatus": 0,
+ "doctype": "Dashboard",
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "modified": "2024-09-02 14:12:38.871413",
+ "modified_by": "Administrator",
+ "module": "Light Delivery",
+ "name": "Business Performance Overview",
+ "owner": "Administrator"
+}
