@@ -71,14 +71,15 @@ def delivery_cancel_request(request_id , status):
 			WHERE 
 				name = '{request_id}' """)
 	frappe.db.commit()
-	request = frappe.db.sql( f'''select delivery , store from `tabRequest Delivery` where name = '{request_id}'  ''' ,as_dict =1 )
+	
+	# request = frappe.db.sql( f'''select delivery , store from `tabRequest Delivery` where name = '{request_id}'  ''' ,as_dict =1 )
 
-	frappe.db.sql(f""" UPDATE `tabOrder Log` 
-					SET status = "Delivery Cancel" 
-			WHERE parent = '{request_id}' """)
-	frappe.db.commit()
-	create_transaction(party = "Delivery" , party_type = request[0]["delivery"],
-						In= 0.0 , Out = float(fees), balance = balance , aganist = "Store", aganist_from = request[0]["store"] ,  voucher = "Pay Planty")	
+	# frappe.db.sql(f""" UPDATE `tabOrder Log` 
+	# 				SET status = "Delivery Cancel" 
+	# 		WHERE parent = '{request_id}' """)
+	# frappe.db.commit()
+	# create_transaction(party = "Delivery" , party_type = request[0]["delivery"],
+	# 					In= 0.0 , Out = float(fees), balance = balance , aganist = "Store", aganist_from = request[0]["store"] ,  voucher = "Pay Planty")	
 
 def create_transaction(**kwargs):
 	transaction = frappe.new_doc("Transactions")
