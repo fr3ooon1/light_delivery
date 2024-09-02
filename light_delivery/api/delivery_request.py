@@ -91,7 +91,7 @@ def create_transaction(**kwargs):
 	transaction.party_type = kwargs.get('party_type')
 	transaction.In = kwargs.get('In')
 	transaction.out = kwargs.get('Out')
-	transaction.balance = kwargs.get('balance')
+	# transaction.balance = kwargs.get('balance')
 	transaction.aganist = kwargs.get('aganist')
 	transaction.aganist_from = kwargs.get('aganist_from')
 	transaction.voucher = kwargs.get('voucher')

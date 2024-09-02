@@ -8,10 +8,9 @@
   "party",
   "party_type",
   "amount",
-  "against",
-  "against_type",
   "column_break_kkrm",
-  "due_date"
+  "due_date",
+  "amended_from"
  ],
  "fields": [
   {
@@ -32,18 +31,6 @@
    "label": "Amount"
   },
   {
-   "fieldname": "against",
-   "fieldtype": "Select",
-   "label": "Against",
-   "options": "\nStore\nDelivery"
-  },
-  {
-   "fieldname": "against_type",
-   "fieldtype": "Dynamic Link",
-   "label": "Against Type",
-   "options": "against"
-  },
-  {
    "fieldname": "column_break_kkrm",
    "fieldtype": "Column Break"
   },
@@ -52,11 +39,22 @@
    "fieldname": "due_date",
    "fieldtype": "Date",
    "label": "Due Date"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Closing operations",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2024-09-02 11:10:05.075159",
+ "modified": "2024-09-02 11:39:25.407535",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Closing operations",

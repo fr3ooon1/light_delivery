@@ -11,7 +11,6 @@ frappe.ui.form.on("Closing operations", {
                     "party_type":party_type
                 },
                 callback(r){
-                    console.log(r.message)
                     if(r.message){
                         frm.set_value("amount" , r.message);
                         frm.refresh_field("amount");

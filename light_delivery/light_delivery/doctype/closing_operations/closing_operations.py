@@ -6,10 +6,17 @@ from frappe.model.document import Document
 
 
 class Closingoperations(Document):
-	pass
+	def on_submit(self):
+		self.create_transaction()
 
 
-
-@frappe.whitelist()
-def calculate_amount(party_type):
-	pass
+	def create_transaction(self):
+		doc = frappe.new_doc("Transactions")
+		doc.party = self.party
+		doc.party_type = self.party_type
+		if float(self.amount) > 0 :
+			doc.out = self.amount
+		else:
+			doc.in_wallet = self.amount
+		doc.save(ignore_permissions=True)
+		frappe.db.commit()
