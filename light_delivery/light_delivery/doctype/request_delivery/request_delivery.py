@@ -11,7 +11,23 @@ class RequestDelivery(Document):
 			pass
 		if self.status == "Store Cancel":
 			pass
-		
+			
+
+	def delivery_cancel(self):
+		minimum_rate = frappe.db.sql( 
+		f'''select  
+				c.minimum_rate , d.cash
+			from 
+				`tabDelivery Category` c
+			inner join 
+				`tabDelivery` d 
+			on 
+				d.delivery_category = c.name
+			where 
+				d.name = '{self.delivery}'  '''   , as_dict = 1)
+		fees = (minimum_rate[0]["minimum_rate"] * 50) / 100
+		balance = balance - fees
+		return balance
 # def delivery_cancel_request(request_id):
 # 	user = frappe.db.sql(f"select name from `tabDelivery` where user = '{frappe.session.user}' " , as_dict = 1) 
 # 	if not user :
