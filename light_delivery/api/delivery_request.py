@@ -58,38 +58,33 @@ def delivery_cancel_request(request_id , status):
 
 
 
-	@frappe.whitelist(allow_guest = 0 )
-	def delivery_cancel_request(request_id , status):
-		user = frappe.db.sql(f"select name from `tabDelivery` where user = '{frappe.session.user}' " , as_dict = 1) 
-		if not user :
-			return "You don't have permision"
-		request = frappe.db.sql( f'''select delivery , store from `tabRequest Delivery` where name = '{request_id}'  ''' ,as_dict =1 )
-		minimum_rate = frappe.db.sql( 
-			f'''select  
-					c.minimum_rate , d.cash
-				from 
-					`tabDelivery Category` c
-				inner join 
-					`tabDelivery` d 
-				on 
-					d.delivery_category = c.name
-				where 
-					d.name = '{request[0]["delivery"]}'  '''   , as_dict = 1)
-		fees = (minimum_rate[0]["minimum_rate"] * 50) / 100
+@frappe.whitelist(allow_guest = 0 )
+def delivery_cancel_request(request_id , status):
+	user = frappe.db.sql(f"select name from `tabDelivery` where user = '{frappe.session.user}' " , as_dict = 1) 
+	if not user :
+		return "You don't have permision"
+	frappe.db.sql(
+			f""" UPDATE 
+				`tabRequest Delivery` 
+			SET 
+				status = "Delivery Cancel" 
+			WHERE 
+				name = '{request_id}' """)
+	frappe.db.commit()
+	request = frappe.db.sql( f'''select delivery , store from `tabRequest Delivery` where name = '{request_id}'  ''' ,as_dict =1 )
 
-		balance = balance - fees
-		frappe.db.sql(f""" UPDATE `tabOrder Log` 
-						SET status = "Delivery Cancel" 
-				WHERE parent = '{request_id}' """)
-		frappe.db.commit()
-		create_transaction(party = "Delivery" , party_type = request[0]["delivery"],
-							In= 0.0 , Out = float(fees), balance = balance , aganist = "Store", aganist_from = request[0]["store"] ,  voucher = "Pay Planty")	
+	frappe.db.sql(f""" UPDATE `tabOrder Log` 
+					SET status = "Delivery Cancel" 
+			WHERE parent = '{request_id}' """)
+	frappe.db.commit()
+	create_transaction(party = "Delivery" , party_type = request[0]["delivery"],
+						In= 0.0 , Out = float(fees), balance = balance , aganist = "Store", aganist_from = request[0]["store"] ,  voucher = "Pay Planty")	
 
 def create_transaction(**kwargs):
 	transaction = frappe.new_doc("Transactions")
 	transaction.party = kwargs.get('party')
 	transaction.party_type = kwargs.get('party_type')
-	transaction.In = kwargs.get('In')
+	transaction.in_wallet = kwargs.get('in_wallet')
 	transaction.out = kwargs.get('Out')
 	transaction.balance = kwargs.get('balance')
 	transaction.aganist = kwargs.get('aganist')
