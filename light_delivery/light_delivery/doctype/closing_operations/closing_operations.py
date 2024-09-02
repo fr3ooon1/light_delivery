@@ -18,13 +18,21 @@ class Closingoperations(Document):
 			doc.out = self.amount
 		else:
 			doc.in_wallet = abs(self.amount)
+		doc.paid = 1
 		doc.save(ignore_permissions=True)
 		doc.submit()
+		frappe.db.commit()
 
 
-		transactions = frappe.get_list("Transactions" , {"party_type":self.party_type})
+		transactions = frappe.get_list(
+			"Transactions", 
+			{
+				"party_type": self.party_type , 
+				"paid": 0
+			})
 		if transactions:
 			for i in transactions:
 				if frappe.db.exists("Transactions" , i.name):
 					frappe.db.set_value("Transactions" , i.name , 'reference' , self.name)
-		frappe.db.commit()
+					frappe.db.set_value("Transactions" , i.name , 'paid' , 1)
+		

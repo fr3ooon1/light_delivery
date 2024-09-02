@@ -16,7 +16,8 @@
   "aganist",
   "aganist_from",
   "voucher",
-  "reference"
+  "reference",
+  "paid"
  ],
  "fields": [
   {
@@ -84,12 +85,18 @@
    "label": "Reference",
    "options": "Closing operations",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "paid",
+   "fieldtype": "Check",
+   "label": "Paid"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-09-02 14:44:56.178439",
+ "modified": "2024-09-02 15:36:11.409026",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Transactions",
