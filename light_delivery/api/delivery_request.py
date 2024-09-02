@@ -84,7 +84,7 @@ def create_transaction(**kwargs):
 	transaction = frappe.new_doc("Transactions")
 	transaction.party = kwargs.get('party')
 	transaction.party_type = kwargs.get('party_type')
-	transaction.In = kwargs.get('In')
+	transaction.in_wallet = kwargs.get('in_wallet')
 	transaction.out = kwargs.get('Out')
 	transaction.balance = kwargs.get('balance')
 	transaction.aganist = kwargs.get('aganist')
@@ -93,6 +93,7 @@ def create_transaction(**kwargs):
 	transaction.save(ignore_permissions=True)
 	transaction.submit()
 	frappe.db.commit()
+	return transaction.name
 
 @frappe.whitelist(allow_guest = 1)
 def calculate_balane(party_type):

@@ -1,0 +1,81 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-09-02 10:40:55.292118",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "party",
+  "party_type",
+  "amount",
+  "against",
+  "against_type",
+  "column_break_kkrm",
+  "due_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "party",
+   "fieldtype": "Select",
+   "label": "Party",
+   "options": "\nDelivery\nStore"
+  },
+  {
+   "fieldname": "party_type",
+   "fieldtype": "Dynamic Link",
+   "label": "Party Type",
+   "options": "party"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Float",
+   "label": "Amount"
+  },
+  {
+   "fieldname": "against",
+   "fieldtype": "Select",
+   "label": "Against",
+   "options": "\nStore\nDelivery"
+  },
+  {
+   "fieldname": "against_type",
+   "fieldtype": "Dynamic Link",
+   "label": "Against Type",
+   "options": "against"
+  },
+  {
+   "fieldname": "column_break_kkrm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "due_date",
+   "fieldtype": "Date",
+   "label": "Due Date"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-09-02 11:10:05.075159",
+ "modified_by": "Administrator",
+ "module": "Light Delivery",
+ "name": "Closing operations",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
