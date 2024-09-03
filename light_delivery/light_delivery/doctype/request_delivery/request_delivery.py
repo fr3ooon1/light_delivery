@@ -9,12 +9,14 @@ from light_delivery.api.delivery_request import create_transaction
 
 class RequestDelivery(Document):
 	def validate(self):
-		if self.status == "Delivery Cancel":
-			self.delivery_cancel()
-		if self.status == "Store Cancel":
-			pass
+		# if self.status == "Delivery Cancel":
+		# 	# self.delivery_cancel()
+		# if self.status == "Store Cancel":
+		# 	pass
 		if self.status == "Accepted":
 			self.request_accepted()
+		if self.status in ['Arrived' , 'Picked' , 'Delivery Cancel' , 'Store Cancel' , 'Cancel']:
+			self.change_status_for_orders()
 			
 	
 	def request_accepted(self):
@@ -33,6 +35,14 @@ class RequestDelivery(Document):
 			order.status = self.status
 
 			order.save(ignore_permissions=True)
+
+
+	def change_status_for_orders(self):
+		order_request = self.get('order_request')
+		for order in order_request:
+			doc = frappe.get_doc("Order" , order.order)
+			doc.status = self.status
+			doc.save(ignore_permissions=True)
 
 
 	def delivery_cancel(self):
