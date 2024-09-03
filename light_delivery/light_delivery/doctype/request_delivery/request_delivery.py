@@ -24,11 +24,13 @@ class RequestDelivery(Document):
 		self.number_of_order = len(order_request)
 		store = frappe.get_doc("Store",self.store)
 		store_discount = store.get('store_discount')
-		if not store_discount:
-			return False
+		# if not store_discount:
+		# 	return False
 		for i in range(len(order_request)):
 			order = frappe.get_doc("Order" , self.get('order_request')[i].get("order"))
-			order.discount = store_discount[i].get("discount")
+			order.discount = store_discount[i].get("discount") if store_discount else 0
+
+			self.order_request[i] = self.delivery
 
 			order.delivery = order_request[i].get("delivery")
 			order.store = order_request[i].get("store")
