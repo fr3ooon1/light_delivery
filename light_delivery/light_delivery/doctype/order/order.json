@@ -24,7 +24,7 @@
   "total_distance",
   "delivery_fees",
   "store_fees",
-  "discound",
+  "discount",
   "section_break_biyy",
   "order_log",
   "column_break_tpje",
@@ -69,7 +69,6 @@
    "fieldtype": "Select",
    "label": "Status",
    "options": "Pending\nAccepted\nArrived\nPicked\nOn The Way\nArrived For Destination\nDelivered\nRetunred\nDelivery Cancel\nStore Cancel\nCancel"
-
   },
   {
    "fieldname": "total_order",
@@ -108,11 +107,6 @@
    "fieldname": "store_fees",
    "fieldtype": "Float",
    "label": "Store Fees"
-  },
-  {
-   "fieldname": "discound",
-   "fieldtype": "Float",
-   "label": "Discound"
   },
   {
    "fieldname": "order_image",
@@ -155,11 +149,16 @@
    "fieldname": "road_map",
    "fieldtype": "Geolocation",
    "label": "Road Map"
+  },
+  {
+   "fieldname": "discount",
+   "fieldtype": "Float",
+   "label": "Discount"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-02 06:13:23.899126",
+ "modified": "2024-09-03 15:03:40.800318",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",

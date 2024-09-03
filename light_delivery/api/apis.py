@@ -31,7 +31,7 @@ def search_delivary(cash , user = None ):
 				if delivery['pointer_x'] is not None and delivery['pointer_y'] is not None:
 					del_coord = [float(delivery['pointer_x']), float(delivery['pointer_y'])]
 					
-					temp = calculate_distance_and_duration(del_coord = del_coord, store_coord = store_coord)
+					temp = haversine(coord1 = del_coord, coord2 = store_coord)
 					temp['user'] = delivery.get('name')
 					temp['coordination'] = del_coord
 					distance.append(temp)

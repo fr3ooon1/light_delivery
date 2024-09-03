@@ -8,6 +8,7 @@
  "field_order": [
   "section_break_ddxq",
   "number_of_order",
+  "request_date",
   "column_break_shdb",
   "delivery",
   "column_break_zsov",
@@ -73,11 +74,17 @@
    "fieldtype": "Select",
    "label": "Status",
    "options": "Pending\nAccepted\nArrived\nCollect Money\nPicked\nOn The Way\nDelivered\nPartially Deliverd\nTime Out\nDelivery Cancel\nStore Cancel\nCancel"
+  },
+  {
+   "default": "Today",
+   "fieldname": "request_date",
+   "fieldtype": "Date",
+   "label": "Request Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-01 14:25:13.080949",
+ "modified": "2024-09-03 16:41:32.144430",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Request Delivery",

@@ -16,7 +16,8 @@
   "cash",
   "column_break_xhtl",
   "pointer_x",
-  "pointer_y"
+  "pointer_y",
+  "delivery_location"
  ],
  "fields": [
   {
@@ -78,19 +79,14 @@
    "label": "Cash"
   },
   {
-   "fieldname": "valuation",
-   "fieldtype": "Rating",
-   "label": "Rating"
-  },
-  {
-    "fieldname": "num_rates",
-    "fieldtype": "Int",
-    "label": "Number Of Rates"
-   }
+   "fieldname": "delivery_location",
+   "fieldtype": "Geolocation",
+   "label": "Delivery Location"
+  }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-31 16:58:21.050105",
+ "modified": "2024-09-03 12:36:57.341567",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Delivery",

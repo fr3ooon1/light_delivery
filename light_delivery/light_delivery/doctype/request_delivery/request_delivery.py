@@ -13,7 +13,24 @@ class RequestDelivery(Document):
 			self.delivery_cancel()
 		if self.status == "Store Cancel":
 			pass
+		if self.status == "Accepted":
+			self.request_accepted()
 			
+	
+	def request_accepted(self):
+		order_request = self.order_request
+		self.number_of_order = len(order_request)
+		store = frappe.get_doc("Store",self.store)
+		store_discount = store.get('store_discount')
+		for i in range(len(order_request)):
+			order = frappe.get_doc("Order" , self.get('order_request')[i].get("order"))
+			order.discount = store_discount[i].get("discount")
+
+			order.delivery = order_request[i].get("delivery")
+			order.store = order_request[i].get("store")
+
+			order.save(ignore_permissions=True)
+
 
 	def delivery_cancel(self):
 		self.follow_request_status(self.status)

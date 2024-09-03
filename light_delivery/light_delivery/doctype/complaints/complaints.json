@@ -1,0 +1,93 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{from}-{to}-{DD}-{MM}-{YYYY}-{#####}",
+ "creation": "2024-09-03 13:21:29.328582",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "from_type",
+  "from",
+  "column_break_ebwl",
+  "to_type",
+  "to",
+  "column_break_dzhe",
+  "status",
+  "section_break_mfzx",
+  "complaints"
+ ],
+ "fields": [
+  {
+   "fieldname": "from_type",
+   "fieldtype": "Select",
+   "label": "From Type",
+   "options": "\nStore\nDelivery"
+  },
+  {
+   "fieldname": "from",
+   "fieldtype": "Dynamic Link",
+   "label": "From",
+   "options": "from_type"
+  },
+  {
+   "fieldname": "column_break_ebwl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "to_type",
+   "fieldtype": "Select",
+   "label": "To Type",
+   "options": "\nStore\nDelivery"
+  },
+  {
+   "fieldname": "to",
+   "fieldtype": "Dynamic Link",
+   "label": "To",
+   "options": "to_type"
+  },
+  {
+   "fieldname": "section_break_mfzx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "complaints",
+   "fieldtype": "Text",
+   "label": "Complaints"
+  },
+  {
+   "fieldname": "column_break_dzhe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Pending\nInreview"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-09-03 13:28:16.553694",
+ "modified_by": "Administrator",
+ "module": "Light Delivery",
+ "name": "Complaints",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

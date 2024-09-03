@@ -6,7 +6,7 @@ from frappe.model.document import Document
 from frappe import _
 import json
 from frappe.utils import now_datetime
-from light_delivery.api.apis import calculate_distance_and_duration
+from light_delivery.api.apis import calculate_distance_and_duration , haversine
 
 
 class Order(Document):
@@ -60,12 +60,22 @@ class Order(Document):
 	def draw_roads(self):
 		temp = 0
 		total = 0
+		counter = 0
+		distance = 0
 		if self.status in ['Returned' , 'Delivered']:
 			road = self.get('road')
-			first_point = [float(road[0].get("pointer_x") ), float(road[0].get("pointer_y"))]
-			end_point = [float(road[-1].get("pointer_x") ), float(road[-1].get("pointer_y"))]
-			distance = calculate_distance_and_duration(first_point,end_point)
-			total_distance = float(distance.get("distance")) / 1000
+			if not road or len(road) < 2:
+				message = "Insufficient road data to calculate distance."
+				print(message)
+				self.total_distance = 0
+				return message
+			for idx in range(len(road)-1):
+				first_point = [float(road[idx].get("pointer_x")), float(road[idx].get("pointer_y"))]
+				
+				end_point = [float(road[idx+1].get("pointer_x") ), float(road[idx+1].get("pointer_y"))]
+				counter = haversine(first_point,end_point)
+				distance += counter
+			total_distance = float(distance)
 			self.total_distance = total_distance
 
 			if self.delivery:
@@ -74,9 +84,13 @@ class Order(Document):
 					temp = total_distance * float(delivery_category.rate_of_km or 0) 
 					if delivery_category.minimum_rate > temp:
 						total = float(delivery_category.minimum_rate or 0)
+						total = total - (total / 100 * self.discount)
 					else:
 						total = temp
+						total = total - (total / 100 * self.discount)
 					self.delivery_fees = total
+
+					
 
 					doc = frappe.new_doc("Transactions")
 					doc.party = "Delivery"
