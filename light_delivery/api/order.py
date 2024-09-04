@@ -269,7 +269,7 @@ def get_order_state():
 		user = frappe.session.user
 		store = frappe.get_doc("Store" , {'user':user})
 		if store:
-			sql = f"""select store_name ,minimum_price , rate_of_km from `tabStore` where user = {user} """
+			sql = f"""select store_name ,minimum_price , rate_of_km from `tabStore` where user = '{user}' """
 			store_priceLise = frappe.db.sql(sql , as_dict = 1)
 			
 			"""
