@@ -37,7 +37,7 @@ class Order(Document):
 	def calculate_duration(self):
 		if self.get("order_log"):
 			time = self.get("order_log")[-1].time
-			datetime_obj1 = datetime.strptime(str(time), '%Y-%m-%d %H:%M:%S')
+			datetime_obj1 = datetime.strptime(str(time), '%Y-%m-%d %H:%M:%S.%f')
 			datetime_obj2 = datetime.strptime(str(now_datetime()), '%Y-%m-%d %H:%M:%S.%f')
 			duration = datetime_obj2 - datetime_obj1
 			seconds = duration.seconds
