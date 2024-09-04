@@ -281,13 +281,13 @@ def get_order_state():
 			"""
 
 			# wait_for_delivery = frappe.db.count('Order', {'status': 'Pending','store':store})
-			accepted = frappe.db.get_list('Order', {'status': 'Accepted','store':store})
-			on_the_way = frappe.db.get_list('Order', {'status': 'On The Way','store':store})
-			arrived_for_destination = frappe.db.get_list('Order', {'status': 'Arrived For Destination','store':store})
-			delivered = frappe.db.get_list('Order', {'status': 'Delivered','store':store})
-			retunred = frappe.db.get_list('Order', {'status': 'Retunred','store':store})
-			delivery_cancel = frappe.db.get_list('Order', {'status': 'Delivery Cancel','store':store})
-			store_cancel = frappe.db.get_list('Order', {'status': 'Store Cancel','store':store})
+			accepted = frappe.db.get_list('Order', {'status': 'Accepted','store':store.name})
+			on_the_way = frappe.db.get_list('Order', {'status': 'On The Way','store':store.name})
+			arrived_for_destination = frappe.db.get_list('Order', {'status': 'Arrived For Destination','store':store.name})
+			delivered = frappe.db.get_list('Order', {'status': 'Delivered','store':store.name})
+			retunred = frappe.db.get_list('Order', {'status': 'Retunred','store':store.name})
+			delivery_cancel = frappe.db.get_list('Order', {'status': 'Delivery Cancel','store':store.name})
+			store_cancel = frappe.db.get_list('Order', {'status': 'Store Cancel','store':store.name})
 			all_orders = len(accepted ) + len(on_the_way ) + len(arrived_for_destination ) + len(delivered ) + len(retunred ) + len(delivery_cancel) + len( store_cancel)
 
 			order_states = {
@@ -308,8 +308,8 @@ def get_order_state():
 			Offline
 			"""
 			pending = frappe.db.count('Delivery', {'status': 'Pending'})
-			avaliable = frappe.db.count('Delivery', {'status': 'Avaliable','store':store})
-			Inorder = frappe.db.count('Delivery', {'status': 'Inorder','store':store})
+			avaliable = frappe.db.count('Delivery', {'status': 'Avaliable'})
+			Inorder = frappe.db.count('Delivery', {'status': 'Inorder'})
 			Offline = frappe.db.count('Delivery', {'status': 'Offline'})
 			all_delivery = frappe.db.count('Delivery')
 
