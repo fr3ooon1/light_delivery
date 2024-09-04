@@ -281,23 +281,23 @@ def get_order_state():
 			"""
 
 			# wait_for_delivery = frappe.db.count('Order', {'status': 'Pending','store':store})
-			accepted = frappe.db.count('Order', {'status': 'Accepted','store':store})
-			on_the_way = frappe.db.count('Order', {'status': 'On The Way','store':store})
-			arrived_for_destination = frappe.db.count('Order', {'status': 'Arrived For Destination','store':store})
-			delivered = frappe.db.count('Order', {'status': 'Delivered','store':store})
-			retunred = frappe.db.count('Order', {'status': 'Retunred','store':store})
-			delivery_cancel = frappe.db.count('Order', {'status': 'Delivery Cancel','store':store})
-			store_cancel = frappe.db.count('Order', {'status': 'Store Cancel','store':store})
-			all_orders = float(accepted or 0) + float(on_the_way or 0) + float(arrived_for_destination or 0) + float(delivered or 0) + float(retunred or 0) + float(delivery_cancel or 0) + float( store_cancel or 0)
+			accepted = frappe.db.get_list('Order', {'status': 'Accepted','store':store})
+			on_the_way = frappe.db.get_list('Order', {'status': 'On The Way','store':store})
+			arrived_for_destination = frappe.db.get_list('Order', {'status': 'Arrived For Destination','store':store})
+			delivered = frappe.db.get_list('Order', {'status': 'Delivered','store':store})
+			retunred = frappe.db.get_list('Order', {'status': 'Retunred','store':store})
+			delivery_cancel = frappe.db.get_list('Order', {'status': 'Delivery Cancel','store':store})
+			store_cancel = frappe.db.get_list('Order', {'status': 'Store Cancel','store':store})
+			all_orders = len(accepted ) + len(on_the_way ) + len(arrived_for_destination ) + len(delivered ) + len(retunred ) + len(delivery_cancel) + len( store_cancel)
 
 			order_states = {
-					'accepted': accepted,
-					'confirmeon_the_wayd': on_the_way,
-					'arrived_for_destination': arrived_for_destination,
-					'delivered': delivered,
-					'retunred': retunred , 
-					'delivery_cancel': delivery_cancel,
-					'store_cancel':store_cancel,
+					'accepted': len(accepted),
+					'confirmeon_the_wayd': len(on_the_way),
+					'arrived_for_destination': len(arrived_for_destination),
+					'delivered': len(delivered),
+					'retunred': len(retunred) , 
+					'delivery_cancel': len(delivery_cancel),
+					'store_cancel': len(store_cancel),
 					'all_orders':all_orders,
 				}
 			
