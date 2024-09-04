@@ -280,20 +280,25 @@ def get_order_state():
 			Refund
 			"""
 
-			wait_for_delivery = frappe.db.count('Order', {'status': 'Wait for Delivery'})
-			confirmed = frappe.db.count('Order', {'status': 'Confirmed'})
-			on_the_way = frappe.db.count('Order', {'status': 'On The Way'})
-			delivered = frappe.db.count('Order', {'status': 'Delivered'})
-			refund = frappe.db.count('Order', {'status': 'Refund'})
-			all_orders = frappe.db.count('Order')
+			# wait_for_delivery = frappe.db.count('Order', {'status': 'Pending','store':store})
+			accepted = frappe.db.count('Order', {'status': 'Accepted','store':store})
+			on_the_way = frappe.db.count('Order', {'status': 'On The Way','store':store})
+			arrived_for_destination = frappe.db.count('Order', {'status': 'Arrived For Destination','store':store})
+			delivered = frappe.db.count('Order', {'status': 'Delivered','store':store})
+			retunred = frappe.db.count('Order', {'status': 'Retunred','store':store})
+			delivery_cancel = frappe.db.count('Order', {'status': 'Delivery Cancel','store':store})
+			store_cancel = frappe.db.count('Order', {'status': 'Store Cancel','store':store})
+			all_orders = float(accepted or 0) + float(on_the_way or 0) + float(arrived_for_destination or 0) + float(delivered or 0) + float(retunred or 0) + float(delivery_cancel or 0) + float( store_cancel or 0)
 
 			order_states = {
-					'wait_for_delivery': wait_for_delivery,
-					'confirmed': confirmed,
-					'on_the_way': on_the_way,
+					'accepted': accepted,
+					'confirmeon_the_wayd': on_the_way,
+					'arrived_for_destination': arrived_for_destination,
 					'delivered': delivered,
-					'refund': refund , 
-					'all_orders': all_orders
+					'retunred': retunred , 
+					'delivery_cancel': delivery_cancel,
+					'store_cancel':store_cancel,
+					'all_orders':all_orders,
 				}
 			
 			"""
@@ -303,8 +308,8 @@ def get_order_state():
 			Offline
 			"""
 			pending = frappe.db.count('Delivery', {'status': 'Pending'})
-			avaliable = frappe.db.count('Delivery', {'status': 'Avaliable'})
-			Inorder = frappe.db.count('Delivery', {'status': 'Inorder'})
+			avaliable = frappe.db.count('Delivery', {'status': 'Avaliable','store':store})
+			Inorder = frappe.db.count('Delivery', {'status': 'Inorder','store':store})
 			Offline = frappe.db.count('Delivery', {'status': 'Offline'})
 			all_delivery = frappe.db.count('Delivery')
 
