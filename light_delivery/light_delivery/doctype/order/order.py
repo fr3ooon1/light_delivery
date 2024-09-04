@@ -7,6 +7,7 @@ from frappe import _
 import json
 from frappe.utils import now_datetime
 from light_delivery.api.apis import calculate_distance_and_duration , haversine
+from datetime import datetime
 
 
 class Order(Document):
@@ -16,6 +17,7 @@ class Order(Document):
 
 	def validate(self):
 		self.draw_roads()
+		self.get_deduction()
 		self.order_status()
 
 
@@ -26,6 +28,24 @@ class Order(Document):
 			"time": now_datetime(),
 			"note":"Order Created"
 		})
+
+	def get_deduction(self):
+		minutes = float(self.calculate_duration())
+		deduction_obj = frappe.get_doc("Deductions")
+		
+		
+	def calculate_duration(self):
+		if self.get("order_log"):
+			time = self.get("order_log")[-1].time
+			datetime_obj1 = datetime.strptime(time, '%Y-%m-%d %H:%M:%S.%f')
+			datetime_obj2 = datetime.strptime(str(now_datetime()), '%Y-%m-%d %H:%M:%S.%f')
+			duration = datetime_obj2 - datetime_obj1
+			seconds = duration.seconds
+			minutes = (seconds % 3600) // 60
+			if self.status == "Delivered":
+				self.duration = float(minutes)
+			return minutes
+
 
 	def order_status(self):
 		status = self.status

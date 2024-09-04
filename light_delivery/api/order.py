@@ -263,13 +263,14 @@ def get_order_history(status = None):
 
 
 
-@frappe.whitelist(allow_guest=True)
-def get_order_state(user=None):
-	if not user:
-		user = "administrator"
+@frappe.whitelist(allow_guest=False)
+def get_order_state():
 	try:
-		roles = frappe.get_roles(user)
-		if 'Accounts User' in roles:
+		user = frappe.session.user
+		store = frappe.get_doc("Store" , {'user':user})
+		if store:
+			sql = f"select store_name ,minimum_price , rate_of_km from `tabStore` where user = '{user}' "
+			store_priceLise = frappe.db.sql(sql , as_dict = 1)
 			
 			"""
 			Wait for Delivery
@@ -308,11 +309,11 @@ def get_order_state(user=None):
 			all_delivery = frappe.db.count('Delivery')
 
 			delivery_states = {
-					'pending':pending,
+					# 'pending':pending,
 					'avaliable':avaliable,
 					'Inorder':Inorder,
-					'Offline':Offline,
-					'all_delivery':all_delivery , 
+					# 'Offline':Offline,
+					'all_delivery':float(avaliable) + float(Inorder) , 
 				}
 			
 			
@@ -342,6 +343,7 @@ def get_order_state(user=None):
 				'data': {
 					'order_states': order_states,
 					'delivery_states': delivery_states,
+					'store_price_list':store_priceLise,
 					# 'stores_states':stores_states
 				}
 			}

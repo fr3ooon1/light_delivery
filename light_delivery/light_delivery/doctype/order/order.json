@@ -21,6 +21,7 @@
   "road",
   "road_map",
   "column_break_gwex",
+  "duration",
   "total_distance",
   "delivery_fees",
   "store_fees",
@@ -154,11 +155,16 @@
    "fieldname": "discount",
    "fieldtype": "Float",
    "label": "Discount"
+  },
+  {
+   "fieldname": "duration",
+   "fieldtype": "Float",
+   "label": "Duration"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-03 15:03:40.800318",
+ "modified": "2024-09-03 19:02:54.317389",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",
