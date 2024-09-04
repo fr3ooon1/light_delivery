@@ -292,7 +292,7 @@ def get_order_state():
 
 			order_states = {
 					'accepted': len(accepted),
-					'confirmeon_the_wayd': len(on_the_way),
+					'on_the_way': len(on_the_way),
 					'arrived_for_destination': len(arrived_for_destination),
 					'delivered': len(delivered),
 					'retunred': len(retunred) , 
