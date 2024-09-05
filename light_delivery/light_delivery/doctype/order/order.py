@@ -70,11 +70,12 @@ class Order(Document):
 			note = f"""the Store Cancel this order in {now_datetime()}"""
 		if self.status == "Cancel":
 			note = f"""the Order Canceled this order in {now_datetime()}"""
-		self.append("order_log",{
-			"status":status,
-			"time": now_datetime(),
-			"note": note
-		})
+		if self.status != 'Pending':
+			self.append("order_log",{
+				"status":status,
+				"time": now_datetime(),
+				"note": note
+			})
 
 
 	def draw_roads(self):

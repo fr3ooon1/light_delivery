@@ -443,3 +443,26 @@ def post_zones():
 # 	except requests.exceptions.RequestException as e:
 # 		print(f"Error downloading image: {e}")
 # 		return False
+
+
+
+@frappe.whitelist(allow_guest=False)
+def cancel_order(*args,**kwargs):
+	order = kwargs.get("order")
+	if frappe.db.exists("Order" , order):
+		order_obj = frappe.get_doc("Order" , order )
+		if kwargs.get("type") == 'store':
+			order_obj.status = "Store Cancel"
+			msg = f"""Order had been cancel by Store"""
+
+		if kwargs.get("type") == 'delivery':
+			order_obj.status = "Delivery Cancel"
+			msg = f"""Order had been cancel by Store"""
+
+		order_obj.save(ignore_permissions=True)
+		frappe.db.commit()
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = _(msg)
+	else:
+		frappe.local.response['http_status_code'] = 300
+		frappe.local.response['message'] = _(f"""no request like {order}""")
