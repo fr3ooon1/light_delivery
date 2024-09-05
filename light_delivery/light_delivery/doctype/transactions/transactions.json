@@ -47,11 +47,15 @@
   {
    "fieldname": "out",
    "fieldtype": "Float",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Out"
   },
   {
    "fieldname": "balance",
    "fieldtype": "Float",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Balance"
   },
   {
@@ -75,13 +79,15 @@
   {
    "fieldname": "in_wallet",
    "fieldtype": "Float",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "In"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-09-02 11:44:38.801942",
+ "modified": "2024-09-02 12:26:02.040562",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Transactions",
