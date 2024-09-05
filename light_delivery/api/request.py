@@ -36,3 +36,18 @@ def get_requests(*args, **kwargs):
         req['orders'] = order_details  # Append order details to the current request
 
     return requests
+
+
+
+@frappe.whitelist(allow_guest=False)
+def cancel_request(*args,**kwargs):
+    request = kwargs.get("request")
+    if frappe.db.exists("Request Delivery" , request):
+        request_obj = frappe.get_doc("Request Delivery" , kwargs.get("request"))
+        if kwargs.get("type") == 'store':
+            return "the cancelation by store"
+        if kwargs.get("type") == 'delivery':
+            return "the cancelation by delivery"
+        return "no type of cancelation"
+    else:
+        return f"""no request like {request}"""
