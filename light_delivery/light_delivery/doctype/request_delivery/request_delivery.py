@@ -11,7 +11,7 @@ class RequestDelivery(Document):
 	def before_naming(self):
 		self.follow_request_status()
 	def validate(self):
-		if self.status not in ['Pending']:
+		if self.status not in ['Pending' , 'Collect Money']:
 			self.follow_request_status()
 			self.request_accepted()
 		if self.status == "Accepted":
@@ -36,8 +36,7 @@ class RequestDelivery(Document):
 
 			order.delivery = order_request[i].get("delivery")
 			order.store = order_request[i].get("store")
-			if self.status not in ["Collect Moeny"]:
-				order.status = self.status
+			order.status = self.status
 
 			total_request_amount += float(order.get("total_order") or 0)
 
