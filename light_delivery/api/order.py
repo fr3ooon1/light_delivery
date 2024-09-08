@@ -24,7 +24,6 @@ def new_order(*args , **kwargs):
 		image = download_image(files)
 
 		file_url = image.file_url
-		return file_url
 
 		doc = frappe.new_doc({
 			"doctype": "Order",
@@ -37,6 +36,16 @@ def new_order(*args , **kwargs):
 			"total_order": data.get('total_order'),
 			"store":store.name
 		})
+
+		doc = frappe.new_doc("Order")
+		doc.full_name =  data.get('full_name')
+		doc.phone_number = data.get('phone_number')
+		doc.address= data.get('address')
+		doc.order_type= data.get('order_type')
+		doc.zone_address= data.get('zone_address')
+		doc.invoice= file_url
+		doc.total_order = data.get('total_order')
+		doc.store = store.name
 		doc.save(ignore_permissions=True)
 		frappe.db.commit()
 		frappe.local.response['http_status_code'] = 404
