@@ -38,25 +38,16 @@ def new_order():
 		return {"status": "error", "message": str(e)}
 
 @frappe.whitelist(allow_guest=True)
-def get_orders(user=None):
-	# Validate the token
-	# print("Hello")
-	# validate_token()
-	# url = "http://frappe.local:8000/api/method/frappe.auth.get_logged_user"
-	# headers = {
-	# 	'Authorization': "token <api_key>:<api_secret>"
-	# }
-	# response = requests.request("GET", url, headers=headers)
-	
-	if not user:
-		user = "administrator"
-
+def get_orders():
 	try:
-		# Check if the user has the required role
-		roles = frappe.get_roles(user)
-		if 'Accounts User' in roles:
-			# Get all orders with specific fields
-			all_orders = frappe.get_list("Order", fields=['name', 'full_name', 'phone_number', 'address', 'invoice' , 'total_order' , 'creation'])
+		user = frappe.session.user
+
+		if not frappe.db.exists("Store" , {"user":user}):
+			return f"""no store for this user"""
+		store = frappe.get_doc("Store" , {"user":user})
+		if store:
+
+			all_orders = frappe.get_list("Order",{"store":store , "status":"Pending"}, fields=['name', 'full_name', 'phone_number', 'address', 'invoice' , 'total_order' , 'creation'])
 
 			for order in all_orders:
 				if isinstance(order.get('creation'), datetime):
@@ -70,7 +61,6 @@ def get_orders(user=None):
 					order['invoice'] = url + file.file_url
 					
 
-			# Construct response
 			res = {}
 			if all_orders:
 				res = {
