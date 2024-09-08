@@ -43,12 +43,19 @@ def get_orders():
 		user = frappe.session.user
 
 		if not frappe.db.exists("Store" , {"user":user}):
-			return f"""no store for this user"""
+			frappe.local.response['http_status_code'] = 500
+			return {
+				'status_code': 404,
+				'message': 'No store found for this user'
+			}
 		store = frappe.get_doc("Store" , {"user":user})
 		if store:
 
-			all_orders = frappe.get_list("Order",filters={"store":store , "status":"Pending"}, fields=['name', 'full_name', 'phone_number', 'address', 'invoice' , 'total_order' , 'creation'])
-
+			all_orders = frappe.get_list(
+				"Order",
+				filters={"store": store.name, "status": "Pending"},
+				fields=['name', 'full_name', 'phone_number', 'address', 'invoice', 'total_order', 'creation']
+			)
 			for order in all_orders:
 				if isinstance(order.get('creation'), datetime):
 					order['creation'] = order.get('creation').strftime('%Y-%m-%d %H:%M:%S')
@@ -69,6 +76,7 @@ def get_orders():
 					'data': all_orders
 				}
 			else:
+				frappe.local.response['http_status_code'] = 204
 				res = {
 					'status_code': 204,
 					'message': _('No Orders Found'),
@@ -76,6 +84,7 @@ def get_orders():
 				}
 			return res
 		else:
+			frappe.local.response['http_status_code'] = 403
 			return {
 				'status_code': 403,
 				'message': _('User does not have the required role'),
