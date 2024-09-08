@@ -7,7 +7,7 @@ from light_delivery.api.apis import download_image
 
 
 @frappe.whitelist(allow_guest=False)
-def new_order():
+def new_order(*args , **kwargs):
 	try:
 		user = frappe.session.user
 		if not frappe.db.exists("Store" , {"user":user}):
@@ -36,7 +36,7 @@ def new_order():
 			"total_order": data.get('total_order'),
 			"store":store.name
 		})
-		doc.insert()
+		doc.save(ignore_permissions=True)
 		frappe.db.commit()
 		frappe.local.response['http_status_code'] = 404
 		return {"status": "success", "message": "Order created successfully", "order_name": doc.name}
