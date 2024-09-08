@@ -13,7 +13,7 @@ def get_requests(*args, **kwargs):
 	requests = frappe.get_list("Request Delivery", 
 							   {"store": store, 
 								'status': ['in', ['Accepted', 'Arrived', 'Collect Money', 'Picked', 'On The Way', 'Partially Delivered']]}, 
-							   ['name as id', 'status', 'delivery', 'number_of_order', 'request_date'])
+							   ['name as id', 'status', 'delivery', 'number_of_order', 'request_date','total'])
 
 	for req in requests:
 		request_del = frappe.get_doc("Request Delivery", req.get('id'))
