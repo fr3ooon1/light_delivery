@@ -47,7 +47,7 @@ def get_orders():
 		store = frappe.get_doc("Store" , {"user":user})
 		if store:
 
-			all_orders = frappe.get_list("Order",{"store":store , "status":"Pending"}, fields=['name', 'full_name', 'phone_number', 'address', 'invoice' , 'total_order' , 'creation'])
+			all_orders = frappe.get_list("Order",filters={"store":store , "status":"Pending"}, fields=['name', 'full_name', 'phone_number', 'address', 'invoice' , 'total_order' , 'creation'])
 
 			for order in all_orders:
 				if isinstance(order.get('creation'), datetime):
