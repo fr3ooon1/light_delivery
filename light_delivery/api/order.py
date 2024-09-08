@@ -20,6 +20,7 @@ def new_order(*args , **kwargs):
 
 		files = frappe.request.files.get('invoice')
 		data = frappe.form_dict
+		return data
 
 		image = download_image(files)
 
