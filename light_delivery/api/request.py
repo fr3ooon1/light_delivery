@@ -22,16 +22,17 @@ def get_requests(*args, **kwargs):
 
 		for order in order_list:
 			doc = frappe.get_doc("Order", order.order)
-			res = {
-				"id": doc.name,
-				"total": doc.total_order,
-				"date": doc.order_date,
-				"customer": doc.full_name,
-				"address": doc.address,
-				"status": doc.status,
-				
-			}
-			order_details.append(res)
+			if doc.status not in ['Delivery Cancel','Store Cancel']:
+				res = {
+					"id": doc.name,
+					"total": doc.total_order,
+					"date": doc.order_date,
+					"customer": doc.full_name,
+					"address": doc.address,
+					"status": doc.status,
+					
+				}
+				order_details.append(res)
 
 		req['orders'] = order_details  # Append order details to the current request
 
