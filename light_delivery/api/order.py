@@ -6,10 +6,18 @@ from light_delivery.api.apis import get_url
 from light_delivery.api.apis import download_image
 
 
-@frappe.whitelist(allow_guest=1)
+@frappe.whitelist(allow_guest=False)
 def new_order():
 	try:
-		# Get the file from the request
+		user = frappe.session.user
+		if not frappe.db.exists("Store" , {"user":user}):
+			frappe.local.response['http_status_code'] = 404
+			return {
+				'status_code': 404,
+				'message': 'No store found for this user'
+			}
+		store = frappe.get_doc("Store" , {"user":user})
+
 		files = frappe.request.files.get('invoice')
 		data = frappe.form_dict
 
@@ -17,7 +25,7 @@ def new_order():
 
 		file_url = image.file_url
 
-		doc = frappe.get_doc({
+		doc = frappe.new_doc({
 			"doctype": "Order",
 			"full_name": data.get('full_name'),
 			"phone_number": data.get('phone_number'),
@@ -25,25 +33,25 @@ def new_order():
 			"order_type": data.get('order_type'),
 			"zone_address": data.get('zone_address'),
 			"invoice": file_url,
-			"image":file_url,
-			"total_order": data.get('total_order')
+			"total_order": data.get('total_order'),
+			"store":store.name
 		})
 		doc.insert()
 		frappe.db.commit()
-
+		frappe.local.response['http_status_code'] = 404
 		return {"status": "success", "message": "Order created successfully", "order_name": doc.name}
 
 	except Exception as e:
 		frappe.log_error(frappe.get_traceback(), "new_order API error")
 		return {"status": "error", "message": str(e)}
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=False)
 def get_orders():
 	try:
 		user = frappe.session.user
 
 		if not frappe.db.exists("Store" , {"user":user}):
-			frappe.local.response['http_status_code'] = 500
+			frappe.local.response['http_status_code'] = 404
 			return {
 				'status_code': 404,
 				'message': 'No store found for this user'
@@ -76,9 +84,9 @@ def get_orders():
 					'data': all_orders
 				}
 			else:
-				frappe.local.response['http_status_code'] = 204
+				frappe.local.response['http_status_code'] = 200
 				res = {
-					'status_code': 204,
+					'status_code': 200,
 					'message': _('No Orders Found'),
 					'data': all_orders
 				}
