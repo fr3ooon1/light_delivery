@@ -15,6 +15,8 @@ def change_request_status(*args , **kwargs):
 			if frappe.db.exists("Request Delivery" , request):
 				request_obj = frappe.get_doc("Request Delivery" , request)
 				request_obj.status = status
+				request_obj.save(ignore_permissions=True)
+				frappe.db.commit()
 				frappe.local.response['http_status_code'] = 200
 				frappe.local.response['message'] = f""" Request id: {request} status has been changed"""
 	except Exception as e:
