@@ -41,7 +41,6 @@ def new_order():
 def get_orders():
 	try:
 		user = frappe.session.user
-		return user
 
 		if not frappe.db.exists("Store" , {"user":user}):
 			return f"""no store for this user"""
