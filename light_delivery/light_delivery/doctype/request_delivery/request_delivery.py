@@ -36,7 +36,7 @@ class RequestDelivery(Document):
 
 			order.delivery = order_request[i].get("delivery")
 			order.store = order_request[i].get("store")
-			if self.status != "Collect Moeny":
+			if self.status not in ["Collect Moeny"]:
 				order.status = self.status
 
 			total_request_amount += float(order.get("total_order") or 0)
