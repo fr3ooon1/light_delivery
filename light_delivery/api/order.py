@@ -25,17 +25,17 @@ def new_order(*args , **kwargs):
 
 		file_url = image.file_url
 
-		doc = frappe.new_doc({
-			"doctype": "Order",
-			"full_name": data.get('full_name'),
-			"phone_number": data.get('phone_number'),
-			"address": data.get('address'),
-			"order_type": data.get('order_type'),
-			"zone_address": data.get('zone_address'),
-			"invoice": file_url,
-			"total_order": data.get('total_order'),
-			"store":store.name
-		})
+		# doc = frappe.new_doc({
+		# 	"doctype": "Order",
+		# 	"full_name": data.get('full_name'),
+		# 	"phone_number": data.get('phone_number'),
+		# 	"address": data.get('address'),
+		# 	"order_type": data.get('order_type'),
+		# 	"zone_address": data.get('zone_address'),
+		# 	"invoice": file_url,
+		# 	"total_order": data.get('total_order'),
+		# 	"store":store.name
+		# })
 
 		doc = frappe.new_doc("Order")
 		doc.full_name =  data.get('full_name')
