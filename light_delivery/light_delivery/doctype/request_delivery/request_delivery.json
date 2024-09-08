@@ -11,6 +11,7 @@
   "request_date",
   "column_break_shdb",
   "delivery",
+  "total",
   "column_break_zsov",
   "store",
   "column_break_qnyl",
@@ -80,11 +81,16 @@
    "fieldname": "request_date",
    "fieldtype": "Date",
    "label": "Request Date"
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Float",
+   "label": "Total of Request"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-03 16:41:32.144430",
+ "modified": "2024-09-08 12:09:45.002995",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Request Delivery",

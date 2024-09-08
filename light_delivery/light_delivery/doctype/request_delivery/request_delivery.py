@@ -11,9 +11,11 @@ class RequestDelivery(Document):
 	def before_naming(self):
 		self.follow_request_status()
 	def validate(self):
-		self.follow_request_status()
-		if self.status == "Accepted":
+		if self.status not in ['Pending']:
+			self.follow_request_status()
 			self.request_accepted()
+		if self.status == "Accepted":
+			pass
 		if self.status in ['Arrived' , 'Picked' , 'Delivery Cancel' , 'Store Cancel' , 'Cancel']:
 			self.change_status_for_orders()
 			
@@ -23,6 +25,8 @@ class RequestDelivery(Document):
 		self.number_of_order = len(order_request)
 		store = frappe.get_doc("Store",self.store)
 		store_discount = store.get('store_discount')
+
+		total_request_amount = 0
 
 		for i in range(len(order_request)):
 			order = frappe.get_doc("Order" , self.get('order_request')[i].get("order"))
@@ -34,7 +38,10 @@ class RequestDelivery(Document):
 			order.store = order_request[i].get("store")
 			order.status = self.status
 
+			total_request_amount += float(order.get("total_order") or 0)
+
 			order.save(ignore_permissions=True)
+		self.total = total_request_amount
 
 
 	def change_status_for_orders(self):
