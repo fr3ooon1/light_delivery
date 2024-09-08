@@ -7,6 +7,23 @@ from light_delivery.api.apis import download_image
 
 
 @frappe.whitelist(allow_guest=False)
+def change_request_status(*args , **kwargs):
+	status = kwargs.get("status")
+	request = kwargs.get("request")
+	try:
+		if status and request:
+			if frappe.db.exists("Request Delivery" , request):
+				request_obj = frappe.get_doc("Request Delivery" , request)
+				request_obj.status = status
+				frappe.local.response['http_status_code'] = 200
+				frappe.local.response['message'] = f""" Request id: {request} status has been changed"""
+	except Exception as e:
+		frappe.log_error(message=str(e), title=_('Error in change_request_status'))
+		frappe.local.response['http_status_code'] = 500
+		
+
+
+@frappe.whitelist(allow_guest=False)
 def get_requests(*args, **kwargs):
 	user = frappe.session.user
 	store = frappe.get_value("Store", {"user": user}, 'name')
