@@ -36,7 +36,7 @@ def new_order(*args , **kwargs):
 		doc.store = store.name
 		doc.save(ignore_permissions=True)
 		frappe.db.commit()
-		frappe.local.response['http_status_code'] = 404
+		frappe.local.response['http_status_code'] = 200
 		return {"status": "success", "message": "Order created successfully", "order_name": doc.name}
 
 	except Exception as e:
