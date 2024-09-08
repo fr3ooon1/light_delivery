@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{delivery}-{store}-{###}",
+ "autoname": "format:Request-{#####}",
  "creation": "2024-08-29 11:44:28.545931",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -90,7 +90,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-08 12:09:45.002995",
+ "modified": "2024-09-08 12:58:06.208187",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Request Delivery",
