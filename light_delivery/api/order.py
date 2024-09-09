@@ -7,6 +7,12 @@ from light_delivery.api.apis import download_image
 
 
 @frappe.whitelist(allow_guest=False)
+def search_by_phone(phone_number):
+	invoices = frappe.get_list("Order" , {"phone_number":phone_number},['address'] , pluck='address')
+	return invoices
+
+
+@frappe.whitelist(allow_guest=False)
 def new_order(*args , **kwargs):
 	try:
 		user = frappe.session.user
