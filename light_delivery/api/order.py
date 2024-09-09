@@ -7,9 +7,51 @@ from light_delivery.api.apis import download_image
 
 
 @frappe.whitelist(allow_guest=False)
+def update_order(*args , **kwargs):
+	try:
+		files = frappe.request.files.get('invoice')
+		data = frappe.form_dict
+		if data.get("order"):
+			if frappe.db.exists("Order",data.get("order")):
+				order_obj = frappe.get_doc("Order" , data.get("order"))
+				
+				if order_obj.status in ['Pending','Accepted','Arrived']:
+					
+
+					order_obj.full_name = data.get("full_name") if data.get("full_name") else order_obj.full_name
+					order_obj.address = data.get("address") if data.get("address") else order_obj.address
+					order_obj.zone_address = data.get("zone_address") if data.get("zone_address") else order_obj.zone_address
+					order_obj.phone_number = data.get("phone_number") if data.get("phone_number") else order_obj.phone_number
+					order_obj.order_type = data.get("order_type") if data.get("order_type") else order_obj.order_type
+					order_obj.total = data.get("total") if data.get("total") else order_obj.total
+					if files:
+						image = download_image(files)
+						file_url = image.file_url
+						order_obj.invoice = file_url
+
+
+					order_obj.save(ignore_permissions=True)
+					frappe.db.commit()
+					return {"status": "success", "message": "Order updated successfully", "order_name": kwargs.get("order")}
+				else:
+					frappe.local.response['http_status_code'] = 403
+					return {"status": "failed", "message": "can not update order with this status", "order_name": kwargs.get("order")}
+		else:
+			frappe.local.response['http_status_code'] = 403
+			return {"status": "Failed", "message": "No Order Found", "order_name": kwargs.get("order")}
+
+	except Exception as e:
+		frappe.log_error(frappe.get_traceback(), "update_order API error")
+		return {"status": "error", "message": str(e)}
+
+@frappe.whitelist(allow_guest=False)
 def search_by_phone(phone_number):
-	invoices = frappe.get_list("Order" , {"phone_number":phone_number},['address'] , pluck='address')
-	return invoices
+	try:
+		invoices = frappe.get_list("Order" , {"phone_number":phone_number},['address'] , pluck='address')
+		return invoices
+	except Exception as e:
+		frappe.log_error(frappe.get_traceback(), "search_by_phone API error")
+		return {"status": "error", "message": str(e)}
 
 
 @frappe.whitelist(allow_guest=False)
