@@ -23,7 +23,7 @@ def update_order(*args , **kwargs):
 					order_obj.zone_address = data.get("zone_address") if data.get("zone_address") else order_obj.zone_address
 					order_obj.phone_number = data.get("phone_number") if data.get("phone_number") else order_obj.phone_number
 					order_obj.order_type = data.get("order_type") if data.get("order_type") else order_obj.order_type
-					order_obj.total = data.get("total") if data.get("total") else order_obj.total
+					order_obj.total_order = data.get("total_order") if data.get("total_order") else order_obj.total_order
 					if files:
 						image = download_image(files)
 						file_url = image.file_url
