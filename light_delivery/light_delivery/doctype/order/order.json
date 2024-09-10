@@ -8,6 +8,8 @@
  "field_order": [
   "full_name",
   "order_type",
+  "order_reference",
+  "previous_order_amount",
   "address",
   "zone_address",
   "invoice",
@@ -164,14 +166,25 @@
    "label": "Duration"
   },
   {
-    "fieldname": "valuation",
-    "fieldtype": "Rating",
-    "label": "Valuation"
-   }
+   "fieldname": "valuation",
+   "fieldtype": "Rating",
+   "label": "Valuation"
+  },
+  {
+   "fieldname": "order_reference",
+   "fieldtype": "Link",
+   "label": "Order Reference",
+   "options": "Order"
+  },
+  {
+   "fieldname": "previous_order_amount",
+   "fieldtype": "Float",
+   "label": "Previous Order Amount"
+  }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-08 11:41:20.046093",
+ "modified": "2024-09-10 13:45:35.164297",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",

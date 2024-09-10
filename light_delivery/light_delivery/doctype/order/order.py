@@ -19,6 +19,8 @@ class Order(Document):
 		self.draw_roads()
 		self.get_deduction()
 		self.order_status()
+		self.get_previous_order_amount()
+		self.rate_delivery()
 
 
 	def begain_order(self):
@@ -33,7 +35,13 @@ class Order(Document):
 		minutes = float(self.calculate_duration())
 		deduction_obj = frappe.get_doc("Deductions")
 		
-		
+	def get_previous_order_amount(self):
+		if self.order_reference and self.order_type in ['Refund' , 'Replacing']:
+			amount = frappe.get_value("Order",self.order_reference,'total_order')
+			self.previous_order_amount = float(amount)
+			self.the_rest_of_the_amount = float(self.total_order or 0) - float(amount)
+
+
 	def calculate_duration(self):
 		if self.get("order_log"):
 			time = self.get("order_log")[-1].time
@@ -45,6 +53,14 @@ class Order(Document):
 			if self.status == "Delivered":
 				self.duration = float(minutes)
 			return minutes
+
+	def rate_delivery(self):
+		if self.delivery:
+			if self.valuation and frappe.db.exists("Delivery",self.delivery):
+				del_obj = frappe.get_doc("Delivery" , self.delivery)
+				del_obj.num_rates = float(del_obj.num_rates or 0) + 1
+				del_obj.total_rates = float(del_obj.total_rates or 0) + float(self.valuation or 0)
+				del_obj.save(ignore_permissions=True)
 
 
 	def order_status(self):
@@ -119,6 +135,7 @@ class Order(Document):
 					doc.in_wallet = total
 					doc.aganist = "Store"
 					doc.aganist_from = self.store
+					doc.order = self.name
 					doc.save(ignore_permissions=True)
 					doc.submit()
 			
@@ -137,6 +154,7 @@ class Order(Document):
 				doc.out = total
 				doc.aganist = "Delivery"
 				doc.aganist_from = self.delivery
+				doc.order = self.name
 				doc.save(ignore_permissions=True)
 				doc.submit()
 

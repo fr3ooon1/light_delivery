@@ -17,7 +17,8 @@
   "aganist_from",
   "voucher",
   "reference",
-  "paid"
+  "paid",
+  "order"
  ],
  "fields": [
   {
@@ -91,12 +92,18 @@
    "fieldname": "paid",
    "fieldtype": "Check",
    "label": "Paid"
+  },
+  {
+   "fieldname": "order",
+   "fieldtype": "Link",
+   "label": "Order",
+   "options": "Order"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-09-02 15:36:11.409026",
+ "modified": "2024-09-10 12:14:08.324943",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Transactions",
