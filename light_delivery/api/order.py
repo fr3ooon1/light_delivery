@@ -45,10 +45,15 @@ def update_order(*args , **kwargs):
 		return {"status": "error", "message": str(e)}
 
 @frappe.whitelist(allow_guest=False)
-def search_by_phone(phone_number):
+def search_by_phone(phone_number , order_type = False):
 	try:
-		invoices = frappe.get_list("Order" , {"phone_number":phone_number},['address'] , pluck='address')
-		return invoices
+		res = {}
+		address = frappe.get_list("Order" , {"phone_number":phone_number},['address'] , pluck='address')
+		res['address'] = address
+		if order_type in ['Replace','Refund']:
+			orders = frappe.get_list("Order" , {"phone_number":phone_number},['name'] , pluck='name')
+			res['order'] = orders 
+		return res
 	except Exception as e:
 		frappe.log_error(frappe.get_traceback(), "search_by_phone API error")
 		return {"status": "error", "message": str(e)}
