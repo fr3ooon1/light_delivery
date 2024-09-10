@@ -14,6 +14,9 @@
   "national_id",
   "date_of_joining",
   "cash",
+  "num_rates",
+  "total_rates",
+  "valuation",
   "column_break_xhtl",
   "pointer_x",
   "pointer_y",
@@ -84,14 +87,24 @@
    "label": "Delivery Location"
   },
   {
-    "fieldname": "valuation",
-    "fieldtype": "Rating",
-    "label": "Valuation"
-   }
+   "fieldname": "num_rates",
+   "fieldtype": "Int",
+   "label": "Num of Rates"
+  },
+  {
+   "fieldname": "total_rates",
+   "fieldtype": "Int",
+   "label": "Total Rates"
+  },
+  {
+   "fieldname": "valuation",
+   "fieldtype": "Rating",
+   "label": "Rating"
+  }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-03 12:36:57.341567",
+ "modified": "2024-09-10 12:54:18.759708",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Delivery",

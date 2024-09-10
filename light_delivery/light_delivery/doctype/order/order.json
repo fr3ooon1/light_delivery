@@ -30,7 +30,8 @@
   "order_log",
   "column_break_tpje",
   "delivery",
-  "store"
+  "store",
+  "valuation"
  ],
  "fields": [
   {
@@ -161,7 +162,12 @@
    "fieldname": "duration",
    "fieldtype": "Float",
    "label": "Duration"
-  }
+  },
+  {
+    "fieldname": "valuation",
+    "fieldtype": "Rating",
+    "label": "Valuation"
+   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
