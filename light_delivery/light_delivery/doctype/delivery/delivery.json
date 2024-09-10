@@ -89,11 +89,13 @@
   {
    "fieldname": "num_rates",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "Num of Rates"
   },
   {
    "fieldname": "total_rates",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "Total Rates"
   },
   {
@@ -104,7 +106,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-10 12:54:18.759708",
+ "modified": "2024-09-10 13:53:49.381616",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Delivery",
