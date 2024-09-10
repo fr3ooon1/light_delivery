@@ -6,7 +6,7 @@ app_email = "mohamed.essam68.me@gmail.com"
 app_license = "mit"
 # required_apps = []
 website_route_rules = [
-    {"from_route": "/custom_search", "to_route": "api/method/light_delivery.api.order.search_by_phone"},
+    # {"from_route": "/custom_search", "to_route": "api/method/light_delivery.api.order.search_by_phone"},
 ]
 # Includes in <head>
 # ------------------
@@ -162,7 +162,7 @@ scheduler_events = {
 # ------------------------------
 #
 override_whitelisted_methods = {
-	"light_delivery.api.order.search_by_phone": "Custom_search"
+	"search_by_phone":"light_delivery.api.order.search_by_phone"
 }
 #
 # each overriding function accepts a `data` argument;
