@@ -74,9 +74,7 @@ def new_order(*args , **kwargs):
 		files = frappe.request.files.get('invoice')
 		data = frappe.form_dict
 
-		image = download_image(files)
-
-		file_url = image.file_url
+		
 
 		doc = frappe.new_doc("Order")
 		doc.full_name =  data.get('full_name')
@@ -84,7 +82,10 @@ def new_order(*args , **kwargs):
 		doc.address= data.get('address')
 		doc.order_type= data.get('order_type')
 		doc.zone_address= data.get('zone_address')
-		doc.invoice= file_url
+		if files:
+			image = download_image(files)
+			file_url = image.file_url
+			doc.invoice= file_url
 		doc.total_order = data.get('total_order')
 		doc.store = store.name
 		doc.save(ignore_permissions=True)
@@ -93,6 +94,7 @@ def new_order(*args , **kwargs):
 		return {"status": "success", "message": "Order created successfully", "order_name": doc.name}
 
 	except Exception as e:
+		frappe.local.response['http_status_code'] = 404
 		frappe.log_error(frappe.get_traceback(), "new_order API error")
 		return {"status": "error", "message": str(e)}
 
