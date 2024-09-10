@@ -4,16 +4,32 @@
    "card": "Total Number of Orders"
   },
   {
-   "card": "Total Pending Orders-2"
+   "card": "Total Pending Orders"
+  },
+  {
+   "card": "Total On the way Orders"
   },
   {
    "card": "Total Delivered Orders"
+  },
+  {
+   "card": "Total Returned Orders"
+  },
+  {
+   "card": "Total Cancelled Orders (By Delivery)"
+  },
+  {
+   "card": "Total Cancelled Orders (By Store)"
   },
   {
    "card": "Total Cancelled Orders"
   }
  ],
  "charts": [
+  {
+   "chart": "Orders Over Time",
+   "width": "Full"
+  },
   {
    "chart": "Order Status",
    "width": "Half"
@@ -23,8 +39,12 @@
    "width": "Half"
   },
   {
-   "chart": "Orders Over Time",
-   "width": "Full"
+   "chart": "Top 5 Delivery",
+   "width": "Half"
+  },
+  {
+   "chart": "Top 5 Stores",
+   "width": "Half"
   }
  ],
  "creation": "2024-09-02 13:35:24.722115",
@@ -34,7 +54,7 @@
  "idx": 0,
  "is_default": 0,
  "is_standard": 1,
- "modified": "2024-09-02 14:15:05.126982",
+ "modified": "2024-09-10 10:01:27.807791",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order Tracking Metrics",

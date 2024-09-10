@@ -82,7 +82,12 @@
    "fieldname": "delivery_location",
    "fieldtype": "Geolocation",
    "label": "Delivery Location"
-  }
+  },
+  {
+    "fieldname": "valuation",
+    "fieldtype": "Rating",
+    "label": "Valuation"
+   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],

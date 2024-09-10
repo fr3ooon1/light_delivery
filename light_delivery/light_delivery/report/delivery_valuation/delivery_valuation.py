@@ -38,7 +38,7 @@ def get_delivery_report(filters=None):
 
 def get_report_columns():
     return [
-        {"label": _("Delivery Name"), "fieldname": "name", "fieldtype": "Link", "options": "Delivery", "width": 180},
+        {"label": _("Delivery ID"), "fieldname": "name", "fieldtype": "Link", "options": "Delivery", "width": 180},
 		{"label": _("Delivery Name"), "fieldname": "delivery_name", "fieldtype": "Data", "width": 180},
         {"label": _("Date of Joining"), "fieldname": "date_of_joining", "fieldtype": "Date", "width": 150},
         {"label": _("Delivery Category"), "fieldname": "delivery_category", "fieldtype": "Link", "options": "Delivery Category", "width": 180},
