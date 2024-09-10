@@ -81,6 +81,10 @@ def new_order(*args , **kwargs):
 		doc.phone_number = data.get('phone_number')
 		doc.address= data.get('address')
 		doc.order_type= data.get('order_type')
+		if data.get("order_type") in ["Refund" , "Replacing"]:
+			doc.order_reference = data.get("order_reference")
+			doc.previous_order_amount = data.get("previous_order_amount")
+			
 		doc.zone_address= data.get('zone_address')
 		if files:
 			image = download_image(files)

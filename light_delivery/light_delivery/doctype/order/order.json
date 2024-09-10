@@ -10,6 +10,7 @@
   "order_type",
   "order_reference",
   "previous_order_amount",
+  "differente_amount",
   "address",
   "zone_address",
   "invoice",
@@ -180,11 +181,16 @@
    "fieldname": "previous_order_amount",
    "fieldtype": "Float",
    "label": "Previous Order Amount"
+  },
+  {
+   "fieldname": "differente_amount",
+   "fieldtype": "Float",
+   "label": "Differente Amount"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-10 13:45:35.164297",
+ "modified": "2024-09-10 17:14:47.419316",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",
