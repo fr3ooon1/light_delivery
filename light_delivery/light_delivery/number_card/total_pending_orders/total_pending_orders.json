@@ -1,7 +1,7 @@
 {
  "aggregate_function_based_on": "",
- "color": "#ED6396",
- "creation": "2024-09-02 13:37:59.770784",
+ "color": "#ECAD4B",
+ "creation": "2024-09-10 09:33:08.468463",
  "docstatus": 0,
  "doctype": "Number Card",
  "document_type": "Order",
@@ -12,7 +12,7 @@
  "is_public": 1,
  "is_standard": 1,
  "label": "Total Pending Orders",
- "modified": "2024-09-02 13:49:27.079992",
+ "modified": "2024-09-10 09:35:03.233292",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Total Pending Orders",

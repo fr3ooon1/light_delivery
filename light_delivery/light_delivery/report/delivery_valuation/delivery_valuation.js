@@ -30,10 +30,7 @@ frappe.query_reports["Delivery Valuation"] = {
 	"formatter": function(value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
 
-<<<<<<< Updated upstream
-=======
 		// Center the text in specific columns
->>>>>>> Stashed changes
 		if (column.fieldname === "name" || 
 			column.fieldname === "delivery_name" || 
 			column.fieldname === "date_of_joining" || 

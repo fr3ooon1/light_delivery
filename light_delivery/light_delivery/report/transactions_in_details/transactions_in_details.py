@@ -23,32 +23,52 @@ def execute(filters=None):
             "fieldname": "name",
             "fieldtype": "Dynamic Link",
             "options": "party",
-            "width": 300
+            "width": 200
         },
         {
             "label": _("Debit"),
             "fieldname": "debit",
             "fieldtype": "Currency",
-            "width": 200
+            "width": 150
         },
         {
             "label": _("Credit"),
             "fieldname": "credit",
             "fieldtype": "Currency",
-            "width": 200
+            "width": 150
         },
 		{
             "label": _("Against"),
             "fieldname": "against",
             "fieldtype": "Dynamic Link",
             "options": "party",
-            "width": 300
+            "width": 200
         },
 		{
             "label": _("Net Balance"),
             "fieldname": "net_balance",
             "fieldtype": "Currency",
-            "width": 200
+            "width": 120
+        },
+        {
+            "label": _("Is Paid"),
+            "fieldname": "paid",
+            "fieldtype": "Check",
+            "width": 100
+        },
+        {
+            "label": _("Voucher"),
+            "fieldname": "voucher",
+            "fieldtype": "Select",
+            "options": "Get Order\nPay Order\nPay Planty",
+            "width": 150
+        },
+        {
+            "label": _("Reference"),
+            "fieldname": "reference",
+            "fieldtype": "Link",
+            "options": "Closing operations",
+            "width": 150
         },
     ]
     
@@ -64,7 +84,7 @@ def get_filtered_transactions(filters):
     }
 
     transactions = frappe.get_all("Transactions", 
-                                  fields=["party_type", "party", "against", "against_from", "in_wallet", "out"],
+                                  fields=["party_type", "party", "against", "against_from", "in_wallet", "out", "balance", "voucher", "reference", "paid"],
                                   filters=filters)
 
     result = []
@@ -74,14 +94,20 @@ def get_filtered_transactions(filters):
         debit = transaction.get("in_wallet")
         credit = transaction.get("out")
         against = transaction.get("against_from")
-        net_balance = debit - credit
+        net_balance = transaction.get("balance")
+        ref = transaction.get("reference")
+        voucher = transaction.get("voucher")
+        paid = transaction.get("paid")
 
         result.append({
 			"against": against,
             "name": party_name,
             "debit": debit,
             "credit": credit,
-            "net_balance": net_balance
+            "net_balance": net_balance,
+            "reference": ref,
+            "voucher": voucher,
+            "paid": paid
         })
 
     return result

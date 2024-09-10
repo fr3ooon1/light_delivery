@@ -1,6 +1,6 @@
 {
  "aggregate_function_based_on": "",
- "color": "#4F9DD9",
+ "color": "#4463F0",
  "creation": "2024-09-02 13:35:09.108359",
  "docstatus": 0,
  "doctype": "Number Card",
@@ -12,7 +12,7 @@
  "is_public": 1,
  "is_standard": 1,
  "label": "Total Number of Orders",
- "modified": "2024-09-02 13:35:09.108359",
+ "modified": "2024-09-10 09:40:30.383065",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Total Number of Orders",
