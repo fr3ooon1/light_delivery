@@ -50,7 +50,7 @@ def search_by_phone(phone_number , order_type = False):
 		res = {}
 		address = frappe.get_list("Order" , {"phone_number":phone_number},['address'] , pluck='address')
 		res['address'] = address
-		if order_type in ['Replace','Refund']:
+		if order_type in ['Replacing','Refund']:
 			orders = frappe.get_list("Order" , {"phone_number":phone_number},['name'] , pluck='name')
 			res['order'] = orders 
 		return res
