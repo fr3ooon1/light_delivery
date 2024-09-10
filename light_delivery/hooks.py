@@ -5,7 +5,9 @@ app_description = "Delivery Mobile App"
 app_email = "mohamed.essam68.me@gmail.com"
 app_license = "mit"
 # required_apps = []
-
+website_route_rules = [
+    {"from_route": "/custom_search", "to_route": "api/method/light_delivery.api.order.search_by_phone"},
+]
 # Includes in <head>
 # ------------------
 
@@ -159,9 +161,9 @@ scheduler_events = {
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "light_delivery.event.get_events"
-# }
+override_whitelisted_methods = {
+	"light_delivery.api.order.search_by_phone": "Custom_search"
+}
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
