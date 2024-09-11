@@ -28,6 +28,10 @@ def update_order(*args , **kwargs):
 						image = download_image(files)
 						file_url = image.file_url
 						order_obj.invoice = file_url
+					if order_obj.get("order_type") in ["Refund" , "Replacing"]:
+						order_obj.order_reference = data.get("order_reference")
+						order_obj.previous_order_amount = data.get("previous_order_amount")
+					
 
 
 					order_obj.save(ignore_permissions=True)
@@ -84,7 +88,7 @@ def new_order(*args , **kwargs):
 		if data.get("order_type") in ["Refund" , "Replacing"]:
 			doc.order_reference = data.get("order_reference")
 			doc.previous_order_amount = data.get("previous_order_amount")
-			
+
 		doc.zone_address= data.get('zone_address')
 		if files:
 			image = download_image(files)
@@ -119,7 +123,7 @@ def get_orders():
 			all_orders = frappe.get_list(
 				"Order",
 				filters={"store": store.name, "status": "Pending"},
-				fields=['name', 'full_name', 'phone_number', 'address', 'invoice', 'total_order', 'creation']
+				fields=['name', 'full_name', 'phone_number', 'address','zone_address', 'invoice', 'total_order', 'creation' ,'status','order_type','order_reference' ,'previous_order_amount','differente_amount']
 			)
 			for order in all_orders:
 				if isinstance(order.get('creation'), datetime):
