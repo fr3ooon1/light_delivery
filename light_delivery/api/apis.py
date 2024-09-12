@@ -140,8 +140,9 @@ def upload_images(*args , **kwargs):
 		if frappe.db.exists("Order",data.get('order')):
 			order = frappe.get_doc("Order" , data.get('order'))
 			images = len(order.get("order_image"))
-			new_images = files
-			return new_images
+			new_images = len(files)
+			if images + new_images > 4:
+				order.order_image = []
 			if files.get("first_image"):
 				first_image = download_image(files.get("first_image"))
 				order.append("order_image",{
