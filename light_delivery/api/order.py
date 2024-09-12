@@ -127,7 +127,7 @@ def get_orders():
 			)
 			for order in all_orders:
 
-				order['number_of_images'] = len(frappe.get_doc("Order",order.get("name").get("order_image")))
+				order['number_of_images'] = len(frappe.get_doc("Order",order.get("name")).get("order_image"))
 				if isinstance(order.get('creation'), datetime):
 					order['creation'] = order.get('creation').strftime('%Y-%m-%d %H:%M:%S')
 				else:
