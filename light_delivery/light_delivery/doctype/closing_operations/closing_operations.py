@@ -5,14 +5,53 @@ import frappe
 from frappe.model.document import Document
 from light_delivery.api.delivery_request import calculate_balane
 from erpnext import get_default_company
+from frappe.utils import nowdate 
 
 
 class Closingoperations(Document):
+	def validate(self):
+		self.make_balance_table()
 	def on_submit(self):
 		self.create_transaction()
 
 	
+	def make_balance_table(self):
+		balance = calculate_balane(self.party_type)
 
+		company = get_default_company()
+
+		default_receivable_account = frappe.get_value("Company",company,'default_receivable_account',)
+		default_income_account = frappe.get_value("Company",company,'default_income_account')
+		if balance > 0:
+			self.append("accounts",{
+					"account":default_receivable_account,
+					"party_type": "Customer",
+					"party": "Palmer Productions Ltd.",
+					"debit_in_account_currency":balance,
+					"credit_in_account_currency":0
+				})
+			self.append("accounts",{
+					"account":default_income_account,
+					# "party_type": "Customer",
+					# "party": "Palmer Productions Ltd.",
+					"debit_in_account_currency":0,
+					"credit_in_account_currency":balance
+				})
+		else:
+			self.append("accounts",{
+					"account":default_receivable_account,
+					# "party_type": "Customer",
+					# "party": "Palmer Productions Ltd.",
+					"debit_in_account_currency":balance,
+					"credit_in_account_currency":0
+				})
+			self.append("accounts",{
+					"account":default_income_account,
+					"party_type": "Customer",
+					"party": "Palmer Productions Ltd.",
+					"debit_in_account_currency":0,
+					"credit_in_account_currency":balance
+				})
 
 	def create_transaction(self):
 		doc = frappe.new_doc("Transactions")
@@ -62,28 +101,6 @@ def create_sales_invoice(doc):
 
 
 
-@frappe.whitelist()
-def make_balance_table(party_type , doc):
-	self = frappe.get_doc("Closing operations" , doc)
-	balance = calculate_balane(party_type)
 
-	company = get_default_company()
 
-	default_receivable_account = frappe.get_value("Company",company,['default_receivable_account','default_payable_account'],as_dict=1).get("default_receivable_account")
-	default_payable_account = frappe.get_value("Company",company,['default_receivable_account','default_payable_account'],as_dict=1).get("default_receivable_account")
-	if balance > 0:
-		self.append("accounts",{
-				"account":default_receivable_account,
-				"party_type": now_datetime(),
-				"party": note,
-				"debit_in_account_currency":0,
-				"credit_in_account_currency":0
-			})
-		self.append("accounts",{
-				"account":default_payable_account,
-				"party_type": now_datetime(),
-				"party": note,
-				"debit_in_account_currency":0,
-				"credit_in_account_currency":0
-			})
 

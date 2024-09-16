@@ -3,7 +3,8 @@ from frappe import _
 
 # from frappe.core.doctype.user.user import generate_keys
 from light_delivery.api.apis import download_image
-
+from frappe.utils import nowdate 
+import json
 
 
 @frappe.whitelist(allow_guest=True)
@@ -22,7 +23,6 @@ def login(*args,**kwargs):
 			frappe.local.response['http_status_code'] = 401
 			return {
 				'message': 'Login failed',
-				# 'error': str(e)
 			}
 		user_obj = frappe.get_doc("User",filters)
 		login_manager = frappe.auth.LoginManager()
@@ -37,9 +37,16 @@ def login(*args,**kwargs):
 			'message': 'Login failed',
 			'error': str(e)
 		}
+	store_logo = None
+	store_cover = None
+	coordi = []
+	if frappe.db.exists("Store",{"user":user_obj.name}):
+		store = frappe.get_doc("Store",{"user":user_obj.name})
+		store_logo = store.store_logo
+		store_cover = store.store_cover
+		if store.store_location:
+			coordi = json.loads(store.store_location)["features"][0]["geometry"].get("coordinates", None)
 
-	
-	# user = frappe.get_doc('User', usr)
 	api_secret = generate_keys(user=user_obj.name).get('api_secret')
 	frappe.db.commit()
 
@@ -55,6 +62,9 @@ def login(*args,**kwargs):
 		"first_name": user_obj.first_name,
 		"phone": user_obj.mobile_no,
 		"username":user_obj.username,
+		"store_logo":store_logo,
+		"store_cover":store_cover,
+		"coordination":coordi,
 	}     
 
 
@@ -92,19 +102,19 @@ def get_user_permissions(user):
 def registration (*args , **kwargs):
 	files = frappe.request.files
 	data = frappe.form_dict
-	if float(data.is_store) == 1:
-		if  frappe.db.exists("User",{"phone":kwargs.get("phone"),"email":kwargs.get("email")}):
-			frappe.local.response['http_status_code'] = 200
-			frappe.local.response['message'] = _("Employee With Email And Phone Number Already Exist")
-			return
-		try:
+	if  frappe.db.exists("User",{"phone":kwargs.get("phone"),"email":kwargs.get("email")}):
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = _("Employee With Email And Phone Number Already Exist")
+		return
+	try:
+		new_user = create_user_if_not_exists(**kwargs)
+		login(email = new_user.email, pwd = kwargs.get('password'))
+
+		if float(data.is_store) == 1:
 			store_logo = download_image(files.get('store_logo'))
 			store_cover = download_image(files.get('store_cover'))
-
-			new_user = create_user_if_not_exists(**kwargs)
-			login(email = new_user.email, pwd = kwargs.get('password'))
 			store_obj = frappe.new_doc("Store")
-			store_obj.store_name = data.store_name
+			store_obj.store_name = data.full_name
 			store_obj.status = "Pending"
 			store_obj.user = new_user.name
 			store_obj.zone = data.zone
@@ -115,33 +125,50 @@ def registration (*args , **kwargs):
 			store_obj.insert(ignore_permissions=True)
 			store_obj.save(ignore_permissions=True)
 			frappe.db.commit()
-
-			contact = frappe.new_doc('Contact')
-			contact.first_name = store_obj.store_name
-			contact.append('phone_nos',{
-				"phone":kwargs.get('phone'),
-				"is_primary_mobile_no":1
-			})
-			contact.append('links',{
-				"link_doctype":"Store",
-				"link_name":store_obj.name,
-				"link_type":store_obj.store_name,
-			})
-			contact.append('email_ids',{
-				"email_id":kwargs.get("email"),
-				"is_primary":1
-			})
-			contact.insert(ignore_permissions=True)
-			contact.save(ignore_permissions=True)
+		else:
+			delivery_obj = frappe.new_doc("Delivery")
+			# delivery_obj.delivery_category = "gold"
+			delivery_obj.national_id = data.national_id
+			delivery_obj.delivery_name = data.full_name
+			delivery_obj.date_of_joining = nowdate() 
+			delivery_obj.status = "Pending"
+			delivery_obj.user = new_user.name
+			delivery_obj.insert(ignore_permissions=True)
+			delivery_obj.save(ignore_permissions=True)
 			frappe.db.commit()
-			
 
-		except Exception as er:
-				frappe.local.response['http_status_code'] = 401
-				frappe.local.response['message'] =str(er)
-				frappe.local.response['data'] = {"errors" : "Not Completed Data"}
-				return
-	
+		customer_obj = frappe.new_doc("Customer")
+		customer_obj.customer_name = store_obj.name if float(data.is_store) == 1 else delivery_obj.name
+		customer_obj.insert(ignore_permissions=True)
+		customer_obj.save(ignore_permissions=True)
+		frappe.db.commit()
+
+		contact = frappe.new_doc('Contact')
+		contact.first_name = store_obj.store_name
+		contact.append('phone_nos',{
+			"phone":kwargs.get('phone'),
+			"is_primary_mobile_no":1
+		})
+		contact.append('links',{
+			"link_doctype":"Store",
+			"link_name":store_obj.name,
+			"link_type":store_obj.store_name,
+		})
+		contact.append('email_ids',{
+			"email_id":kwargs.get("email"),
+			"is_primary":1
+		})
+		contact.insert(ignore_permissions=True)
+		contact.save(ignore_permissions=True)
+		frappe.db.commit()
+		
+
+	except Exception as er:
+			frappe.local.response['http_status_code'] = 401
+			frappe.local.response['message'] =str(er)
+			frappe.local.response['data'] = {"errors" : "Not Completed Data"}
+			return
+
 
 
 @frappe.whitelist(allow_guest=True)
