@@ -29,11 +29,7 @@ def search_delivary(cash , user = None ):
 			for delivery in deliveries:
 				if delivery['pointer_x'] is not None and delivery['pointer_y'] is not None:
 					del_coord = [float(delivery['pointer_x']), float(delivery['pointer_y'])]
-					
-					# temp['distance'] = float(haversine(coord1 = del_coord, coord2 = store_coord) or 0) * 1000
-					# temp['user'] = delivery.get('name')
-					# temp['name'] = frappe.get_value("Delivery",delivery.get('name'),'user')
-					# temp['coordination'] = del_coord
+
 					dist = float(haversine(coord1=del_coord, coord2=store_coord) or 0) * 1000
 					delivery_data = {
                         'distance': dist,
@@ -43,7 +39,9 @@ def search_delivary(cash , user = None ):
                     }
 					distance.append(delivery_data)
 			sorted_deliveries = sorted(distance, key=lambda x: x['distance'])
-			return sorted_deliveries
+			result = [entry for entry in sorted_deliveries if entry["distance"] < 2500]
+
+			return result
 		else:
 			frappe.local.response['http_status_code'] = 400
 			frappe.local.response['message'] = _(f"""Their are no store assign to this user: {user}""")
