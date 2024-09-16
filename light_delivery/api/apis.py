@@ -39,7 +39,7 @@ def search_delivary(cash , user = None ):
                     }
 					distance.append(delivery_data)
 			sorted_deliveries = sorted(distance, key=lambda x: x['distance'])
-			result = [entry for entry in sorted_deliveries if entry["distance"] < 2500]
+			result = [entry for entry in sorted_deliveries if entry["distance"] < 2000]
 
 			return result
 		else:
