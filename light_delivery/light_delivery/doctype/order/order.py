@@ -121,10 +121,14 @@ class Order(Document):
 					temp = total_distance * float(delivery_category.rate_of_km or 0) 
 					if delivery_category.minimum_rate > temp:
 						total = float(delivery_category.minimum_rate or 0)
-						total = total - (total / 100 * self.discount)
 					else:
 						total = temp
-						total = total - (total / 100 * self.discount)
+					total = total - (total / 100 * self.discount)
+					tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
+					tax_rate = float(tax or 0) / total
+					self.tax = tax_rate
+					total = total - tax_rate 
+
 					self.delivery_fees = total
 
 					
@@ -146,6 +150,7 @@ class Order(Document):
 					total = float(store.minimum_price or 0)
 				else:
 					total = temp
+				total = total - (total / 100 * self.discount)
 				self.store_fees = total
 
 				doc = frappe.new_doc("Transactions")

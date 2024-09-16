@@ -350,7 +350,7 @@ def get_order_state():
 			Refund
 			"""
 
-			# wait_for_delivery = frappe.db.count('Order', {'status': 'Pending','store':store})
+			pending = frappe.db.get_list('Order', {'status': 'Pending','store':store.name})
 			accepted = frappe.db.get_list('Order', {'status': 'Accepted','store':store.name})
 			on_the_way = frappe.db.get_list('Order', {'status': 'On The Way','store':store.name})
 			arrived_for_destination = frappe.db.get_list('Order', {'status': 'Arrived For Destination','store':store.name})
@@ -358,9 +358,10 @@ def get_order_state():
 			retunred = frappe.db.get_list('Order', {'status': 'Retunred','store':store.name})
 			delivery_cancel = frappe.db.get_list('Order', {'status': 'Delivery Cancel','store':store.name})
 			store_cancel = frappe.db.get_list('Order', {'status': 'Store Cancel','store':store.name})
-			all_orders = len(accepted ) + len(on_the_way ) + len(arrived_for_destination ) + len(delivered ) + len(retunred ) + len(delivery_cancel) + len( store_cancel)
+			all_orders = len(pending)+ len(accepted ) + len(on_the_way ) + len(arrived_for_destination ) + len(delivered ) + len(retunred ) + len(delivery_cancel) + len( store_cancel)
 
 			order_states = {
+					'pending':len(pending),
 					'accepted': len(accepted),
 					'on_the_way': len(on_the_way),
 					'arrived_for_destination': len(arrived_for_destination),

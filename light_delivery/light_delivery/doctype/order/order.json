@@ -22,13 +22,19 @@
   "order_image",
   "section_break_uelk",
   "road",
+  "column_break_wnxm",
   "road_map",
   "column_break_gwex",
   "duration",
   "total_distance",
-  "delivery_fees",
+  "section_break_hfbg",
   "store_fees",
   "discount",
+  "net_store_fees",
+  "column_break_mhwx",
+  "delivery_fees",
+  "tax",
+  "net_delivery_fees",
   "section_break_biyy",
   "order_log",
   "column_break_tpje",
@@ -186,11 +192,38 @@
    "fieldname": "differente_amount",
    "fieldtype": "Float",
    "label": "Differente Amount"
+  },
+  {
+   "fieldname": "column_break_wnxm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_hfbg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_mhwx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "net_store_fees",
+   "fieldtype": "Float",
+   "label": "Net Store Fees"
+  },
+  {
+   "fieldname": "tax",
+   "fieldtype": "Float",
+   "label": "Tax"
+  },
+  {
+   "fieldname": "net_delivery_fees",
+   "fieldtype": "Float",
+   "label": "Net Delivery Fees"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-10 17:14:47.419316",
+ "modified": "2024-09-16 09:16:24.040847",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",
