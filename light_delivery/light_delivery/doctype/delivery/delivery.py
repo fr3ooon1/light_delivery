@@ -35,8 +35,9 @@ class Delivery(Document):
 			frappe.db.commit()
 
 	def rate_delivery(self):
-		rate = float(self.total_rates or 0) / float(self.num_rates or 0)
-		self.valuation = rate
+		if self.total_retes:
+			rate = float(self.total_rates or 0) / float(self.num_rates or 0)
+			self.valuation = rate
 
 
 
