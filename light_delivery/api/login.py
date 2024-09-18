@@ -41,7 +41,7 @@ def login(*args,**kwargs):
 	store_logo = None
 	store_cover = None
 	coordi = []
-
+	api_secret = generate_keys(user=user_obj.name).get('api_secret')
 	res = {
 		"status_code": 200,
 		"message": "Authentication success",
@@ -70,7 +70,7 @@ def login(*args,**kwargs):
 			coordi = json.loads(store.store_location)["features"][0]["geometry"].get("coordinates", None)
 			res['coordination'] = coordi
 
-	api_secret = generate_keys(user=user_obj.name).get('api_secret')
+	
 	frappe.db.commit()
 
 	# frappe.local.response["message"] = {
