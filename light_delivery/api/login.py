@@ -12,6 +12,7 @@ def login(*args,**kwargs):
 	try:
 		password = kwargs.get('pwd')
 		filters = {}
+		res = {}
 
 		if kwargs.get("usr"):
 			filters = {"username":kwargs.get("usr")}
@@ -40,17 +41,8 @@ def login(*args,**kwargs):
 	store_logo = None
 	store_cover = None
 	coordi = []
-	if frappe.db.exists("Store",{"user":user_obj.name}):
-		store = frappe.get_doc("Store",{"user":user_obj.name})
-		store_logo = store.store_logo
-		store_cover = store.store_cover
-		if store.store_location:
-			coordi = json.loads(store.store_location)["features"][0]["geometry"].get("coordinates", None)
 
-	api_secret = generate_keys(user=user_obj.name).get('api_secret')
-	frappe.db.commit()
-
-	frappe.local.response["message"] = {
+	res = {
 		"status_code": 200,
 		"message": "Authentication success",
 		"sid": frappe.session.sid,
@@ -62,10 +54,42 @@ def login(*args,**kwargs):
 		"first_name": user_obj.first_name,
 		"phone": user_obj.mobile_no,
 		"username":user_obj.username,
-		"store_logo":store_logo,
-		"store_cover":store_cover,
-		"coordination":coordi,
-	}     
+		# "store_logo":store_logo,
+		# "store_cover":store_cover,
+		# "coordination":coordi,
+	}
+
+	if frappe.db.exists("Store",{"user":user_obj.name}):
+		store = frappe.get_doc("Store",{"user":user_obj.name})
+		# store_logo = store.store_logo
+		# store_cover = store.store_cover
+		res['store_logo'] = store.store_logo
+		res['store_cover'] = store.store_cover
+
+		if store.store_location:
+			coordi = json.loads(store.store_location)["features"][0]["geometry"].get("coordinates", None)
+			res['coordination'] = coordi
+
+	api_secret = generate_keys(user=user_obj.name).get('api_secret')
+	frappe.db.commit()
+
+	# frappe.local.response["message"] = {
+	# 	"status_code": 200,
+	# 	"message": "Authentication success",
+	# 	"sid": frappe.session.sid,
+	# 	"api_key": user_obj.api_key,
+	# 	"api_secret": api_secret,
+	# 	"Auth":f"""token {user_obj.api_key}:{api_secret}""",
+	# 	"username": user_obj.username,
+	# 	"email": user_obj.email,
+	# 	"first_name": user_obj.first_name,
+	# 	"phone": user_obj.mobile_no,
+	# 	"username":user_obj.username,
+	# 	"store_logo":store_logo,
+	# 	"store_cover":store_cover,
+	# 	"coordination":coordi,
+	# }     
+	frappe.local.response["message"] = res
 
 
 @frappe.whitelist()
