@@ -40,7 +40,7 @@ def request_history(*args, **kwargs):
 @frappe.whitelist(allow_guest=False)
 def delivery_request_status(*args , **kwargs):
 	user = frappe.session.user
-	delivery = frappe.get_value("Delivery", {"user": user}, ['name','delivery_category'])
+	delivery = frappe.get_value("Delivery", {"user": user}, ['name','delivery_category'],as_dict=1)
 
 	delivered = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Delivered"})
 	accepted = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Accepted"})
