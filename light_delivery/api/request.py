@@ -6,7 +6,7 @@ from light_delivery.api.apis import get_url
 from light_delivery.api.apis import download_image
 
 
-@frappe.whitelist(alow_guest=False)
+@frappe.whitelist(allow_guest=False)
 def get_current_request(*args , **kwargs):
 	user = frappe.session.user
 	delivery = frappe.get_value("Delivery" ,{"user":user},'name')
@@ -14,7 +14,7 @@ def get_current_request(*args , **kwargs):
 
 
 
-@frappe.whitelist(alow_guest=False)
+@frappe.whitelist(allow_guest=False)
 def request_history(*args , **kwargs):
 	user = frappe.session.user
 	delivery = frappe.get_value("Delivery" ,{"user":user},'name')
@@ -26,7 +26,7 @@ def request_history(*args , **kwargs):
 
 
 
-@frappe.whitelist(alow_guest=False)
+@frappe.whitelist(allow_guest=False)
 def delivery_request_status(*args , **kwargs):
 	pass
 
