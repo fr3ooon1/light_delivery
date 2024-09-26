@@ -40,17 +40,22 @@ def request_history(*args, **kwargs):
 @frappe.whitelist(allow_guest=False)
 def delivery_request_status(*args , **kwargs):
 	user = frappe.session.user
-	delivery = frappe.get_value("Delivery", {"user": user}, 'name')
+	delivery = frappe.get_value("Delivery", {"user": user}, ['name','delivery_category'])
 
-	delivered = frappe.get_list("Request Delivery" , {"delivery":delivery , "status":"Delivered"})
-	accepted = frappe.get_list("Request Delivery" , {"delivery":delivery , "status":"Accepted"})
-	delivery_cancel = frappe.get_list("Request Delivery" , {"delivery":delivery , "status":"Delivery Cancel"})
-	store_cacnel = frappe.get_list("Request Delivery" , {"delivery":delivery , "status":"Store Cancel"})
+	delivered = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Delivered"})
+	accepted = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Accepted"})
+	delivery_cancel = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Delivery Cancel"})
+	store_cacnel = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Store Cancel"})
+
+
+	price_list = frappe.get_value("Delivery Category" , delivery.get("delivery_category" , ['minimum_orders' , 'maximum_orders' , 'maximum_order_by_request' , 'minimum_rate' , 'rate_of_km']))
+
 	res = {
 		"delivered":len(delivered),
 		"accepted":len(accepted),
 		"delivery_cancel":len(delivery_cancel),
-		"store_cacnel":len(store_cacnel)
+		"store_cacnel":len(store_cacnel),
+		"price_list":price_list
 	}
 	return res
 
