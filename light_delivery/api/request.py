@@ -24,6 +24,8 @@ def request_history(*args , **kwargs):
 	for i in requests:
 		i['orders'] = i.get("order_request")
 
+	return requests
+
 
 
 @frappe.whitelist(allow_guest=False)
