@@ -10,7 +10,7 @@ from light_delivery.api.apis import download_image
 def get_current_request(*args , **kwargs):
 	user = frappe.session.user
 	delivery = frappe.get_value("Delivery" ,{"user":user},'name')
-	request = frappe.get_doc("Request Deliver",{"delivery":delivery , "status":["!=" , ""] })
+	request = frappe.get_doc("Request Delivery",{"delivery":delivery , "status":["!=" , ""] })
 
 
 
@@ -19,7 +19,7 @@ def request_history(*args , **kwargs):
 	user = frappe.session.user
 	delivery = frappe.get_value("Delivery" ,{"user":user},'name')
 
-	requests = frappe.get_list("Request Deliver" , {"delivery":delivery},[
+	requests = frappe.get_list("Request Delivery" , {"delivery":delivery},[
 		'number_of_order' , 'number_ostoref_order','status',"request_date" , "total as total_of_request"])
 	for i in requests:
 		i['orders'] = i.get("order_request")
