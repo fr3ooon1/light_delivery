@@ -38,7 +38,7 @@ def request_history(*args, **kwargs):
             "Order Request",
             filters={"parent": i.get("id")},  # Use 'id' instead of 'name'
             fields=['order']
-        )
+        ,ignore_permissions=True)
 
     return requests
 
