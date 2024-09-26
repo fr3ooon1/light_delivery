@@ -20,7 +20,7 @@ def request_history(*args , **kwargs):
 	delivery = frappe.get_value("Delivery" ,{"user":user},'name')
 
 	requests = frappe.get_list("Request Delivery" , {"delivery":delivery},[
-		'number_of_order' , 'number_ostoref_order','status',"request_date" , "total as total_of_request"])
+		'name as id','number_of_order' , 'number_ostoref_order','status',"request_date" , "total as total_of_request"])
 	for i in requests:
 		i['orders'] = i.get("order_request")
 
