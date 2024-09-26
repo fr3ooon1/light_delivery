@@ -15,17 +15,32 @@ def get_current_request(*args , **kwargs):
 
 
 @frappe.whitelist(allow_guest=False)
-def request_history(*args , **kwargs):
-	user = frappe.session.user
-	delivery = frappe.get_value("Delivery" ,{"user":user},'name')
+def request_history(*args, **kwargs):
+    user = frappe.session.user
 
-	requests = frappe.get_list("Request Delivery" , {"delivery":delivery},[
-		'name as id','number_of_order' , 'number_ostoref_order','status',"request_date" , "total as total_of_request"])
-	for i in requests:
-		i['orders'] = frappe.get_list("Order Request" , {"parent":i.get("name")} , ['order'])
+    # Fetch delivery name for the logged-in user
+    delivery = frappe.get_value("Delivery", {"user": user}, 'name')
 
-	return requests
+    if not delivery:
+        # If delivery is None, return an empty list or handle it as needed
+        return {"status": "error", "message": "No delivery found for the current user."}
 
+    # Fetch request deliveries for the found delivery
+    requests = frappe.get_list(
+        "Request Delivery",
+        filters={"delivery": delivery},
+        fields=['name as id', 'number_of_order', 'number_ostoref_order', 'status', 'request_date', 'total as total_of_request']
+    )
+
+    # Fetch associated orders for each request
+    for i in requests:
+        i['orders'] = frappe.get_list(
+            "Order Request",
+            filters={"parent": i.get("id")},  # Use 'id' instead of 'name'
+            fields=['order']
+        )
+
+    return requests
 
 
 @frappe.whitelist(allow_guest=False)
