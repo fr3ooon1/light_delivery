@@ -16,36 +16,43 @@ def get_current_request(*args , **kwargs):
 
 @frappe.whitelist(allow_guest=False)
 def request_history(*args, **kwargs):
-    user = frappe.session.user
+	user = frappe.session.user
+	delivery = frappe.get_value("Delivery", {"user": user}, 'name')
 
-    # Fetch delivery name for the logged-in user
-    delivery = frappe.get_value("Delivery", {"user": user}, 'name')
+	if not delivery:
+		return {"status": "error", "message": "No delivery found for the current user."}
 
-    if not delivery:
-        # If delivery is None, return an empty list or handle it as needed
-        return {"status": "error", "message": "No delivery found for the current user."}
+	requests = frappe.get_list(
+		"Request Delivery",
+		filters={"delivery": delivery},
+		fields=['name as id', 'number_of_order', 'number_ostoref_order', 'status', 'request_date', 'total as total_of_request']
+	)
+	for i in requests:
+		i['orders'] = frappe.get_list(
+			"Order Request",
+			filters={"parent": i.get("id")},
+			fields=['order']
+		,ignore_permissions=True)
 
-    # Fetch request deliveries for the found delivery
-    requests = frappe.get_list(
-        "Request Delivery",
-        filters={"delivery": delivery},
-        fields=['name as id', 'number_of_order', 'number_ostoref_order', 'status', 'request_date', 'total as total_of_request']
-    )
-
-    # Fetch associated orders for each request
-    for i in requests:
-        i['orders'] = frappe.get_list(
-            "Order Request",
-            filters={"parent": i.get("id")},  # Use 'id' instead of 'name'
-            fields=['order']
-        ,ignore_permissions=True)
-
-    return requests
+	return requests
 
 
 @frappe.whitelist(allow_guest=False)
 def delivery_request_status(*args , **kwargs):
-	pass
+	user = frappe.session.user
+	delivery = frappe.get_value("Delivery", {"user": user}, 'name')
+
+	delivered = frappe.get_list("Request Delivery" , {"delivery":delivery , "status":"Delivered"})
+	accepted = frappe.get_list("Request Delivery" , {"delivery":delivery , "status":"Accepted"})
+	delivery_cancel = frappe.get_list("Request Delivery" , {"delivery":delivery , "status":"Delivery Cancel"})
+	store_cacnel = frappe.get_list("Request Delivery" , {"delivery":delivery , "status":"Store Cancel"})
+	res = {
+		"delivered":len(delivered),
+		"accepted":len(accepted),
+		"delivery_cancel":len(delivery_cancel),
+		"store_cacnel":len(store_cacnel)
+	}
+	return res
 
 @frappe.whitelist(allow_guest=False)
 def change_request_status(*args , **kwargs):
