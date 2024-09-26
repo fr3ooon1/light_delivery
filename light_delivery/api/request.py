@@ -6,6 +6,30 @@ from light_delivery.api.apis import get_url
 from light_delivery.api.apis import download_image
 
 
+@frappe.whitelist(alow_guest=False)
+def get_current_request(*args , **kwargs):
+	user = frappe.session.user
+	delivery = frappe.get_value("Delivery" ,{"user":user},'name')
+	request = frappe.get_doc("Request Deliver",{"delivery":delivery , "status":["!=" , ""] })
+
+
+
+@frappe.whitelist(alow_guest=False)
+def request_history(*args , **kwargs):
+	user = frappe.session.user
+	delivery = frappe.get_value("Delivery" ,{"user":user},'name')
+
+	requests = frappe.get_list("Request Deliver" , {"delivery":delivery},[
+		'number_of_order' , 'number_ostoref_order','status',"request_date" , "total as total_of_request"])
+	for i in requests:
+		i['orders'] = i.get("order_request")
+
+
+
+@frappe.whitelist(alow_guest=False)
+def delivery_request_status(*args , **kwargs):
+	pass
+
 @frappe.whitelist(allow_guest=False)
 def change_request_status(*args , **kwargs):
 	status = kwargs.get("status")

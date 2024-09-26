@@ -342,14 +342,6 @@ def get_order_state():
 			sql = frappe.db.sql(f"""select store_name ,minimum_price , rate_of_km from `tabStore` where user = '{user}' """, as_dict = 1)
 			store_priceLise = sql[0] if sql else 0
 			
-			"""
-			Wait for Delivery
-			Confirmed
-			On The Way
-			Delivered
-			Refund
-			"""
-
 			pending = frappe.db.get_list('Order', {'status': 'Pending','store':store.name})
 			accepted = frappe.db.get_list('Order', {'status': 'Accepted','store':store.name})
 			on_the_way = frappe.db.get_list('Order', {'status': 'On The Way','store':store.name})
@@ -408,10 +400,10 @@ def get_order_state():
 				'store_pending': store_pending,
 				'store_active': store_active,
 				'store_inactive': store_inactive,
-				'all_stores': all_stores
+				# 'all_stores': all_stores
 			}
 
-
+			
 			frappe.local.response['http_status_code'] = 200
 			return {
 				'status_code': 200,
