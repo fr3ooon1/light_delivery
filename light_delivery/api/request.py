@@ -41,23 +41,37 @@ def request_history(*args, **kwargs):
 def delivery_request_status(*args , **kwargs):
 	user = frappe.session.user
 	delivery = frappe.get_value("Delivery", {"user": user}, ['name','delivery_category'],as_dict=1)
-
-	delivered = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Delivered"})
-	accepted = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Accepted"})
-	delivery_cancel = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Delivery Cancel"})
-	store_cacnel = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Store Cancel"})
+	res = {}
+	
+	if delivery:
 
 
-	price_list = frappe.get_value("Delivery Category" , delivery.get("delivery_category"), ['minimum_orders' , 'maximum_orders' , 'maximum_order_by_request' , 'minimum_rate' , 'rate_of_km'],as_dict=1)
+		delivered = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Delivered"})
+		accepted = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Accepted"})
+		delivery_cancel = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Delivery Cancel"})
+		store_cacnel = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Store Cancel"})
 
-	res = {
-		"delivered":len(delivered),
-		"accepted":len(accepted),
-		"delivery_cancel":len(delivery_cancel),
-		"store_cacnel":len(store_cacnel),
-		"price_list":price_list
-	}
-	return res
+
+		price_list = frappe.get_value("Delivery Category" , delivery.get("delivery_category"), ['minimum_orders' , 'maximum_orders' , 'maximum_order_by_request' , 'minimum_rate' , 'rate_of_km'],as_dict=1)
+
+		res = {
+			"delivered":len(delivered),
+			"accepted":len(accepted),
+			"delivery_cancel":len(delivery_cancel),
+			"store_cacnel":len(store_cacnel),
+			"price_list":price_list
+		}
+		return res
+	else:
+		res = {
+			"delivered":0,
+			"accepted":0,
+			"delivery_cancel":0,
+			"store_cacnel":0,
+			"price_list":0
+		}
+		return res
+
 
 @frappe.whitelist(allow_guest=False)
 def change_request_status(*args , **kwargs):
