@@ -41,7 +41,6 @@ def request_history(*args, **kwargs):
 def delivery_request_status(*args , **kwargs):
 	user = frappe.session.user
 	delivery = frappe.get_value("Delivery", {"user": user}, ['name','delivery_category'],as_dict=1)
-	return delivery
 	res = {}
 	
 	if delivery:
