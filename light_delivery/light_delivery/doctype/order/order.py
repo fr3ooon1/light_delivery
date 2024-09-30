@@ -32,7 +32,7 @@ class Order(Document):
 		})
 
 	def get_deduction(self):
-		pass
+		return True
 		minutes = float(self.calculate_duration())
 		deduction_obj = frappe.get_doc("Deductions")
 		
