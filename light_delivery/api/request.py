@@ -234,7 +234,7 @@ def get_request_details_for_del(*args, **kwargs):
         fields=["name", "number_of_order", "total", "store"],
         limit=1
     )
-    
+    return request
     if request:
         request_name = request[0].get("name")
         
