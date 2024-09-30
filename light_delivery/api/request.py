@@ -241,7 +241,7 @@ def get_request_details_for_del(*args, **kwargs):
 				SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order
 				FROM `tabOrder` as o
 				JOIN `tabOrder Request` as orq ON orq.name = o.name
-				JOIN `tabRequest Delivery` as rd ON rd.parent = orq.name
+				JOIN `tabRequest Delivery` as rd ON rd.name = orq.parent
 				WHERE rd.name = '{request_name}';
 			""", as_dict=1)
 
