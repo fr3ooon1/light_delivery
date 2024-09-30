@@ -54,17 +54,12 @@ def login(*args,**kwargs):
 		"first_name": user_obj.first_name,
 		"phone": user_obj.mobile_no,
 		"username":user_obj.username,
-		# "store_logo":store_logo,
-		# "store_cover":store_cover,
-		# "coordination":coordi,
 	}
 
 	if frappe.db.exists("Store",{"user":user_obj.name}):
 		store = frappe.get_doc("Store",{"user":user_obj.name})
-		# store_logo = store.store_logo
-		# store_cover = store.store_cover
-		res['store_logo'] = store.store_logo
-		res['store_cover'] = store.store_cover
+		res['store_logo'] = frappe.get_value("Store",{"user":frappe.session.user},"store_logo")
+		res['store_cover'] = frappe.get_value("Store",{"user":frappe.session.user},"store_cover")
 	
 	if frappe.db.exists("Delivery",{"user":frappe.session.user}):
 		res['cash'] =frappe.get_value("Delivery",{"user":frappe.session.user},"cash") 
