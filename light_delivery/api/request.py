@@ -223,8 +223,8 @@ def get_request_details_for_del(*args, **kwargs):
 	delivery = frappe.get_value("Delivery", {"user": frappe.session.user}, 'name')
 	
 	if not delivery:
-		return {"message": "No delivery found for the current user."}
-	
+		frappe.local.response['http_status_code'] = 300
+		frappe.local.response['message'] = _("No delivery found for the current user.")	
 
 	request = frappe.get_all("Request Delivery", 
 		filters={
@@ -238,19 +238,23 @@ def get_request_details_for_del(*args, **kwargs):
 		request_name = request[0].get("name")
 		
 		order = frappe.db.sql(f"""
-    SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order
-    FROM `tabOrder` as o
-    JOIN `tabRequest Delivery` as rd ON rd.name = '{request_name}'
-    JOIN `tabOrder Request` as orq ON orq.parent = rd.name AND orq.order = o.name
-    WHERE rd.name = '{request_name}';
-""", as_dict=1)
+			SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order
+			FROM `tabOrder` as o
+			JOIN `tabRequest Delivery` as rd ON rd.name = '{request_name}'
+			JOIN `tabOrder Request` as orq ON orq.parent = rd.name AND orq.order = o.name
+			WHERE rd.name = '{request_name}';
+		""", as_dict=1)
 
 
 			
 		
 		request[0]['order'] = order
 	
-	return request if request else {"message": "No valid request found."}
+		frappe.local.response['http_status_code'] = 200
+		return request[0] if request else {"message": "No valid request found."}
+	else:
+		frappe.local.response['http_status_code'] = 300
+		frappe.local.response['message'] = _("No request for this delivery.")	
 
 
 		
