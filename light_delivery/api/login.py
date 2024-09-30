@@ -60,15 +60,16 @@ def login(*args,**kwargs):
 		store = frappe.get_doc("Store",{"user":user_obj.name})
 		res['store_logo'] = frappe.get_value("Store",{"user":frappe.session.user},"store_logo")
 		res['store_cover'] = frappe.get_value("Store",{"user":frappe.session.user},"store_cover")
+		if store.store_location:
+			coordi = json.loads(store.store_location)["features"][0]["geometry"].get("coordinates", None)
+			res['coordination'] = coordi
 	
 	if frappe.db.exists("Delivery",{"user":frappe.session.user}):
 		res['cash'] =frappe.get_value("Delivery",{"user":frappe.session.user},"cash") 
 		res["status"]=  frappe.get_value("Delivery",{"user":frappe.session.user},"status") 
 
 
-		if store.store_location:
-			coordi = json.loads(store.store_location)["features"][0]["geometry"].get("coordinates", None)
-			res['coordination'] = coordi
+		
 
 	
 	frappe.db.commit()
