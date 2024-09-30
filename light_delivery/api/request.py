@@ -151,38 +151,38 @@ def cancel_request(*args,**kwargs):
 @frappe.whitelist(allow_guest=False)
 def change_delivery_status(*args, **kwargs):
 
-    delivery = frappe.db.exists("Delivery", {"user": frappe.session.user})
-    if not delivery:
-        frappe.local.response['http_status_code'] = 404
-        frappe.local.response['message'] = _("No delivery found for the current user.")
-        return
+	delivery = frappe.db.exists("Delivery", {"user": frappe.session.user})
+	if not delivery:
+		frappe.local.response['http_status_code'] = 404
+		frappe.local.response['message'] = _("No delivery found for the current user.")
+		return
 
-    delivery = frappe.get_doc("Delivery", {"user": frappe.session.user})
-    new_status = kwargs.get("status")
+	delivery = frappe.get_doc("Delivery", {"user": frappe.session.user})
+	new_status = kwargs.get("status")
 
-    if delivery.status == "Inorder":
-        frappe.local.response['http_status_code'] = 400
-        frappe.local.response['message'] = _("Cannot change status while processing a delivery order.")
-        return
+	if delivery.status == "Inorder":
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = _("Cannot change status while processing a delivery order.")
+		return
 
-    if new_status == "Online" and delivery.status == "Offline":
-        delivery.status = "Avaliable"
-        delivery.cash = float(kwargs.get("cash", 0))
-        delivery.save(ignore_permissions=True)
-        frappe.db.commit()
-        frappe.local.response['http_status_code'] = 200
-        frappe.local.response['message'] = _("The delivery status has been changed to Available.")
+	if new_status == "Online" and delivery.status == "Offline":
+		delivery.status = "Avaliable"
+		delivery.cash = float(kwargs.get("cash", 0))
+		delivery.save(ignore_permissions=True)
+		frappe.db.commit()
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = _("The delivery status has been changed to Available.")
 
-    elif new_status == "Offline" and delivery.status == "Avaliable":
-        delivery.status = "Offline"
-        delivery.save(ignore_permissions=True)
-        frappe.db.commit()
-        frappe.local.response['http_status_code'] = 200
-        frappe.local.response['message'] = _("The delivery status has been changed to Offline.")
+	elif new_status == "Offline" and delivery.status == "Avaliable":
+		delivery.status = "Offline"
+		delivery.save(ignore_permissions=True)
+		frappe.db.commit()
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = _("The delivery status has been changed to Offline.")
 
-    else:
-        frappe.local.response['http_status_code'] = 400
-        frappe.local.response['message'] = _("Invalid status transition or already in the desired state.")
+	else:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = _("Invalid status transition or already in the desired state.")
 
 	
 
@@ -191,7 +191,7 @@ def change_delivery_status(*args, **kwargs):
 # @frappe.whitelist(allow_guest=True)
 # def get_request_details_for_del(*args, **kwargs):
 #     delivery = frappe.get_value("Delivery", {"user": frappe.session.user}, 'name')
-    
+	
 #     if delivery:
 #         request = frappe.db.sql(f"""
 #             SELECT rd.name, rd.number_of_order, rd.total, rd.store
@@ -199,7 +199,7 @@ def change_delivery_status(*args, **kwargs):
 #             WHERE rd.delivery = '{delivery}' 
 #             AND rd.status NOT IN ('Pending', 'Time Out', 'Delivery Cancel', 'Delivered', 'Store Cancel', 'Cancel');
 #         """, as_dict=1)
-        
+		
 #         if request and len(request) > 0:
 #             request_name = request[0].get("name")
 
@@ -214,42 +214,42 @@ def change_delivery_status(*args, **kwargs):
 #             """, as_dict=1)
 
 #             request[0]['order'] = order
-        
+		
 #         return request
 
 @frappe.whitelist(allow_guest=True)
 def get_request_details_for_del(*args, **kwargs):
-    # Get the current user's delivery
-    delivery = frappe.get_value("Delivery", {"user": frappe.session.user}, 'name')
-    
-    if not delivery:
-        return {"message": "No delivery found for the current user."}
-    
-    # Fetch Request Delivery details
-    request = frappe.get_all("Request Delivery", 
-        filters={
-            "delivery": delivery,
-            "status": ["not in", ['Pending', 'Time Out', 'Delivery Cancel', 'Delivered', 'Store Cancel', 'Cancel']]
-        },
-        fields=["name", "number_of_order", "total", "store"],
-        limit=1
-    )
-    return request
-    if request:
-        request_name = request[0].get("name")
-        
-        # Fetch Order details related to the Request Delivery
-        orders = frappe.db.get_all("Order", 
-            filters={
-                "parent": request_name
-            },
-            fields=["name", "full_name", "order_type", "address", "zone_address", "invoice", "total_order"],
-            as_list=False
-        )
-        
-        request[0]['order'] = orders
-    
-    return request if request else {"message": "No valid request found."}
+
+	delivery = frappe.get_value("Delivery", {"user": frappe.session.user}, 'name')
+	
+	if not delivery:
+		return {"message": "No delivery found for the current user."}
+	
+
+	request = frappe.get_all("Request Delivery", 
+		filters={
+			"delivery": delivery,
+			"status": ["not in", ['Pending', 'Time Out', 'Delivery Cancel', 'Delivered', 'Store Cancel', 'Cancel']]
+		},
+		fields=["name", "number_of_order", "total", "store"],
+		limit=1
+	)
+	if request:
+		request_name = request[0].get("name")
+		
+		order = frappe.db.sql(f"""
+				SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order
+				FROM `tabOrder` as o
+				JOIN `tabOrder Request` as orq ON orq.name = o.name
+				JOIN `tabDelivery Request` as rd ON rd.parent = orq.name
+				WHERE rd.name = '{request_name}';
+			""", as_dict=1)
+
+			
+		
+		request[0]['order'] = order
+	
+	return request if request else {"message": "No valid request found."}
 
 
 		
