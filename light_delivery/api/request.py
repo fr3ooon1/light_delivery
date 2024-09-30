@@ -156,7 +156,7 @@ def change_delivery_status(*args , **kwargs):
 			frappe.local.response['http_status_code'] = 300
 			frappe.local.response['message'] = _(f"""Cannot change status during delivery order""")
 		
-		elif kwargs.status == "Avaliable" and delivery.status == "Offline":
+		elif kwargs.status == "Online" and delivery.status == "Offline":
 			delivery.status == "Avaliable"
 			delivery.cash = kwargs.get("cash")
 			frappe.local.response['http_status_code'] = 200
@@ -172,9 +172,17 @@ def change_delivery_status(*args , **kwargs):
 		else:
 			frappe.local.response['http_status_code'] = 300
 			frappe.local.response['message'] = _(f"""Cannot change status during delivery order""")
+
+		delivery.save(ignore_permissions=True)
+		frappe.db.commit()
+
+		
 	else:
 		frappe.local.response['http_status_code'] = 300
 		frappe.local.response['message'] = _(f"""Their are no delivery like this names""")
+
+
+	
 
 
 		
