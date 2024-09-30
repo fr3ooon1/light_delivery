@@ -188,34 +188,68 @@ def change_delivery_status(*args, **kwargs):
 
 
 		
+# @frappe.whitelist(allow_guest=True)
+# def get_request_details_for_del(*args, **kwargs):
+#     delivery = frappe.get_value("Delivery", {"user": frappe.session.user}, 'name')
+    
+#     if delivery:
+#         request = frappe.db.sql(f"""
+#             SELECT rd.name, rd.number_of_order, rd.total, rd.store
+#             FROM `tabRequest Delivery` rd
+#             WHERE rd.delivery = '{delivery}' 
+#             AND rd.status NOT IN ('Pending', 'Time Out', 'Delivery Cancel', 'Delivered', 'Store Cancel', 'Cancel');
+#         """, as_dict=1)
+        
+#         if request and len(request) > 0:
+#             request_name = request[0].get("name")
+
+#             order = frappe.db.sql(f"""
+#                 SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order
+#                 FROM `tabOrder` o
+# 				JOIN `tabOrder Request` or
+# 				ON o.name = or.order
+# 				JOIN `tabRequest Delivery` rd
+# 				ON rd.name = or.parent
+#                 WHERE rd.name = '{request_name}';
+#             """, as_dict=1)
+
+#             request[0]['order'] = order
+        
+#         return request
+
 @frappe.whitelist(allow_guest=True)
 def get_request_details_for_del(*args, **kwargs):
+    # Get the current user's delivery
     delivery = frappe.get_value("Delivery", {"user": frappe.session.user}, 'name')
     
-    if delivery:
-        request = frappe.db.sql(f"""
-            SELECT rd.name, rd.number_of_order, rd.total, rd.store
-            FROM `tabRequest Delivery` rd
-            WHERE rd.delivery = '{delivery}' 
-            AND rd.status NOT IN ('Pending', 'Time Out', 'Delivery Cancel', 'Delivered', 'Store Cancel', 'Cancel');
-        """, as_dict=1)
+    if not delivery:
+        return {"message": "No delivery found for the current user."}
+    
+    # Fetch Request Delivery details
+    request = frappe.get_all("Request Delivery", 
+        filters={
+            "delivery": delivery,
+            "status": ["not in", ['Pending', 'Time Out', 'Delivery Cancel', 'Delivered', 'Store Cancel', 'Cancel']]
+        },
+        fields=["name", "number_of_order", "total", "store"],
+        limit=1
+    )
+    
+    if request:
+        request_name = request[0].get("name")
         
-        if request and len(request) > 0:
-            request_name = request[0].get("name")
-
-            order = frappe.db.sql(f"""
-                SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order
-                FROM `tabOrder` o
-				JOIN `tabOrder Request` or
-				ON o.name = or.order
-				JOIN `tabRequest Delivery` rd
-				ON rd.name = or.parent
-                WHERE rd.name = '{request_name}';
-            """, as_dict=1)
-
-            request[0]['order'] = order
+        # Fetch Order details related to the Request Delivery
+        orders = frappe.db.get_all("Order", 
+            filters={
+                "parent": request_name
+            },
+            fields=["name", "full_name", "order_type", "address", "zone_address", "invoice", "total_order"],
+            as_list=False
+        )
         
-        return request
+        request[0]['order'] = orders
+    
+    return request if request else {"message": "No valid request found."}
 
 
 		
