@@ -54,8 +54,6 @@ def login(*args,**kwargs):
 		"first_name": user_obj.first_name,
 		"phone": user_obj.mobile_no,
 		"username":user_obj.username,
-		"cash" : frappe.get_value("Delivery",{"user":frappe.session.user},"cash") if frappe.db.exists("Delivery",{"user":frappe.session.user}) else "this is a store",
-		"status": frappe.get_value("Delivery",{"user":frappe.session.user},"status") if frappe.db.exists("Delivery",{"user":frappe.session.user}) else "this is a store",
 		# "store_logo":store_logo,
 		# "store_cover":store_cover,
 		# "coordination":coordi,
@@ -67,6 +65,11 @@ def login(*args,**kwargs):
 		# store_cover = store.store_cover
 		res['store_logo'] = store.store_logo
 		res['store_cover'] = store.store_cover
+	
+	if frappe.db.exists("Delivery",{"user":frappe.session.user}):
+		res['cash'] =frappe.get_value("Delivery",{"user":frappe.session.user},"cash") 
+		res["status"]=  frappe.get_value("Delivery",{"user":frappe.session.user},"status") 
+
 
 		if store.store_location:
 			coordi = json.loads(store.store_location)["features"][0]["geometry"].get("coordinates", None)
