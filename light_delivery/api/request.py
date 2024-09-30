@@ -189,10 +189,39 @@ def change_delivery_status(*args, **kwargs):
 
 		
 @frappe.whitelist(allow_guest=True)
-def get_request_details_for_del(*args,**kwargs):
-	delivery = frappe.get_value("Delivery",{"user":frappe.user.session},'name')
-	if delivery:
-		# request = 
-		pass
+def get_request_details_for_del(*args, **kwargs):
+    # Fetch delivery linked to the current session user
+    delivery = frappe.get_value("Delivery", {"user": frappe.session.user}, 'name')
+    
+    if delivery:
+        # First query to fetch request delivery details
+        request = frappe.db.sql(f"""
+            SELECT rd.name, rd.number_of_order, rd.total, rd.store
+            FROM `tabRequest Delivery` rd
+            WHERE rd.delivery = '{delivery}' 
+            AND rd.status NOT IN ('Pending', 'Time Out', 'Delivery Cancel', 'Delivered', 'Store Cancel', 'Cancel');
+        """, as_dict=1)
+        
+        # Ensure request contains data
+        if request and len(request) > 0:
+            # Fetching 'name' from the first request's result
+            request_name = request[0].get("name")
+
+            # Second query to fetch order details based on the first request
+            order = frappe.db.sql(f"""
+                SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order
+                FROM `tabOrder` o
+                JOIN `tabRequest Delivery` rd ON rd.name = o.request_delivery
+                WHERE rd.name = '{request_name}';
+            """, as_dict=1)
+
+            # Attach the order data to the request
+            request[0]['order'] = order
+        
+        return request
+
+
+		
+		
 
 
