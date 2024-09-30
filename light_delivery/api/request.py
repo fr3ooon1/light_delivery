@@ -188,6 +188,11 @@ def change_delivery_status(*args, **kwargs):
 
 
 		
-		
+@frappe.whitelist(allow_guest=True)
+def get_request_details_for_del(*args,**kwargs):
+	delivery = frappe.get_value("Delivery",{"user":frappe.user.session},'name')
+	if delivery:
+		# request = 
+		pass
 
 
