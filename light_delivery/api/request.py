@@ -167,7 +167,7 @@ def change_delivery_status(*args, **kwargs):
 
     if new_status == "Online" and delivery.status == "Offline":
         delivery.status = "Avaliable"
-        delivery.cash = kwargs.get("cash", 0)
+        delivery.cash = float(kwargs.get("cash", 0))
         delivery.save(ignore_permissions=True)
         frappe.db.commit()
         frappe.local.response['http_status_code'] = 200
