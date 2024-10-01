@@ -232,7 +232,8 @@ def get_request_details_for_del(*args, **kwargs):
 									'Order Image',
 									filters={'parent': order[0].get('name')},
 									fields=['image'],
-									pluck='image'
+									pluck='image',
+									ignore_permissions=True
 								)
 
 		order[0]['images_of_orders']=images_of_orders
