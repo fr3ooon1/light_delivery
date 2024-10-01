@@ -181,41 +181,8 @@ def change_delivery_status(*args, **kwargs):
 		frappe.local.response['message'] = _("The delivery status has been changed to Offline.")
 
 	else:
-		frappe.local.response['http_status_code'] = 400
-		frappe.local.response['message'] = _("Invalid status transition or already in the desired state.")
-
-	
-
-
-		
-# @frappe.whitelist(allow_guest=True)
-# def get_request_details_for_del(*args, **kwargs):
-#     delivery = frappe.get_value("Delivery", {"user": frappe.session.user}, 'name')
-	
-#     if delivery:
-#         request = frappe.db.sql(f"""
-#             SELECT rd.name, rd.number_of_order, rd.total, rd.store
-#             FROM `tabRequest Delivery` rd
-#             WHERE rd.delivery = '{delivery}' 
-#             AND rd.status NOT IN ('Pending', 'Time Out', 'Delivery Cancel', 'Delivered', 'Store Cancel', 'Cancel');
-#         """, as_dict=1)
-		
-#         if request and len(request) > 0:
-#             request_name = request[0].get("name")
-
-#             order = frappe.db.sql(f"""
-#                 SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order
-#                 FROM `tabOrder` o
-# 				JOIN `tabOrder Request` or
-# 				ON o.name = or.order
-# 				JOIN `tabRequest Delivery` rd
-# 				ON rd.name = or.parent
-#                 WHERE rd.name = '{request_name}';
-#             """, as_dict=1)
-
-#             request[0]['order'] = order
-		
-#         return request
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = _("The Delivery is already in this status.")
 
 @frappe.whitelist(allow_guest=True)
 def get_request_details_for_del(*args, **kwargs):

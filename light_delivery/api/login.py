@@ -73,23 +73,6 @@ def login(*args,**kwargs):
 
 	
 	frappe.db.commit()
-
-	# frappe.local.response["message"] = {
-	# 	"status_code": 200,
-	# 	"message": "Authentication success",
-	# 	"sid": frappe.session.sid,
-	# 	"api_key": user_obj.api_key,
-	# 	"api_secret": api_secret,
-	# 	"Auth":f"""token {user_obj.api_key}:{api_secret}""",
-	# 	"username": user_obj.username,
-	# 	"email": user_obj.email,
-	# 	"first_name": user_obj.first_name,
-	# 	"phone": user_obj.mobile_no,
-	# 	"username":user_obj.username,
-	# 	"store_logo":store_logo,
-	# 	"store_cover":store_cover,
-	# 	"coordination":coordi,
-	# }     
 	frappe.local.response["message"] = res
 
 
