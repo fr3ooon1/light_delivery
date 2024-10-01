@@ -204,9 +204,9 @@ def get_request_details_for_del(*args, **kwargs):
 	)
 	if request:
 		request_name = request[0].get("name")
-		store = request_name[0].get("store")
-		# coordi = frappe.get_value("Store",{"user":store},"store_location")["features"][0]["geometry"].get("coordinates", None)
-		request[0]['coordi'] = json.loads(frappe.get_value("Store",{"user":store},"store_location")["features"][0]["geometry"])
+		store = request[0].get("store")
+
+		request[0]['coordi'] = json.loads(frappe.get_value("Store",{"user":store},"store_location")["features"][0]["geometry"]).get("coordinates", None)
 		
 		order = frappe.db.sql(f"""
 			SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order
