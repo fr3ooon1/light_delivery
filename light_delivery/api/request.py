@@ -4,6 +4,7 @@ from frappe.utils import nowdate , get_first_day_of_week , get_first_day , getda
 from datetime import datetime
 from light_delivery.api.apis import get_url
 from light_delivery.api.apis import download_image
+import json
 
 
 @frappe.whitelist(allow_guest=False)
@@ -205,7 +206,7 @@ def get_request_details_for_del(*args, **kwargs):
 		request_name = request[0].get("name")
 		store = request_name[0].get("store")
 		# coordi = frappe.get_value("Store",{"user":store},"store_location")["features"][0]["geometry"].get("coordinates", None)
-		request[0]['coordi'] = frappe.get_value("Store",{"user":store},"store_location")["features"][0]["geometry"].get("coordinates", None)
+		request[0]['coordi'] = json.loads(frappe.get_value("Store",{"user":store},"store_location")["features"][0]["geometry"]).get("coordinates", None)
 		
 		order = frappe.db.sql(f"""
 			SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order
