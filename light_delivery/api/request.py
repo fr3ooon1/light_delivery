@@ -212,7 +212,7 @@ def get_request_details_for_del(*args, **kwargs):
 			request[0]['coordi'] = json.loads(coordi).get("features")[0].get("geometry").get("coordinates" , None) 
 		
 		order = frappe.db.sql(f"""
-			SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order
+			SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order , o.phone_number
 			FROM `tabOrder` as o
 			JOIN `tabRequest Delivery` as rd ON rd.name = '{request_name}'
 			JOIN `tabOrder Request` as orq ON orq.parent = rd.name AND orq.order = o.name
