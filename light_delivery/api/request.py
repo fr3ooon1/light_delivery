@@ -221,7 +221,14 @@ def get_request_details_for_del(*args, **kwargs):
 			WHERE rd.name = '{request_name}';
 		""", as_dict=1)
 
-
+		images_of_orders = frappe.db.sql(f"""
+		SELECT oi.image
+		FROM `tabOrder Image` oi
+		JOIN `tabOrder` o
+		ON  o.name = oi.parent
+		WHERE o.name = '{order[0].get("name")}'
+		""",as_dict=1)
+		order[0]['images_of_orders']=images_of_orders
 			
 		
 		request[0]['order'] = order
