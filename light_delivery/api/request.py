@@ -227,7 +227,7 @@ def get_request_details_for_del(*args, **kwargs):
 		JOIN `tabOrder` o
 		ON  o.name = oi.parent
 		WHERE o.name = '{order[0].get("name")}'
-		""",as_dict=1)
+		""")
 		order[0]['images_of_orders']=images_of_orders
 			
 		
