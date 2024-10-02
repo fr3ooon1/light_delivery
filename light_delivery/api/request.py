@@ -222,7 +222,7 @@ def get_request_details_for_del(*args, **kwargs):
 			JOIN `tabRequest Delivery` as rd ON rd.name = '{request_name}'
 			JOIN `tabOrder Request` as orq ON orq.parent = rd.name AND orq.order = o.name
 			WHERE rd.name = '{request_name}'
-			AND o.status NOT IN ['Pending','Store Cancel','Delivered','Delivery Cancel','Cancel'] ;
+			AND o.status NOT IN ('Pending','Store Cancel','Delivered','Delivery Cancel','Cancel') ;
 		""", as_dict=1)
 
 		images_of_orders = frappe.get_list(
