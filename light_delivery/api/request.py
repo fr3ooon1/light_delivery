@@ -233,7 +233,7 @@ def get_request_details_for_del(*args, **kwargs):
 									ignore_permissions=True
 								)
 
-		order[0]['images_of_orders'] = images_of_orders or []
+		order[0]['images_of_orders'] = images_of_orders
 			
 		
 		request[0]['order'] = order
