@@ -199,7 +199,7 @@ def get_request_details_for_del(*args, **kwargs):
 			"delivery": delivery,
 			"status": ["not in", ['Pending', 'Time Out', 'Delivery Cancel', 'Delivered', 'Store Cancel', 'Cancel']]
 		},
-		fields=["name", "number_of_order", "total", "store" , "status"],
+		fields=["name", "number_of_order", "total", "store" , "status" ,],
 		limit=1
 	)
 	if request:
@@ -221,7 +221,8 @@ def get_request_details_for_del(*args, **kwargs):
 			FROM `tabOrder` as o
 			JOIN `tabRequest Delivery` as rd ON rd.name = '{request_name}'
 			JOIN `tabOrder Request` as orq ON orq.parent = rd.name AND orq.order = o.name
-			WHERE rd.name = '{request_name}';
+			WHERE rd.name = '{request_name}'
+			AND o.status NOT IN ['Pending','Store Cancel','Delivered','Delivery Cancel','Cancel'] ;
 		""", as_dict=1)
 
 		images_of_orders = frappe.get_list(
