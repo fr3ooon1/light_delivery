@@ -199,7 +199,7 @@ def get_request_details_for_del(*args, **kwargs):
 			"delivery": delivery,
 			"status": ["not in", ['Pending', 'Time Out', 'Delivery Cancel', 'Delivered', 'Store Cancel', 'Cancel']]
 		},
-		fields=["name", "number_of_order", "total", "store"],
+		fields=["name", "number_of_order", "total", "store" , "status"],
 		limit=1
 	)
 	if request:
@@ -211,23 +211,19 @@ def get_request_details_for_del(*args, **kwargs):
 
 			request[0]['coordi'] = json.loads(store.store_location).get("features")[0].get("geometry").get("coordinates" , None) 
 			request[0]['phone_number'] = frappe.get_value("User" , store.user , 'mobile_no')
+			request[0]['phone_number'] = store.address
+
+
 
 		
 		order = frappe.db.sql(f"""
-			SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order , o.phone_number
+			SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order , o.phone_number , o.status
 			FROM `tabOrder` as o
 			JOIN `tabRequest Delivery` as rd ON rd.name = '{request_name}'
 			JOIN `tabOrder Request` as orq ON orq.parent = rd.name AND orq.order = o.name
 			WHERE rd.name = '{request_name}';
 		""", as_dict=1)
 
-		# images_of_orders = frappe.db.sql(f"""
-		# SELECT oi.image
-		# FROM `tabOrder Image` oi
-		# JOIN `tabOrder` o
-		# ON  o.name = oi.parent
-		# WHERE o.name = '{order[0].get("name")}'
-		# """)
 		images_of_orders = frappe.get_list(
 									'Order Image',
 									filters={'parent': order[0].get('name')},
