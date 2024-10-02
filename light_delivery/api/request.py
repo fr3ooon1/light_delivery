@@ -211,7 +211,7 @@ def get_request_details_for_del(*args, **kwargs):
 
 			request[0]['coordi'] = json.loads(store.store_location).get("features")[0].get("geometry").get("coordinates" , None) 
 			request[0]['phone_number'] = frappe.get_value("User" , store.user , 'mobile_no')
-			request[0]['phone_number'] = store.address
+			request[0]['address'] = store.address
 
 
 
