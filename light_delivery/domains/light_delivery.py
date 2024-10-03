@@ -10,6 +10,7 @@ data = {
 				"fieldname": "notification_key",
 				"fieldtype": "Data",
 				"insert_after": "api_secret" ,
+                "read_only":1,
 				},
 			],
 	},
