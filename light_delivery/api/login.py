@@ -57,7 +57,7 @@ def login(*args,**kwargs):
 		"first_name": user_obj.first_name,
 		"phone": user_obj.mobile_no,
 		"username":user_obj.username,
-		"notification_key":kwargs.get("notification_key"),
+		"notification_key":kwargs.get("notification_key") if kwargs.get("notification_key") else user_obj.notification_key,
 	}
 
 	if frappe.db.exists("Store",{"user":user_obj.name}):
@@ -77,6 +77,7 @@ def login(*args,**kwargs):
 
 	
 	frappe.db.commit()
+	res["status"]=  frappe.get_value("Delivery",{"user":frappe.session.user},"status") 
 	frappe.local.response["message"] = res
 
 
