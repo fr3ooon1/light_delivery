@@ -57,6 +57,7 @@ def login(*args,**kwargs):
 		"first_name": user_obj.first_name,
 		"phone": user_obj.mobile_no,
 		"username":user_obj.username,
+		"notification_key":kwargs.get("notification_key"),
 	}
 
 	if frappe.db.exists("Store",{"user":user_obj.name}):
