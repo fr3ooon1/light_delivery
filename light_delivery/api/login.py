@@ -31,8 +31,7 @@ def login(*args,**kwargs):
 		login_manager.post_login()
 
 
-		if kwargs.get("notification_key"):
-			user_obj.notification_key = kwargs.get("notification_key")
+		
 		
 			
 		
@@ -44,7 +43,7 @@ def login(*args,**kwargs):
 		}
 
 	coordi = []
-	api_secret = generate_keys(user=user_obj.name).get('api_secret')
+	api_secret = generate_keys(user=user_obj.name ,  notification_key=kwargs.get("notification_key")).get('api_secret')
 	res = {
 		"status_code": 200,
 		"message": "Authentication success",
@@ -82,24 +81,27 @@ def login(*args,**kwargs):
 
 
 @frappe.whitelist()
-def generate_keys(user):
-    """
-    Generate API key and secret for the user.
-    :param user: Username
-    :return: API secret
-    """
-    user_details = frappe.get_doc("User", user , ignore_permissions=1)
-    api_secret = frappe.generate_hash(length=15)
+def generate_keys(user , notification_key):
+	"""
+	Generate API key and secret for the user.
+	:param user: Username
+	:return: API secret
+	"""
+	user_details = frappe.get_doc("User", user , ignore_permissions=1)
+	api_secret = frappe.generate_hash(length=15)
 
-    if not user_details.api_key:
-        api_key = frappe.generate_hash(length=15)
-        user_details.api_key = api_key
-        user_details.save(ignore_permissions=1)
-        frappe.db.commit()
+	if notification_key:
+		user_details.notification_key = notification_key
 
-    user_details.api_secret = api_secret
-    user_details.save()	
-    return {"api_secret": api_secret}
+	if not user_details.api_key:
+		api_key = frappe.generate_hash(length=15)
+		user_details.api_key = api_key
+		user_details.save(ignore_permissions=1)
+		frappe.db.commit()
+
+	user_details.api_secret = api_secret
+	user_details.save()	
+	return {"api_secret": api_secret}
 
 @frappe.whitelist()
 def get_user_permissions(user):
