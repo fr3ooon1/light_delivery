@@ -536,7 +536,7 @@ def cancel_order(*args,**kwargs):
 @frappe.whitelist(allow_guest=False)
 def change_order_status_del(*args,**kwargs):
 	user = frappe.session.user
-	delivery = frappe.get_doc("Delivery",{"user":user})
+	delivery = frappe.get_value("Delivery",{"user":user},'name')
 
 	order = kwargs.get("order")
 	status = kwargs.get("status")
