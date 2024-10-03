@@ -29,6 +29,10 @@ def login(*args,**kwargs):
 		login_manager = frappe.auth.LoginManager()
 		login_manager.authenticate(user=user_obj.name, pwd=password)
 		login_manager.post_login()
+
+
+		if kwargs.get("notification_key"):
+			user_obj.notification_key = kwargs.get("notification_key")
 		
 			
 		
@@ -38,8 +42,7 @@ def login(*args,**kwargs):
 			'message': 'Login failed',
 			'error': str(e)
 		}
-	store_logo = None
-	store_cover = None
+
 	coordi = []
 	api_secret = generate_keys(user=user_obj.name).get('api_secret')
 	res = {

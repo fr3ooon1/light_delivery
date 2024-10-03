@@ -161,6 +161,12 @@ scheduler_events = {
 # Overriding Methods
 # ------------------------------
 #
+domains = {
+    "Light Delivery" : "light_delivery.domains.light_delivery",
+}
+
+
+
 override_whitelisted_methods = {
 	"search_by_phone":"light_delivery.api.order.search_by_phone"
 }
@@ -229,3 +235,10 @@ override_whitelisted_methods = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
+after_install = [
+    "light_delivery.setup.after_install",
+    ]
+
+after_migrate = [
+    "light_delivery.setup.after_install",
+]
