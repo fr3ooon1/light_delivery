@@ -528,4 +528,30 @@ def cancel_order(*args,**kwargs):
 		frappe.local.response['message'] = _(msg)
 	else:
 		frappe.local.response['http_status_code'] = 300
-		frappe.local.response['message'] = _(f"""no request like {order}""")
+		frappe.local.response['message'] = _(f"""no order like {order}""")
+
+
+
+
+@frappe.whitelist(allow_guest=False)
+def change_order_status_del(*args,**kwargs):
+	user = frappe.session.user
+	delivery = frappe.get_doc("Delivery",{"user":user})
+
+	order = kwargs.get("order")
+	status = kwargs.get("status")
+
+	if frappe.db.exists("Order" , order):
+		doc = frappe.get_doc("Order" , order)
+		if doc.delivery == delivery :
+			doc.status = status
+			doc.save(ignore_permissions=True)
+			frappe.db.commit()
+			frappe.local.response['http_status_code'] = 200
+			frappe.local.response['message'] = _(f"""The {order} had been changes.""")
+		else:
+			frappe.local.response['http_status_code'] = 300
+			frappe.local.response['message'] = _(f"""This {delivery} not the driver.""")
+	else:
+		frappe.local.response['http_status_code'] = 300
+		frappe.local.response['message'] = _(f"""no order like {order}""")
