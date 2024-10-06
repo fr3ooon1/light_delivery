@@ -31,10 +31,12 @@ class RequestDelivery(Document):
 		doc.cash = self.total
 		deliveries = search_delivary(self.total)
 
-		# for i in deliveries:
-		# 	doc.append("deliveries",{
-
-		# 	})
+		for i in deliveries:
+			doc.append("deliveries",{
+				"user" :i.user,
+				"delivery":i.name,
+				"notification_key":i.frappe.get_value("User",i.user,"notification_key")
+			})
 
 		doc.save(ignore_permissions=True)
 		frappe.db.commit()

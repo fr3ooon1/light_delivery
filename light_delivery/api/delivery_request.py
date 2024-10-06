@@ -1,5 +1,18 @@
 import frappe
 
+
+@frappe.whitelist()
+def sending_request():
+	requests = frappe.get_list("Request",{"status":"Waiting for Delivery"})
+	if requests:
+		for request in requests:
+			doc = frappe.get_doc("Request",request.name)
+			deliveries = doc.get("deliveries")[-1]
+			
+
+
+
+
 @frappe.whitelist(allow_guest = 0 )
 def get_delivery_request():
 	store = frappe.db.sql(f"select name from `tabStore` where user = '{frappe.session.user}' " , as_dict = 1)
