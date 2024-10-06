@@ -25,7 +25,6 @@ def sending_request():
 
 
 			
-
 @frappe.whitelist(allow_guest=False)
 def delivery_accepted_request(*args , **kwargs):
 	delivery = frappe.get_value("Delivery",{"user":frappe.session.user},'name')
