@@ -1,4 +1,6 @@
 import frappe
+from light_delivery.api.apis import send_notification
+
 
 
 @frappe.whitelist()
@@ -7,10 +9,33 @@ def sending_request():
 	if requests:
 		for request in requests:
 			doc = frappe.get_doc("Request",request.name)
-			deliveries = doc.get("deliveries")[-1]
+			deliveries = doc.get("deliveries")[0]
+			res = send_notification(deliveries.get("notification_key")) if deliveries.get("notification_key") else None
+			if res :
+				if res.status_code == 200:
+					doc.append("deliveries",{
+						"user":deliveries.get("user"),
+						"delivery":deliveries.get("delivery"),
+						"notification_key":deliveries.get("notification_key")
+					})
+					doc.remove(doc.deliveries[0])
+
+					doc.save(ignore_permissions=True)
+					frappe.db.commit()
+
+
 			
 
-
+@frappe.whitelist(allow_guest=False)
+def delivery_accepted_request(*args , **kwargs):
+	delivery = frappe.get_value("Delivery",{"user":frappe.session.user},'name')
+	request = kwargs.get("request")
+	doc = frappe.get_doc("Request",request)
+	if kwargs.get("status") == "Accept":
+		doc.status = "Accepted"
+		doc.delivery = delivery
+	elif kwargs.get("status") == "Reject":
+		pass
 
 
 @frappe.whitelist(allow_guest = 0 )

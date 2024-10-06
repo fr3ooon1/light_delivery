@@ -9,12 +9,12 @@ import json
 #from light_delivery.api.apis import
 
 @frappe.whitelist(allow_guest = False)
-def search_delivary(cash , user = None ):
-	# if not user:
+def search_delivary(cash , store = None ):
 	try:
-		user = frappe.session.user
-		if frappe.db.exists("Store",{'user':user}):
-			store = frappe.get_doc("Store" , {"user":user})
+		if not store:
+			store = frappe.get_value("Store",{'user',frappe.session.user})
+		if frappe.db.exists("Store",store):
+			store = frappe.get_doc("Store" ,store)
 			store_location = json.loads(store.store_location)
 			store_coord = store_location.get("features")[0].get("geometry").get("coordinates")
 
@@ -49,7 +49,7 @@ def search_delivary(cash , user = None ):
 			return result
 		else:
 			frappe.local.response['http_status_code'] = 400
-			frappe.local.response['message'] = _(f"""Their are no store assign to this user: {user}""")
+			frappe.local.response['message'] = _(f"""Their are no store assign to this user: {frappe.session.user}""")
 	except Exception as e:
 		frappe.log_error(message=str(e), title=_('Error in search_delivary'))
 		return {
@@ -260,7 +260,7 @@ def get_store_state(user=None):
 
 
 @frappe.whitelist()
-def send_notification(app_id ,UsersArray):
+def send_notification(UsersArray):
     url = "https://onesignal.com/api/v1/notifications"
 
     headers = {

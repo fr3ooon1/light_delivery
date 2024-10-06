@@ -29,14 +29,15 @@ class RequestDelivery(Document):
 		doc.status = "Waiting for Delivery"
 		doc.store = self.store
 		doc.cash = self.total
-		deliveries = search_delivary(self.total)
+		deliveries = search_delivary(self.total , self.store)
 
-		for i in deliveries:
-			doc.append("deliveries",{
-				"user" :i.user,
-				"delivery":i.name,
-				"notification_key":i.frappe.get_value("User",i.user,"notification_key")
-			})
+		if deliveries:
+			for i in deliveries:
+				doc.append("deliveries",{
+					"user" :i.get('user'), 
+					"delivery":i.get('name'),
+					"notification_key":frappe.get_value("User",i.get('user'),"notification_key")
+				})
 
 		doc.save(ignore_permissions=True)
 		frappe.db.commit()

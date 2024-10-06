@@ -15,6 +15,7 @@
   "cash",
   "section_break_eivb",
   "deliveries",
+  "delivery",
   "column_break_yetf",
   "log"
  ],
@@ -74,11 +75,17 @@
    "fieldname": "cash",
    "fieldtype": "Float",
    "label": "Cash"
+  },
+  {
+   "fieldname": "delivery",
+   "fieldtype": "Link",
+   "label": "Delivery",
+   "options": "Delivery"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-06 18:19:31.725949",
+ "modified": "2024-10-07 00:37:42.011404",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Request",

@@ -136,6 +136,11 @@ website_route_rules = [
 # ---------------
 
 scheduler_events = {
+    "cron": {
+		"* * * * *": [
+			"light_delivery.api.delivery_request.sending_request",
+		],
+	},
 	# "all": [
 	# 	"light_delivery.tasks.all"
 	# ],
