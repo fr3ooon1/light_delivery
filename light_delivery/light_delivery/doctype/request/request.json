@@ -1,40 +1,88 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format: {request_delivery}",
  "creation": "2024-08-31 15:29:26.321961",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "delivery",
+  "request_delivery",
+  "column_break_shjy",
+  "store",
+  "column_break_kzvn",
   "status",
-  "request_delivery"
+  "column_break_hwrm",
+  "cash",
+  "section_break_eivb",
+  "deliveries",
+  "column_break_yetf",
+  "log"
  ],
  "fields": [
-  {
-   "fieldname": "delivery",
-   "fieldtype": "Link",
-   "label": "Delivery",
-   "options": "Delivery"
-  },
   {
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nAccept\nRejecte"
+   "options": "\nAccepted\nWaiting for Delivery"
   },
   {
    "fieldname": "request_delivery",
    "fieldtype": "Link",
    "label": "Request Delivery",
-   "options": "Request Delivery"
+   "options": "Request Delivery",
+   "unique": 1
+  },
+  {
+   "fieldname": "deliveries",
+   "fieldtype": "Table",
+   "label": "Deliveries",
+   "options": "Deliveries"
+  },
+  {
+   "fieldname": "log",
+   "fieldtype": "Table",
+   "label": "Log",
+   "options": "Log"
+  },
+  {
+   "fieldname": "column_break_shjy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_kzvn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "store",
+   "fieldtype": "Link",
+   "label": "Store",
+   "options": "Store"
+  },
+  {
+   "fieldname": "section_break_eivb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_yetf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_hwrm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cash",
+   "fieldtype": "Float",
+   "label": "Cash"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-31 15:31:48.829191",
+ "modified": "2024-10-06 18:19:31.725949",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Request",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {

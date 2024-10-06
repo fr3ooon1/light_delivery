@@ -5,6 +5,7 @@ import frappe
 from frappe.model.document import Document
 from frappe.utils import now_datetime
 from light_delivery.api.delivery_request import create_transaction
+from light_delivery.api.apis import search_delivary
 
 
 class RequestDelivery(Document):
@@ -18,8 +19,26 @@ class RequestDelivery(Document):
 			pass
 		if self.status in ['Arrived' , 'Picked' , 'Delivery Cancel' , 'Store Cancel' , 'Cancel']:
 			self.change_status_for_orders()
+
+		if self.status == "Waiting for delivery":
+			self.create_request()
 			
-	
+	def create_request(self):
+		doc = frappe.new_doc("Request")
+		doc.request_delivery = self.name
+		doc.status = "Waiting for Delivery"
+		doc.store = self.store
+		doc.cash = self.total
+		deliveries = search_delivary(self.total)
+
+		# for i in deliveries:
+		# 	doc.append("deliveries",{
+
+		# 	})
+
+		doc.save(ignore_permissions=True)
+		frappe.db.commit()
+
 	def request_accepted(self):
 		order_request = self.order_request
 		self.number_of_order = len(order_request)

@@ -9,9 +9,65 @@ import json
 
 @frappe.whitelist(allow_guest=False)
 def get_current_request(*args , **kwargs):
-	user = frappe.session.user
-	delivery = frappe.get_value("Delivery" ,{"user":user},'name')
-	request = frappe.get_doc("Request Delivery",{"delivery":delivery , "status":["!=" , ""] })
+	delivery = frappe.get_value("Delivery", {"user": frappe.session.user}, 'name')
+	
+	if not delivery:
+		frappe.local.response['http_status_code'] = 300
+		frappe.local.response['message'] = _("No delivery found for the current user.")	
+
+	request = frappe.get_all("Request Delivery", 
+		filters={
+			"delivery": delivery,
+			"status":'Waiting for delivery'
+		},
+		fields=["name", "number_of_order", "total", "store" , "status" ,],
+		limit=1
+	)
+	return request
+	# if request:
+	# 	request_name = request[0].get("name")
+	# 	store = request[0].get("store")
+	# 	if store:
+
+	# 		store = frappe.get_doc("Store" , request[0].get("store"))
+
+	# 		request[0]['coordi'] = json.loads(store.store_location).get("features")[0].get("geometry").get("coordinates" , None) 
+	# 		request[0]['phone_number'] = frappe.get_value("User" , store.user , 'mobile_no')
+	# 		request[0]['address'] = store.address
+
+
+
+		
+	# 	order = frappe.db.sql(f"""
+	# 		SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order , o.phone_number , o.status
+	# 		FROM `tabOrder` as o
+	# 		JOIN `tabRequest Delivery` as rd ON rd.name = '{request_name}'
+	# 		JOIN `tabOrder Request` as orq ON orq.parent = rd.name AND orq.order = o.name
+	# 		WHERE rd.name = '{request_name}'
+	# 		AND o.status NOT IN ('Pending','Store Cancel','Delivered','Delivery Cancel','Cancel') ;
+	# 	""", as_dict=1)
+		
+	# 	for i in order:
+
+	# 		images_of_orders = frappe.get_list(
+	# 									'Order Image',
+	# 									filters={'parent': i.get('name')},
+	# 									fields=['image'],
+	# 									pluck='image',
+	# 									ignore_permissions=True
+	# 								)
+
+	# 		i['images_of_orders'] = images_of_orders
+			
+		
+	# 	request[0]['order'] = order
+	
+	# 	frappe.local.response['http_status_code'] = 200
+	# 	return request[0] if request else {"message": "No valid request found."}
+	# else:
+	# 	frappe.local.response['http_status_code'] = 300
+	# 	frappe.local.response['message'] = _("No request for this delivery.")	
+
 
 
 
@@ -197,7 +253,7 @@ def get_request_details_for_del(*args, **kwargs):
 	request = frappe.get_all("Request Delivery", 
 		filters={
 			"delivery": delivery,
-			"status": ["not in", ['Pending', 'Time Out', 'Delivery Cancel', 'Delivered', 'Store Cancel', 'Cancel']]
+			"status": ["not in", ['Pending', 'Time Out', 'Delivery Cancel', 'Delivered', 'Store Cancel', 'Cancel' , 'Waiting for delivery']]
 		},
 		fields=["name", "number_of_order", "total", "store" , "status" ,],
 		limit=1

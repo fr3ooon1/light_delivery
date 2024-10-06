@@ -74,7 +74,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Pending\nAccepted\nArrived\nCollect Money\nPicked\nOn The Way\nDelivered\nPartially Deliverd\nTime Out\nDelivery Cancel\nStore Cancel\nCancel"
+   "options": "Pending\nWaiting for delivery\nAccepted\nArrived\nCollect Money\nPicked\nOn The Way\nDelivered\nPartially Deliverd\nTime Out\nDelivery Cancel\nStore Cancel\nCancel"
   },
   {
    "default": "Today",
@@ -90,7 +90,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-08 12:58:06.208187",
+ "modified": "2024-10-06 19:21:36.611694",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Request Delivery",

@@ -20,9 +20,13 @@ def search_delivary(cash , user = None ):
 
 			deliveries = frappe.db.sql(f"""
 									select 
-										name, pointer_x , pointer_y 
+										d.name as name , d.user as user , d.pointer_x as pointer_x , d.pointer_y as pointer_y , u.notification_key as notification_key
 									from 
-										`tabDelivery` 
+										`tabDelivery` d
+							  		join 
+							  			`tabUser` u
+							  		on 
+							  			d.user = u.name
 									where 
 										status = 'Avaliable' and cash >= {cash} """, as_dict=1)
 			distance = []
@@ -33,9 +37,10 @@ def search_delivary(cash , user = None ):
 					dist = float(haversine(coord1=del_coord, coord2=store_coord) or 0) * 1000
 					delivery_data = {
                         'distance': dist,
-                        'user': delivery.get('name'),
-                        'name': frappe.get_value("Delivery", delivery.get('name'), 'user'),
-                        'coordination': del_coord
+                        'user': delivery.get('user'),
+                        'name': delivery.get('name'),
+                        'coordination': del_coord ,
+						'notification_key' : delivery.get("notification_key")
                     }
 					distance.append(delivery_data)
 			sorted_deliveries = sorted(distance, key=lambda x: x['distance'])
