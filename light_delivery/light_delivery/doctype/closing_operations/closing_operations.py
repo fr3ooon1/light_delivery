@@ -4,7 +4,6 @@
 import frappe
 from frappe.model.document import Document
 from light_delivery.api.delivery_request import calculate_balane
-from erpnext import get_default_company
 from frappe.utils import nowdate 
 
 
@@ -18,7 +17,7 @@ class Closingoperations(Document):
 	def make_balance_table(self):
 		balance = calculate_balane(self.party_type)
 
-		company = get_default_company()
+		company = frappe.db.get_single_value("Global Defaults", "default_company")
 
 		default_receivable_account = frappe.get_value("Company",company,'default_receivable_account',)
 		default_income_account = frappe.get_value("Company",company,'default_income_account')
