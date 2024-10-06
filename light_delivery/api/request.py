@@ -23,6 +23,10 @@ def get_current_request(*args , **kwargs):
 		fields=["name", "number_of_order", "cash as total", "store" , "status" ,],
 		limit=1
 	)
+	if not request:
+		frappe.local.response['http_status_code'] = 300
+		frappe.local.response['message'] = _("No delivery found for the current user.")	
+		return _("No delivery found for the current user.")	
 	return request
 
 
