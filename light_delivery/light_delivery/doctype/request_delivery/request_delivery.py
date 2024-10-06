@@ -29,6 +29,7 @@ class RequestDelivery(Document):
 		doc.status = "Waiting for Delivery"
 		doc.store = self.store
 		doc.cash = self.total
+		doc.number_of_order = self.number_of_order
 		deliveries = search_delivary(self.total , self.store)
 
 		if deliveries:

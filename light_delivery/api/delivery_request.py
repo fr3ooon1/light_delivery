@@ -18,6 +18,7 @@ def sending_request():
 						"delivery":deliveries.get("delivery"),
 						"notification_key":deliveries.get("notification_key")
 					})
+					doc.delivery = deliveries.get("delivery")
 					doc.remove(doc.deliveries[0])
 
 					doc.save(ignore_permissions=True)

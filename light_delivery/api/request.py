@@ -15,12 +15,12 @@ def get_current_request(*args , **kwargs):
 		frappe.local.response['http_status_code'] = 300
 		frappe.local.response['message'] = _("No delivery found for the current user.")	
 
-	request = frappe.get_all("Request Delivery", 
+	request = frappe.get_all("Request", 
 		filters={
 			"delivery": delivery,
 			"status":'Waiting for delivery'
 		},
-		fields=["name", "number_of_order", "total", "store" , "status" ,],
+		fields=["name", "number_of_order", "cash as total", "store" , "status" ,],
 		limit=1
 	)
 	return request

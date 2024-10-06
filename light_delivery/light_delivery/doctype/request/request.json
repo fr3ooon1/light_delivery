@@ -13,6 +13,8 @@
   "status",
   "column_break_hwrm",
   "cash",
+  "column_break_ylpa",
+  "number_of_order",
   "section_break_eivb",
   "deliveries",
   "delivery",
@@ -81,11 +83,20 @@
    "fieldtype": "Link",
    "label": "Delivery",
    "options": "Delivery"
+  },
+  {
+   "fieldname": "column_break_ylpa",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "number_of_order",
+   "fieldtype": "Float",
+   "label": "Number of Order"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-07 00:37:42.011404",
+ "modified": "2024-10-07 02:01:31.345616",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Request",
