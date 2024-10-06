@@ -24,9 +24,9 @@ def get_current_request(*args , **kwargs):
 		limit=1
 	)
 	if not request:
-		frappe.local.response['http_status_code'] = 300
-		frappe.local.response['message'] = _("No delivery found for the current user.")	
-		return _("No delivery found for the current user.")	
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = _("No request for this delivery.")	
+		return _("No request for this delivery.")	
 	return request
 
 
@@ -50,6 +50,10 @@ def request_history(*args, **kwargs):
 			fields=['order']
 		,ignore_permissions=True)
 
+	if not requests:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = _("No requests for this delivery.")	
+		return _("No requests for this delivery.")	
 	return requests
 
 

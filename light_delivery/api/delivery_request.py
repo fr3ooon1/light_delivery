@@ -24,6 +24,13 @@ def sending_request():
 					doc.save(ignore_permissions=True)
 					frappe.db.commit()
 
+					
+				error = frappe.new_doc("Error Log")
+				error.method = "sending_request"
+				error.error = res.text
+				error.save(ignore_permissions=True)
+				frappe.db.commit()
+
 
 			
 @frappe.whitelist(allow_guest=False)
