@@ -256,3 +256,40 @@ def get_store_state(user=None):
 			"status_code": 500,
 			"message": str(e)
 		}
+	
+
+
+@frappe.whitelist()
+def send_notification(parm, UsersArray):
+    url = "https://onesignal.com/api/v1/notifications"
+
+    headers = {
+        "Content-Type": "application/json; charset=utf-8",
+        "Authorization": "Basic NmMwNGNmM2MtYzM5Zi00ODYwLTk0ODYtYWNiMDlkY2M2NDFi"
+    }
+
+    # Constructing the payload
+    payload = {
+        "app_id": "e75df22c-56df-4e69-8a73-fc80c73c4337",
+        "headings": { "en": "تغيير الاسعار" if parm == "cart" else "عروض جديدة" },
+        "title": { "en": "" },
+        "contents": { "en": "لديك اصناف فى العربة تم تغيير اسعارها يرجى المراجعة" if parm == "cart" else "عروووض" },
+        "data": { "postID": parm },
+        "include_player_ids": UsersArray
+    }
+
+    # Convert the payload to JSON
+    payload_json = json.dumps(payload)
+
+    # Make the POST request
+    response = requests.post(url, headers=headers, data=payload_json)
+
+    # Get the response content
+    response_content = response.text
+    return response_content
+
+# Example usage
+parm = "cart"  # or other values like "promo" based on your logic
+UsersArray = ["user_id1", "user_id2", "user_id3"]  # Replace with actual user IDs
+response = send_notification(parm, UsersArray)
+print(response)
