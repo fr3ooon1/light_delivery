@@ -260,7 +260,7 @@ def get_store_state(user=None):
 
 
 @frappe.whitelist()
-def send_notification(app_id , UsersArray):
+def send_notification(app_id ,UsersArray):
     url = "https://onesignal.com/api/v1/notifications"
 
     headers = {
@@ -269,19 +269,19 @@ def send_notification(app_id , UsersArray):
     }
 
     payload = {
-        "app_id": app_id,
+        "app_id": "e75df22c-56df-4e69-8a73-fc80c73c4337",
         "headings": { 
 			"ar": "طلب جديد" ,
 			"en": "New Request" ,
 			},
         "title": { 
 			"en": "",
-			"ar": "",
-			 },
+			"ar": "", 
+			},
         "contents": { 
 			"en": "",
-			"ar": "هناك طاب جديد",
-			  },
+			"ar": "هناك طلب جديد",
+			},
         "data": { "postID": "popup_req" }, #req if delivery accepted or delivery_request 
         "include_player_ids": UsersArray
     }
