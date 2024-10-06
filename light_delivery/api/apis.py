@@ -271,17 +271,17 @@ def send_notification(app_id ,UsersArray):
     payload = {
         "app_id": "e75df22c-56df-4e69-8a73-fc80c73c4337",
         "headings": { 
-			"ar": "طلب جديد" ,
-			"en": "New Request" ,
-			},
+            "ar": _("طلب جديد"), 
+            "en": _("New Request"),  # Ensure English heading is not empty
+        },
         "title": { 
-			"en": "",
-			"ar": "", 
-			},
+            "en": "New Request Available",  # Add a valid English title
+            "ar": "طلب جديد", 
+        },
         "contents": { 
-			"en": "",
-			"ar": "هناك طلب جديد",
-			},
+            "en": "You have a new request",  # Add valid English content
+            "ar": "هناك طلب جديد",  # Keep the Arabic content
+        },
         "data": { "postID": "popup_req" }, #req if delivery accepted or delivery_request 
         "include_player_ids": UsersArray
     }
