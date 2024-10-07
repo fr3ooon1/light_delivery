@@ -1,7 +1,26 @@
 import frappe
+from frappe import _
 from light_delivery.api.apis import send_notification
 
+@frappe.whitelist(allow_guest=False)
+def update_location(*args,**kwargs):
+	try:
+		if frappe.db.exists("Delivery",{"user":frappe.session.user}):
+			doc = frappe.get_doc("Delivery",{"user":frappe.session.user})
+			doc.pointer_x = kwargs.get("pointer_x")
+			doc.pointer_y = kwargs.get("pointer_y")
+			doc.save(ignore_permission=True)
+			frappe.db.commit()
+			frappe.local.response['http_status_code'] = 200
+			frappe.local.response['message'] = _(f"""Update location""")
 
+		else:
+			frappe.local.response['http_status_code'] = 400
+			frappe.local.response['message'] = _(f"""This Delivery not found""")
+
+	except Exception as e:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = _(e)
 
 @frappe.whitelist()
 def sending_request():
