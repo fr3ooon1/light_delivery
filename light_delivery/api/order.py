@@ -550,8 +550,8 @@ def change_order_status_del(*args,**kwargs):
 			frappe.local.response['http_status_code'] = 200
 			frappe.local.response['message'] = _(f"""The {order} had been changes.""")
 		else:
-			frappe.local.response['http_status_code'] = 300
+			frappe.local.response['http_status_code'] = 400
 			frappe.local.response['message'] = _(f"""This {delivery} not the driver.""")
 	else:
-		frappe.local.response['http_status_code'] = 300
+		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = _(f"""no order like {order}""")
