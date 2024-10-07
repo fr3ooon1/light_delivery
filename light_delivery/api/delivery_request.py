@@ -12,19 +12,26 @@ def sending_request():
 				doc = frappe.get_doc("Request",request.get("name"))
 				deliveries = doc.get("deliveries")[0]
 				res = send_notification(deliveries.get("notification_key")) if deliveries.get("notification_key") else None
-				if res :
-					if res.status_code == 200:
-						doc.append("deliveries",{
-							"user":deliveries.get("user"),
-							"delivery":deliveries.get("delivery"),
-							"notification_key":deliveries.get("notification_key")
-						})
-						doc.delivery = deliveries.get("delivery")
-						doc.remove(doc.deliveries[0])
+				if res.status_code == 200:
+					doc.append("deliveries",{
+						"user":deliveries.get("user"),
+						"delivery":deliveries.get("delivery"),
+						"notification_key":deliveries.get("notification_key")
+					})
+					doc.delivery = deliveries.get("delivery")
+					doc.remove(doc.deliveries[0])
 
-						doc.save(ignore_permissions=True)
-						frappe.db.commit()
-						return res
+					doc.save(ignore_permissions=True)
+					frappe.db.commit()
+					
+				else:
+					error = frappe.new_doc("Error Log")
+					error.method = "sending_request"
+					error.error = res.text
+					error.save(ignore_permissions=True)
+					frappe.db.commit()
+				return res
+
 	except Exception as e:
 		error = frappe.new_doc("Error Log")
 		error.method = "sending_request"
