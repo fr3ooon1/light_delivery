@@ -21,6 +21,7 @@ class RequestDelivery(Document):
 			self.change_status_for_orders()
 
 		if self.status == "Waiting for delivery":
+			self.follow_request_status()
 			self.create_request()
 			
 	def create_request(self):
