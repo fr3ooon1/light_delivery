@@ -6,30 +6,31 @@ from light_delivery.api.apis import send_notification
 @frappe.whitelist()
 def sending_request():
 	requests = frappe.get_list("Request",{"status":"Waiting for Delivery"})
-	if requests:
-		for request in requests:
-			doc = frappe.get_doc("Request",request.name)
-			deliveries = doc.get("deliveries")[0]
-			res = send_notification(deliveries.get("notification_key")) if deliveries.get("notification_key") else None
-			if res :
-				if res.status_code == 200:
-					doc.append("deliveries",{
-						"user":deliveries.get("user"),
-						"delivery":deliveries.get("delivery"),
-						"notification_key":deliveries.get("notification_key")
-					})
-					doc.delivery = deliveries.get("delivery")
-					doc.remove(doc.deliveries[0])
+	try:
+		if requests:
+			for request in requests:
+				doc = frappe.get_doc("Request",request.get("name"))
+				deliveries = doc.get("deliveries")[0]
+				res = send_notification(deliveries.get("notification_key")) if deliveries.get("notification_key") else None
+				if res :
+					if res.status_code == 200:
+						doc.append("deliveries",{
+							"user":deliveries.get("user"),
+							"delivery":deliveries.get("delivery"),
+							"notification_key":deliveries.get("notification_key")
+						})
+						doc.delivery = deliveries.get("delivery")
+						doc.remove(doc.deliveries[0])
 
-					doc.save(ignore_permissions=True)
-					frappe.db.commit()
-
-					
-				error = frappe.new_doc("Error Log")
-				error.method = "sending_request"
-				error.error = res.text
-				error.save(ignore_permissions=True)
-				frappe.db.commit()
+						doc.save(ignore_permissions=True)
+						frappe.db.commit()
+						return res
+	except Exception as e:
+		error = frappe.new_doc("Error Log")
+		error.method = "sending_request"
+		error.error = e
+		error.save(ignore_permissions=True)
+		frappe.db.commit()
 
 
 			
