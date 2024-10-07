@@ -88,15 +88,10 @@ def get_delivery_request(*args, **kwargs):
 			frappe.local.response['message'] = _( "No store found for the current user.")
 			return {"status": "error", "message": "No store found for the current user."}
 		
-		orders_str = kwargs.get("orders")
-		try:
-			orders = ast.literal_eval(orders_str)
-		except (ValueError, SyntaxError):
-			return {"status": "error", "message": "Invalid format for orders. It should be a list."}
-		
-		if not isinstance(orders, list):
-			return {"status": "error", "message": "Orders should be a list."}
-		
+		orders = kwargs.get("orders")
+		if not orders or not isinstance(orders, list):
+			return {"status": "error", "message": "No orders provided or invalid format."}
+
 
 		if not orders or not isinstance(orders, list):
 			frappe.local.response['http_status_code'] = 400
