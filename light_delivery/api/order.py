@@ -530,7 +530,12 @@ def cancel_order(*args,**kwargs):
 			notification_key = frappe.get_value("User",store,'notification_key')
 
 		
-		send_notification(notification_key, "modification")
+		res = send_notification(notification_key, "modification")
+		if res.status_code != 200:
+			error = frappe.new_doc("Error Log")
+			error.method = "send_notification"
+			error.error = res.text
+			error.insert(ignore_permissions=True)
 
 		order_obj.save(ignore_permissions=True)
 		frappe.db.commit()
