@@ -36,12 +36,12 @@ def search_delivary(cash , store = None ):
 
 					dist = float(haversine(coord1=del_coord, coord2=store_coord) or 0) * 1000
 					delivery_data = {
-                        'distance': dist,
-                        'user': delivery.get('user'),
-                        'name': delivery.get('name'),
-                        'coordination': del_coord ,
+						'distance': dist,
+						'user': delivery.get('user'),
+						'name': delivery.get('name'),
+						'coordination': del_coord ,
 						'notification_key' : delivery.get("notification_key")
-                    }
+					}
 					distance.append(delivery_data)
 			sorted_deliveries = sorted(distance, key=lambda x: x['distance'])
 			result = [entry for entry in sorted_deliveries if entry["distance"]]  #skip for < 2000 Meter for now
@@ -86,12 +86,12 @@ def calculate_distance_and_duration(del_coord , store_coord ):
 	url = light_integration.api_url
 	api_key = light_integration.api_key
 	headers = {
-    	     'Authorization': api_key,
-    	     'Content-Type': 'application/json; charset=utf-8'
-    	}
+			 'Authorization': api_key,
+			 'Content-Type': 'application/json; charset=utf-8'
+		}
 	data = {
-    	     "coordinates": coordinates
-    	}
+			 "coordinates": coordinates
+		}
 	response = requests.post(url, json=data, headers=headers)
 	route_info = response.json()
 	distance = route_info['routes'][0]['summary']['distance']
@@ -104,16 +104,16 @@ def calculate_distance_and_duration(del_coord , store_coord ):
 	
 
 def haversine(coord1, coord2):
-    
-    lat1, lon1 = map(math.radians, coord1)
-    lat2, lon2 = map(math.radians, coord2)
+	
+	lat1, lon1 = map(math.radians, coord1)
+	lat2, lon2 = map(math.radians, coord2)
 
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-    a = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    r = 6371  
-    return r * c
+	dlat = lat2 - lat1
+	dlon = lon2 - lon1
+	a = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
+	c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+	r = 6371  
+	return r * c
 
 
 def get_url():
@@ -260,41 +260,61 @@ def get_store_state(user=None):
 
 
 @frappe.whitelist()
-def send_notification(UsersArray):
-    url = "https://onesignal.com/api/v1/notifications"
+def send_notification(UsersArray , content ):
+	headings = {}
+	title = {}
+	contents = {}
+	if content == "modification":
+		headings = { 
+			"ar": _("تعديل الطلب"), 
+			"en": _("Request Edit"),  
+		}
+		title = { 
+			"en": _("Request Edit"),
+			"ar": _("تعديل الطلب") , 
+		},
+		contents =  { 
+			"en": _("You have a new request"),
+			"ar": _("هناك تعديل في طلب "),  
+		},
+	elif content == "new request":
+		headings = { 
+			"ar": _("طلب جديد"), 
+			"en": _("New Request"),  
+		}
+		title = { 
+			"en": "New Request Available",
+			"ar": "طلب جديد", 
+		},
+		contents =  { 
+			"en": "You have a new request",
+			"ar": "هناك طلب جديد",  
+		},
+	url = "https://onesignal.com/api/v1/notifications"
 
-    headers = {
-        "Content-Type": "application/json; charset=utf-8",
-        "Authorization": "Basic NmMwNGNmM2MtYzM5Zi00ODYwLTk0ODYtYWNiMDlkY2M2NDFi"
-    }
+	headers = {
+		"Content-Type": "application/json; charset=utf-8",
+		"Authorization": "Basic NmMwNGNmM2MtYzM5Zi00ODYwLTk0ODYtYWNiMDlkY2M2NDFi"
+	}
 
-    payload = {
-        "app_id": "e75df22c-56df-4e69-8a73-fc80c73c4337",
-        "headings": { 
-            "ar": _("طلب جديد"), 
-            "en": _("New Request"),  
-        },
-        "title": { 
-            "en": "New Request Available",
-            "ar": "طلب جديد", 
-        },
-        "contents": { 
-            "en": "You have a new request",
-            "ar": "هناك طلب جديد",  
-        },
-        "data": { "postID": "popup_req" },
-        "include_player_ids": [UsersArray]
-    }
+	payload = {
+		"app_id": "e75df22c-56df-4e69-8a73-fc80c73c4337",
+		"headings":headings,
+		"title":title,
+		"contents": contents,
+		"data": { "postID": "popup_req" },
+		"include_player_ids": [UsersArray]
+	}
 
-    payload_json = json.dumps(payload)
+	payload_json = json.dumps(payload)
 
-    response = requests.post(url, headers=headers, data=payload_json)
-    return response
+	response = requests.post(url, headers=headers, data=payload_json)
+	return response
 
 
 
 def create_error_log(method, error):
-    error_log = frappe.new_doc("Error Log")
-    error_log.method = method
-    error_log.error = error
-    error_log.save(ignore_permissions=True)
+	error_log = frappe.new_doc("Error Log")
+	error_log.method = method
+	error_log.error = error
+	error_log.save(ignore_permissions=True)

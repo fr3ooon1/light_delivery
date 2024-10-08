@@ -4,6 +4,8 @@ from frappe.utils import nowdate , get_first_day_of_week , get_first_day , getda
 from datetime import datetime
 from light_delivery.api.apis import get_url
 from light_delivery.api.apis import download_image
+from light_delivery.api.apis import send_notification 
+
 
 
 @frappe.whitelist(allow_guest=False)
@@ -517,10 +519,18 @@ def cancel_order(*args,**kwargs):
 		if kwargs.get("type") == 'store':
 			order_obj.status = "Store Cancel"
 			msg = f"""Order had been cancel by Store"""
+			delivery = frappe.get_value("Delivery",order_obj.delivery,"user")
+			notification_key = frappe.get_value("User",delivery,'notification_key')
 
 		if kwargs.get("type") == 'delivery':
 			order_obj.status = "Delivery Cancel"
 			msg = f"""Order had been cancel by Store"""
+
+			store = frappe.get_value("Store",order_obj.store,"user")
+			notification_key = frappe.get_value("User",store,'notification_key')
+
+		
+		send_notification(notification_key, "modification")
 
 		order_obj.save(ignore_permissions=True)
 		frappe.db.commit()

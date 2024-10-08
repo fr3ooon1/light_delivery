@@ -5,6 +5,7 @@ from datetime import datetime
 from light_delivery.api.apis import get_url
 from light_delivery.api.apis import download_image
 import json
+from light_delivery.api.apis import send_notification 
 
 
 @frappe.whitelist(allow_guest=False)
@@ -115,11 +116,18 @@ def change_request_status(*args , **kwargs):
 				request_obj.status = status
 				request_obj.save(ignore_permissions=True)
 				frappe.db.commit()
+
+				# store = frappe.get_value("Store",request_obj.store,"user")
+				# notification_key = frappe.get_value("User",store,'notification_key')
+
+		
+				# send_notification(notification_key, "modification")
+
 				frappe.local.response['http_status_code'] = 200
 				frappe.local.response['message'] = f""" Request id: {request} status has been changed"""
 	except Exception as e:
 		frappe.log_error(message=str(e), title=_('Error in change_request_status'))
-		frappe.local.response['http_status_code'] = 500
+		frappe.local.response['http_status_code'] = 400
 		
 
 
@@ -159,7 +167,6 @@ def get_requests(*args, **kwargs):
 	return requests
 
 
-
 @frappe.whitelist(allow_guest=False)
 def cancel_request(*args,**kwargs):
 	request = kwargs.get("request")
@@ -169,9 +176,19 @@ def cancel_request(*args,**kwargs):
 			request_obj.status = "Store Cancel"
 			msg = f"""Request had been cancel by Store"""
 
+			delivery = frappe.get_value("Delivery",request_obj.delivery,"user")
+			notification_key = frappe.get_value("User",delivery,'notification_key')
+		
+			
+
 		if kwargs.get("type") == 'delivery':
 			request_obj.status = "Delivery Cancel"
 			msg = f"""Request had been cancel by Store"""
+
+			store = frappe.get_value("Store",request_obj.store,"user")
+			notification_key = frappe.get_value("User",store,'notification_key')
+
+		send_notification(notification_key, "modification")
 
 		request_obj.save(ignore_permissions=True)
 		frappe.db.commit()
