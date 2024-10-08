@@ -120,12 +120,12 @@ def change_request_status(*args , **kwargs):
 
 				if frappe.db.exists("Delivery",{"user":frappe.session.user}):
 					if request_obj.store:
-						store = frappe.get_value("Store", request_obj.store , 'name')
-						notification_key = frappe.get_value("User",store,'notification_key')
+						user = frappe.get_value("Store", request_obj.store , 'user')
+						notification_key = frappe.get_value("User",user,'notification_key')
 				else:
 					if request_obj.delivery:
-						delivery = frappe.get_value("Delivery", request_obj.delivery , 'name')
-						notification_key = frappe.get_value("User",delivery,'notification_key')
+						user = frappe.get_value("Delivery", request_obj.delivery , 'user')
+						notification_key = frappe.get_value("User",user,'notification_key')
 
 
 				res = send_notification(notification_key, "modification")

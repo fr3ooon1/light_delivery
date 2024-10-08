@@ -493,8 +493,8 @@ def cancel_order(*args,**kwargs):
 			order_obj.status = "Delivery Cancel"
 			msg = f"""Order had been cancel by Store"""
 
-			store = frappe.get_value("Store",order_obj.store,"user")
-			notification_key = frappe.get_value("User",store,'notification_key')
+			user = frappe.get_value("Store",order_obj.store,"user")
+			notification_key = frappe.get_value("User",user,'notification_key')
 
 		
 		res = send_notification(notification_key, "modification")
@@ -527,12 +527,12 @@ def change_order_status_del(*args,**kwargs):
 
 		if frappe.db.exists("Delivery",{"user":frappe.session.user}):
 			if doc.store:
-				store = frappe.get_value("Store", doc.store , 'name')
-				notification_key = frappe.get_value("User",store,'notification_key')
+				user = frappe.get_value("Store", doc.store , 'user')
+				notification_key = frappe.get_value("User",user,'notification_key')
 		else:
 			if doc.delivery:
-				delivery = frappe.get_value("Delivery", doc.delivery , 'name')
-				notification_key = frappe.get_value("User",delivery,'notification_key')
+				user = frappe.get_value("Delivery", doc.delivery , 'user')
+				notification_key = frappe.get_value("User",user,'notification_key')
 
 
 		res = send_notification(notification_key, "modification")
