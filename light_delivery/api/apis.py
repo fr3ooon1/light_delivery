@@ -283,7 +283,7 @@ def send_notification(UsersArray):
             "ar": "هناك طلب جديد",  
         },
         "data": { "postID": "popup_req" },
-        "include_player_ids": UsersArray
+        "include_player_ids": [UsersArray]
     }
 
     payload_json = json.dumps(payload)
