@@ -1,6 +1,6 @@
 import frappe
 from frappe import _
-from light_delivery.api.apis import send_notification
+from light_delivery.api.apis import send_notification , search_delivary
 
 @frappe.whitelist(allow_guest=False)
 def update_location(*args,**kwargs):
@@ -29,6 +29,14 @@ def sending_request():
 		if requests:
 			for request in requests:
 				doc = frappe.get_doc("Request",request.get("name"))
+				if not doc.deliveries:
+					new_delievries = search_delivary(cash=doc.cash , store=doc.store)
+					for delivery in new_delievries:
+						doc.append("deliveries",{
+							"user":delivery.get("user"),
+							"delivery":delivery.get("name"),
+							"notification_key":delivery.get("notification_key")
+						})
 				deliveries = doc.get("deliveries")[0]
 				res = send_notification(deliveries.get("notification_key")) if deliveries.get("notification_key") else None
 				if res.status_code == 200:
