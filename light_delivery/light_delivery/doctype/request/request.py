@@ -13,8 +13,6 @@ class Request(Document):
 	def accepted_delivery(self):
 		if self.status == "Accepted":
 			doc = frappe.get_doc("Request Delivery" , self.request_delivery)
-			# delivery = self.get("deliveries")[0].get("delivery")
-			# self.delivery = delivery
 			doc.delivery = self.delivery
 			doc.status = "Accepted"
 			doc.save(ignore_permissions=True)

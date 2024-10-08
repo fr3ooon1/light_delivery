@@ -187,7 +187,7 @@ def change_delivery_status(*args, **kwargs):
 
 	delivery = frappe.db.exists("Delivery", {"user": frappe.session.user})
 	if not delivery:
-		frappe.local.response['http_status_code'] = 404
+		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = _("No delivery found for the current user.")
 		return
 
@@ -215,7 +215,7 @@ def change_delivery_status(*args, **kwargs):
 		frappe.local.response['message'] = _("The delivery status has been changed to Offline.")
 
 	else:
-		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = _("The Delivery is already in this status.")
 
 @frappe.whitelist(allow_guest=True)

@@ -86,8 +86,11 @@ def delivery_accepted_request(*args , **kwargs):
 		# doc.delivery = delivery
 		doc.save(ignore_permissions=True)
 		frappe.db.commit()
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = _(f"""the request accepted""")
 	elif kwargs.get("status") == "Reject":
-		pass
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = _(f"""the request rejected""")
 
 
 
