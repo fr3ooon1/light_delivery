@@ -516,6 +516,7 @@ def cancel_order(*args,**kwargs):
 	order = kwargs.get("order")
 	if frappe.db.exists("Order" , order):
 		order_obj = frappe.get_doc("Order" , order )
+		notification_key = None
 		if kwargs.get("type") == 'store':
 			order_obj.status = "Store Cancel"
 			msg = f"""Order had been cancel by Store"""
