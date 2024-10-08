@@ -35,7 +35,13 @@ class RequestDelivery(Document):
 	def pay_to_store(self):
 		balance =  float(calculate_balane(self.delivery) or 0)
 
-		temp = balance - self.total
+		temp = 0
+		if balance < self.total:
+			temp = balance
+		if balance >= self.total:
+			temp = self.total
+
+		
 
 		doc = frappe.new_doc("Transactions")
 		doc.party = "Delivery"
