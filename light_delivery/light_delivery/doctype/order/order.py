@@ -21,8 +21,12 @@ class Order(Document):
 		self.order_status()
 		self.get_previous_order_amount()
 		self.rate_delivery()
+		self.change_request_status()
 
+	def change_request_status(self):
 
+		if self.status == "Delivered":
+			pass
 	def begain_order(self):
 		status = self.status
 		self.append("order_log",{

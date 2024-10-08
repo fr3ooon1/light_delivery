@@ -23,7 +23,20 @@ class RequestDelivery(Document):
 		if self.status == "Waiting for delivery":
 			self.follow_request_status()
 			self.create_request()
+		
+		if self.status in ["Delivered" , 'Delivery Cancel' , 'Store Cancel' , 'Cancel' ]:
+			self.close_request()
 			
+
+	def close_request(self):
+		if self.delivery:
+			doc = frappe.get_doc("Delivery",self.delivery)
+			doc.status = "Offline"
+			doc.save(ignore_permission=True)
+			frappe.db.commit()
+			
+		
+
 	def create_request(self):
 		doc = frappe.new_doc("Request")
 		doc.request_delivery = self.name
