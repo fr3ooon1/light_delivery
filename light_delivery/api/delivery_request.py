@@ -24,54 +24,55 @@ def update_location(*args,**kwargs):
 
 @frappe.whitelist()
 def sending_request():
-    requests = frappe.get_list("Request", {"status": "Waiting for Delivery"})
-    
-    # Process each request individually
-    for request in requests:
-        try:
-            doc = frappe.get_doc("Request", request.get("name"))
-            
-            # Check if there are no deliveries already
-            if not doc.deliveries:
-                # Get new deliveries based on cash and store
-                new_deliveries = search_delivary(cash=doc.cash, store=doc.store)
-                
-                # Append new deliveries to the doc
-                for delivery in new_deliveries:
-                    doc.append("deliveries", {
-                        "user": delivery.get("user"),
-                        "delivery": delivery.get("name"),
-                        "notification_key": delivery.get("notification_key")
-                    })
-                
-                # Save the document after adding deliveries
-                doc.save(ignore_permissions=True)
-                frappe.db.commit()
+	requests = frappe.get_list("Request", {"status": "Waiting for Delivery"})
+	
+	# Process each request individually
+	for request in requests:
+		try:
+			doc = frappe.get_doc("Request", request.get("name"))
+			
+			# Check if there are no deliveries already
+			if not doc.deliveries:
+				# Get new deliveries based on cash and store
+				new_deliveries = search_delivary(cash=doc.cash, store=doc.store)
+				
+				# Append new deliveries to the doc
+				for delivery in new_deliveries:
+					doc.append("deliveries", {
+						"user": delivery.get("user"),
+						"delivery": delivery.get("name"),
+						"notification_key": delivery.get("notification_key")
+					})
+				
+				# Save the document after adding deliveries
+				doc.save(ignore_permissions=True)
+				frappe.db.commit()
 
-            # Process the first delivery
-            if doc.deliveries:
-                delivery = doc.deliveries[0]
-                
-                # Send notification if notification key exists
-                if delivery.get("notification_key"):
-                    res = send_notification(delivery.get("notification_key"))
-                    
-                    # If the notification is successful
-                    if res.status_code == 200:
-                        doc.delivery = delivery.get("delivery")
-                        
-                        # Remove the first entry and keep others intact
-                        doc.deliveries = doc.deliveries[1:]
-                        doc.save(ignore_permissions=True)
-                        frappe.db.commit()
-                    
-                    # Handle notification failure
-                    else:
-                        create_error_log("sending_request", res.text)
-            
-        except Exception as e:
-            create_error_log("sending_request", frappe.get_traceback())
-            frappe.db.commit()
+			# Process the first delivery
+			if doc.deliveries:
+				delivery = doc.deliveries[0]
+				
+				# Send notification if notification key exists
+				if delivery.get("notification_key"):
+					res = send_notification(delivery.get("notification_key"))
+					
+					# If the notification is successful
+					if res.status_code == 200:
+						doc.delivery = delivery.get("delivery")
+						
+						# Remove the first entry and keep others intact
+				
+					
+					# Handle notification failure
+					else:
+						create_error_log("sending_request", res.text)
+				doc.deliveries = doc.deliveries[1:]
+				doc.save(ignore_permissions=True)
+				frappe.db.commit()
+			
+		except Exception as e:
+			create_error_log("sending_request", frappe.get_traceback())
+			frappe.db.commit()
 
 
 			
