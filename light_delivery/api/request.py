@@ -6,6 +6,7 @@ from light_delivery.api.apis import get_url
 from light_delivery.api.apis import download_image
 import json
 from light_delivery.api.apis import send_notification 
+from light_delivery.api.delivery_request import calculate_balane
 
 
 @frappe.whitelist(allow_guest=False)
@@ -266,10 +267,16 @@ def get_request_details_for_del(*args, **kwargs):
 			"delivery": delivery,
 			"status": ["not in", ['Pending', 'Time Out', 'Delivery Cancel', 'Delivered', 'Store Cancel', 'Cancel' , 'Waiting for delivery']]
 		},
-		fields=["name", "number_of_order", "total", "store" , "status" ,],
+		fields=["name", "number_of_order", "total", "store" , "status" ,"delivery"],
 		limit=1
 	)
 	if request:
+
+		balance =  float(calculate_balane(request[0].get("delivery")) or 0)
+		request[0]['balance'] = balance
+		tot = balance - request[0]['total']
+		request[0]['cash'] = abs(tot)
+
 		request_name = request[0].get("name")
 		store = request[0].get("store")
 		if store:

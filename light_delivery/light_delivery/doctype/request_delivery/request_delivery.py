@@ -27,6 +27,30 @@ class RequestDelivery(Document):
 		if self.status in ["Delivered" , 'Delivery Cancel' , 'Store Cancel' , 'Cancel' ]:
 			self.close_request()
 			
+		if self.status == "Collect Money":
+			self.pay_to_store()
+
+
+	def pay_to_store(self):
+		doc = frappe.new_doc("Transactions")
+		doc.party = "Delivery"
+		doc.party_type = self.delivery
+		doc.in_wallet = self.total
+		doc.aganist = "Store"
+		doc.aganist_from = self.store
+		doc.save(ignore_permissions=True)
+		doc.submit()
+
+		store = frappe.new_doc("Transactions")
+		store.party = "Store"
+		store.party_type = self.store
+		store.out = self.total
+		store.aganist = "Delivery"
+		store.aganist_from = self.delivery
+		store.save(ignore_permissions=True)
+		store.submit()
+
+		frappe.db.commit()
 
 	def close_request(self):
 		if self.delivery:
