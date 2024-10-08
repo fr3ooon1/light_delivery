@@ -128,7 +128,7 @@ def get_requests(*args, **kwargs):
 
 		for order in order_list:
 			doc = frappe.get_doc("Order", order.order)
-			if doc.status not in ['Delivery Cancel','Store Cancel']:
+			if doc.status not in ['Delivery Cancel','Store Cancel' , 'Cancel']:
 				res = {
 					"id": doc.name,
 					"total": doc.total_order,
