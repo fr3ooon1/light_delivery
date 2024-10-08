@@ -118,7 +118,7 @@ def get_requests(*args, **kwargs):
 	store = frappe.get_value("Store", {"user": user}, 'name')
 	requests = frappe.get_list("Request Delivery", 
 							   {"store": store, 
-								'status': ['in', ['Accepted', 'Arrived', 'Collect Money', 'Picked', 'On The Way', 'Partially Delivered']]}, 
+								'status': ['in', ['Accepted', 'Arrived', 'Collect Money', 'Picked', 'On The Way', 'Partially Delivered','Waiting for delivery']]}, 
 							   ['name as id', 'status', 'delivery', 'number_of_order', 'request_date','total'])
 
 	for req in requests:

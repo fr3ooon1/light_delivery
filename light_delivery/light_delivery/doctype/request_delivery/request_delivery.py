@@ -12,7 +12,7 @@ class RequestDelivery(Document):
 	def before_naming(self):
 		self.follow_request_status()
 	def validate(self):
-		if self.status not in ['Pending' , 'Collect Money']:
+		if self.status not in ['Pending' ,'Accepted','Collect Money']:
 			self.follow_request_status()
 			self.request_accepted()
 		if self.status == "Accepted":
