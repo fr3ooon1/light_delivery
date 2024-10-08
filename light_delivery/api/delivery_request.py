@@ -37,6 +37,8 @@ def sending_request():
 							"delivery":delivery.get("name"),
 							"notification_key":delivery.get("notification_key")
 						})
+						doc.save(ignore_permissions=True)
+						frappe.db.commit()
 				deliveries = doc.get("deliveries")[0]
 				res = send_notification(deliveries.get("notification_key")) if deliveries.get("notification_key") else None
 				if res.status_code == 200:
