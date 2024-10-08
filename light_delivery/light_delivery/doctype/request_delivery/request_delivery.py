@@ -85,8 +85,9 @@ class RequestDelivery(Document):
 		order_request = self.get('order_request')
 		for order in order_request:
 			doc = frappe.get_doc("Order" , order.order)
-			doc.status = self.status
-			doc.save(ignore_permissions=True)
+			if doc.status not in ['Cancel' , 'Delivery Cancel','Store Cancel']:
+				doc.status = self.status
+				doc.save(ignore_permissions=True)
 
 
 	def delivery_cancel(self):
