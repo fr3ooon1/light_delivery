@@ -32,8 +32,7 @@ def get_current_request(*args , **kwargs):
 
 @frappe.whitelist(allow_guest=False)
 def request_history(*args, **kwargs):
-	user = frappe.session.user
-	delivery = frappe.get_value("Delivery", {"user": user}, 'name')
+	delivery = frappe.get_value("Delivery", {"user": frappe.session.user}, 'name')
 
 	if not delivery:
 		return {"status": "error", "message": "No delivery found for the current user."}
@@ -41,14 +40,26 @@ def request_history(*args, **kwargs):
 	requests = frappe.get_list(
 		"Request Delivery",
 		filters={"delivery": delivery},
-		fields=['name as id', 'number_of_order', 'number_ostoref_order', 'status', 'request_date', 'total as total_of_request']
+		fields=['name as id', 'status', 'delivery', 'number_of_order', 'request_date','total']
 	)
-	for i in requests:
-		i['orders'] = frappe.get_list(
-			"Order Request",
-			filters={"parent": i.get("id")},
-			fields=['order']
-		,ignore_permissions=True)
+	for req in requests:
+		request_del = frappe.get_doc("Request Delivery", req.get('id'))
+		order_list = request_del.get("order_request")
+		order_details = []
+
+		for order in order_list:
+			res = frappe.get_value("Order", order.get("order") , ['name','total_order','order_date','full_name','address','status'],as_dict=1)
+			# res = {
+			# 	"id": doc.name,
+			# 	"total": doc.total_order,
+			# 	"date": doc.order_date,
+			# 	"customer": doc.full_name,
+			# 	"address": doc.address,
+			# 	"status": doc.status,	
+			# }
+			order_details.append(res)
+
+		req['orders'] = order_details  # Append order details to the current request
 
 	if not requests:
 		frappe.local.response['http_status_code'] = 400
@@ -141,7 +152,10 @@ def get_requests(*args, **kwargs):
 				order_details.append(res)
 
 		req['orders'] = order_details  # Append order details to the current request
-
+	if not requests:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = _("No requests for this store.")	
+		return _("No requests for this store.")	
 	return requests
 
 
