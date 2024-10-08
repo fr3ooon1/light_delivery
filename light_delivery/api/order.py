@@ -477,46 +477,12 @@ def post_zones():
 		frappe.db.commit()
 
 
- 
-# def download_image(url):
-# 	try:
-# 		site_path = os.path.abspath(os.getcwd()) + get_site_base_path()[1::]+"/public/files"
-# 		access_token = frappe.db.get_single_value('DMS Settings', 'response')
-# 		headers = {
-# 			"Authorization": f"Bearer {access_token}",
-# 			"Content-Type": "application/json"
-# 		}
-
-# 		response = requests.get(url,headers=headers, stream=True)
-# 		response.raise_for_status()  # Raise an exception for error HTTP status codes
-# 		# Ensure the directory exists
-# 		image_name = url.split('/')
-# 		with open(os.path.join(site_path, f'{image_name[-1]}'), 'wb') as f:
-# 			for chunk in response.iter_content(1024):
-# 				f.write(chunk)
-# 		#create File To frappe 
-# 		with open(os.path.join(site_path, f'{image_name[-1]}'), 'rb') as image_file:
-# 			encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-# 		new_file = frappe.new_doc("File")
-# 		new_file.file_name = f'{image_name[-1]}'
-# 		new_file.is_private = 0 
-# 		new_file.filedata = encoded_string
-# 		new_file.file_url ="/files/"+ f'{image_name[-1]}'
-# 		new_file.save(ignore_permissions = True)
-# 		frappe.db.commit()
-# 		return new_file.name
-# 	except requests.exceptions.RequestException as e:
-# 		print(f"Error downloading image: {e}")
-# 		return False
-
-
-
 @frappe.whitelist(allow_guest=False)
 def cancel_order(*args,**kwargs):
 	order = kwargs.get("order")
+	notification_key = None
 	if frappe.db.exists("Order" , order):
 		order_obj = frappe.get_doc("Order" , order )
-		notification_key = None
 		if kwargs.get("type") == 'store':
 			order_obj.status = "Store Cancel"
 			msg = f"""Order had been cancel by Store"""
@@ -551,14 +517,25 @@ def cancel_order(*args,**kwargs):
 
 @frappe.whitelist(allow_guest=False)
 def change_order_status_del(*args,**kwargs):
-	user = frappe.session.user
-	delivery = frappe.get_value("Delivery",{"user":user},'name')
-
 	order = kwargs.get("order")
 	status = kwargs.get("status")
 
+	notification_key = None
+
 	if frappe.db.exists("Order" , order):
 		doc = frappe.get_doc("Order" , order)
+
+		if frappe.db.exists("Delivery",{"user":frappe.session.user}):
+			if doc.store:
+				store = frappe.get_value("Store", doc.store , 'name')
+				notification_key = frappe.get_value("User",store,'notification_key')
+		else:
+			if doc.delivery:
+				delivery = frappe.get_value("Delivery", doc.delivery , 'name')
+				notification_key = frappe.get_value("User",delivery,'notification_key')
+
+
+		send_notification(UsersArray=notification_key,content="modification")
 		doc.status = status
 		doc.save(ignore_permissions=True)
 		frappe.db.commit()

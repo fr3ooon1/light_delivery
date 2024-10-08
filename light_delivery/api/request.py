@@ -109,6 +109,7 @@ def delivery_request_status(*args , **kwargs):
 def change_request_status(*args , **kwargs):
 	status = kwargs.get("status")
 	request = kwargs.get("request")
+	notification_key=None
 	try:
 		if status and request:
 			if frappe.db.exists("Request Delivery" , request):
@@ -117,12 +118,17 @@ def change_request_status(*args , **kwargs):
 				request_obj.save(ignore_permissions=True)
 				frappe.db.commit()
 
-				# store = frappe.get_value("Store",request_obj.store,"user")
-				# notification_key = frappe.get_value("User",store,'notification_key')
+				if frappe.db.exists("Delivery",{"user":frappe.session.user}):
+					if request_obj.store:
+						store = frappe.get_value("Store", request_obj.store , 'name')
+						notification_key = frappe.get_value("User",store,'notification_key')
+				else:
+					if request_obj.delivery:
+						delivery = frappe.get_value("Delivery", request_obj.delivery , 'name')
+						notification_key = frappe.get_value("User",delivery,'notification_key')
 
-		
-				# send_notification(notification_key, "modification")
-
+						
+				send_notification(UsersArray=notification_key,content="modification")
 				frappe.local.response['http_status_code'] = 200
 				frappe.local.response['message'] = f""" Request id: {request} status has been changed"""
 	except Exception as e:
@@ -170,6 +176,7 @@ def get_requests(*args, **kwargs):
 @frappe.whitelist(allow_guest=False)
 def cancel_request(*args,**kwargs):
 	request = kwargs.get("request")
+	notification_key = None
 	if frappe.db.exists("Request Delivery" , request):
 		request_obj = frappe.get_doc("Request Delivery" , kwargs.get("request"))
 		if kwargs.get("type") == 'store':
