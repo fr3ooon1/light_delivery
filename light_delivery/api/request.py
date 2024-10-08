@@ -40,7 +40,7 @@ def request_history(*args, **kwargs):
 	requests = frappe.get_list(
 		"Request Delivery",
 		filters={"delivery": delivery},
-		fields=['name as id', 'status', 'delivery', 'number_of_order', 'request_date','total']
+		fields=['name as id', 'status', 'store', 'number_of_order', 'request_date','total']
 	)
 	for req in requests:
 		request_del = frappe.get_doc("Request Delivery", req.get('id'))
@@ -48,7 +48,7 @@ def request_history(*args, **kwargs):
 		order_details = []
 
 		for order in order_list:
-			res = frappe.get_value("Order", order.get("order") , ['name','total_order','order_date','full_name','address','status'],as_dict=1)
+			res = frappe.get_value("Order", order.get("order") , ['name','total_order','order_date','full_name','address','status','order_date'],as_dict=1)
 			# res = {
 			# 	"id": doc.name,
 			# 	"total": doc.total_order,
