@@ -74,33 +74,84 @@ def delivery_accepted_request(*args , **kwargs):
 		pass
 
 
-@frappe.whitelist(allow_guest = 0 )
-def get_delivery_request():
-	store = frappe.db.sql(f"select name from `tabStore` where user = '{frappe.session.user}' " , as_dict = 1)
-	sql = f'''
-			select 
-				r.name , r.delivery ,
-				GROUP_CONCAT(o.order ORDER BY o.order SEPARATOR ',') AS orders
-			from 
-				`tabRequest Delivery` r
-			inner join
-				`tabOrder Request` o
-				on 
-				r.name = o.parent
-			where 
-				r.store = '{store[0]["name"]}'
-			group by 
-				r.name , r.delivery
-			'''
-	requests = frappe.db.sql(sql , as_dict = 1)
-	if requests :
-		for request in requests :
-			request['orders'] = request['orders'].split(',')
-			delivery_pointers = frappe.db.sql(f'''select pointer_x , pointer_y from `tabDelivery` where name = '{request["delivery"]}' ''', as_dict = 1)
-			request["pointer_x"] = delivery_pointers[0]["pointer_x"]
-			request["pointer_y"] = delivery_pointers[0]["pointer_y"]
+
+import ast
+
+
+@frappe.whitelist(allow_guest=False)
+def get_delivery_request(*args, **kwargs):
+	try:
+		store = frappe.get_value("Store", {"user": frappe.session.user}, 'name')
 		
-	return requests
+		if not store:
+			frappe.local.response['http_status_code'] = 400
+			frappe.local.response['message'] = _( "No store found for the current user.")
+			return {"status": "error", "message": "No store found for the current user."}
+		
+		orders = kwargs.get("orders")
+		if not orders or not isinstance(orders, list):
+			return {"status": "error", "message": "No orders provided or invalid format."}
+
+
+		if not orders or not isinstance(orders, list):
+			frappe.local.response['http_status_code'] = 400
+			frappe.local.response['message'] = _( "No orders provided or invalid format." )
+			return {"status": "error", "message": "No orders provided or invalid format."}
+
+		
+		request = frappe.new_doc("Request Delivery")
+		request.store = store
+		request.request_date = frappe.utils.nowdate()
+
+		for order_id in orders:
+			request.append("order_request", {
+				"order": order_id,
+				"store": store
+			})
+
+		request.insert(ignore_permissions=True)
+		request.status = "Waiting for delivery"
+		request.save(ignore_permissions=True)
+		frappe.db.commit()
+
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = _("Delivery request created successfully.")
+		return {"status": "success", "message": "Delivery request created successfully.", "request_id": request.name}
+
+	except Exception as e:
+		frappe.log_error(frappe.get_traceback(), "get_delivery_request")
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = _(e)
+		return {"status": "error", "message": str(e)}
+
+
+# @frappe.whitelist(allow_guest = 0 )
+# def get_delivery_request():
+# 	store = frappe.db.sql(f"select name from `tabStore` where user = '{frappe.session.user}' " , as_dict = 1)
+# 	sql = f'''
+# 			select 
+# 				r.name , r.delivery ,
+# 				GROUP_CONCAT(o.order ORDER BY o.order SEPARATOR ',') AS orders
+# 			from 
+# 				`tabRequest Delivery` r
+# 			inner join
+# 				`tabOrder Request` o
+# 				on 
+# 				r.name = o.parent
+# 			where 
+# 				r.store = '{store[0]["name"]}'
+# 			group by 
+# 				r.name , r.delivery
+# 			'''
+# 	requests = frappe.db.sql(sql , as_dict = 1)
+# 	if requests :
+# 		for request in requests :
+# 			request['orders'] = request['orders'].split(',')
+# 			delivery_pointers = frappe.db.sql(f'''select pointer_x , pointer_y from `tabDelivery` where name = '{request["delivery"]}' ''', as_dict = 1)
+# 			request["pointer_x"] = delivery_pointers[0]["pointer_x"]
+# 			request["pointer_y"] = delivery_pointers[0]["pointer_y"]
+		
+# 	return requests
 
 @frappe.whitelist(allow_guest = 0 )
 def delivery_cancel_request(request_id , status):
