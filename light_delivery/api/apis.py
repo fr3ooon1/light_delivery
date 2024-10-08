@@ -272,11 +272,11 @@ def send_notification(UsersArray , content ):
 		title = { 
 			"en": _("Request Edit"),
 			"ar": _("تعديل الطلب") , 
-		},
+		}
 		contents =  { 
 			"en": _("You have a new request"),
 			"ar": _("هناك تعديل في طلب "),  
-		},
+		}
 	elif content == "new request":
 		headings = { 
 			"ar": _("طلب جديد"), 
@@ -285,11 +285,11 @@ def send_notification(UsersArray , content ):
 		title = { 
 			"en": "New Request Available",
 			"ar": "طلب جديد", 
-		},
+		}
 		contents =  { 
 			"en": "You have a new request",
 			"ar": "هناك طلب جديد",  
-		},
+		}
 	url = "https://onesignal.com/api/v1/notifications"
 
 	headers = {
