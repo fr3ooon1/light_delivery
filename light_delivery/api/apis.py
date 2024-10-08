@@ -265,30 +265,34 @@ def send_notification(UsersArray , content ):
 	title = {}
 	contents = {}
 	if content == "modification":
-		headings = { 
-			"ar": _("تعديل الطلب"), 
-			"en": _("Request Edit"),  
-		}
-		title = { 
-			"en": _("Request Edit"),
-			"ar": _("تعديل الطلب") , 
-		}
-		contents =  { 
-			"en": _("You have a new request"),
-			"ar": _("هناك تعديل في طلب "),  
+		payload = {
+			"app_id": "e75df22c-56df-4e69-8a73-fc80c73c4337",
+			"headings": { 
+				"en": "Edit Request"
+			},
+			"title": { 
+				"en": "Edit Request"
+			},
+			"contents": { 
+				"en": "You have a modification of request"
+			},
+			"data": { "postID": "req" },
+			"include_player_ids": [UsersArray]
 		}
 	elif content == "new request":
-		headings = { 
-			"ar": _("طلب جديد"), 
-			"en": _("New Request"),  
-		}
-		title = { 
-			"en": "New Request Available",
-			"ar": "طلب جديد", 
-		}
-		contents =  { 
-			"en": "You have a new request",
-			"ar": "هناك طلب جديد",  
+		payload = {
+			"app_id": "e75df22c-56df-4e69-8a73-fc80c73c4337",
+			"headings": { 
+				"en": "New Request"
+			},
+			"title": { 
+				"en": "New Request Available"
+			},
+			"contents": { 
+				"en": "You have a new request"
+			},
+			"data": { "postID": "popup_req" },
+			"include_player_ids": [UsersArray]
 		}
 	url = "https://onesignal.com/api/v1/notifications"
 
@@ -297,14 +301,7 @@ def send_notification(UsersArray , content ):
 		"Authorization": "Basic NmMwNGNmM2MtYzM5Zi00ODYwLTk0ODYtYWNiMDlkY2M2NDFi"
 	}
 
-	payload = {
-		"app_id": "e75df22c-56df-4e69-8a73-fc80c73c4337",
-		"headings":headings,
-		"title":title,
-		"contents": contents,
-		"data": { "postID": "popup_req" },
-		"include_player_ids": [UsersArray]
-	}
+	
 
 	payload_json = json.dumps(payload)
 
