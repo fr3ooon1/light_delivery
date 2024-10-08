@@ -4,8 +4,9 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import now_datetime
-from light_delivery.api.delivery_request import create_transaction
+from light_delivery.api.delivery_request import create_transaction , calculate_balane
 from light_delivery.api.apis import search_delivary
+
 
 
 class RequestDelivery(Document):
@@ -32,10 +33,14 @@ class RequestDelivery(Document):
 
 
 	def pay_to_store(self):
+		balance =  float(calculate_balane(self.delivery) or 0)
+
+		temp = balance - self.total
+
 		doc = frappe.new_doc("Transactions")
 		doc.party = "Delivery"
 		doc.party_type = self.delivery
-		doc.in_wallet = self.total
+		doc.out = abs(temp)
 		doc.aganist = "Store"
 		doc.aganist_from = self.store
 		doc.save(ignore_permissions=True)
@@ -44,7 +49,7 @@ class RequestDelivery(Document):
 		store = frappe.new_doc("Transactions")
 		store.party = "Store"
 		store.party_type = self.store
-		store.out = self.total
+		store.in_wallet = abs(temp)
 		store.aganist = "Delivery"
 		store.aganist_from = self.delivery
 		store.save(ignore_permissions=True)
