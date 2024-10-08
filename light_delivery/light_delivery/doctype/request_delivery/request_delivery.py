@@ -32,7 +32,7 @@ class RequestDelivery(Document):
 		if self.delivery:
 			doc = frappe.get_doc("Delivery",self.delivery)
 			doc.status = "Offline"
-			doc.save(ignore_permission=True)
+			doc.save(ignore_permissions=True)
 			frappe.db.commit()
 			
 		
