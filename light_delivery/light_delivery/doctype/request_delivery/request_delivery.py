@@ -17,7 +17,7 @@ class RequestDelivery(Document):
 			self.request_accepted()
 		if self.status == "Accepted":
 			pass
-		if self.status in ['Arrived' , 'Picked' , 'Delivery Cancel' , 'Store Cancel' , 'Cancel']:
+		if self.status in ['Arrived' , 'Picked' , 'Delivery Cancel' , 'Store Cancel' , 'Cancel', 'Accepted']:
 			self.change_status_for_orders()
 
 		if self.status == "Waiting for delivery":
