@@ -15,6 +15,12 @@ class Request(Document):
 			doc = frappe.get_doc("Request Delivery" , self.request_delivery)
 			doc.delivery = self.delivery
 			doc.status = "Accepted"
+
+			for order in doc.order_request:
+				order_obj = frappe.get_doc("Order",order.get("order"))
+				order_obj.delivery = self.delivery
+				order_obj.save(ignore_permissions=True)
+				frappe.db.commit()
 			doc.save(ignore_permissions=True)
 			frappe.db.commit()
 

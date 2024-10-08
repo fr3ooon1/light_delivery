@@ -127,8 +127,13 @@ def change_request_status(*args , **kwargs):
 						delivery = frappe.get_value("Delivery", request_obj.delivery , 'name')
 						notification_key = frappe.get_value("User",delivery,'notification_key')
 
-						
-				send_notification(UsersArray=notification_key,content="modification")
+
+				res = send_notification(notification_key, "modification")
+				if res.status_code != 200:
+					error = frappe.new_doc("Error Log")
+					error.method = "send_notification"
+					error.error = res.text
+					error.insert(ignore_permissions=True)
 				frappe.local.response['http_status_code'] = 200
 				frappe.local.response['message'] = f""" Request id: {request} status has been changed"""
 	except Exception as e:
