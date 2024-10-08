@@ -272,17 +272,17 @@ def send_notification(UsersArray):
         "app_id": "e75df22c-56df-4e69-8a73-fc80c73c4337",
         "headings": { 
             "ar": _("طلب جديد"), 
-            "en": _("New Request"),  # Ensure English heading is not empty
+            "en": _("New Request"),  
         },
         "title": { 
-            "en": "New Request Available",  # Add a valid English title
+            "en": "New Request Available",
             "ar": "طلب جديد", 
         },
         "contents": { 
-            "en": "You have a new request",  # Add valid English content
-            "ar": "هناك طلب جديد",  # Keep the Arabic content
+            "en": "You have a new request",
+            "ar": "هناك طلب جديد",  
         },
-        "data": { "postID": "popup_req" }, #req if delivery accepted or delivery_request 
+        "data": { "postID": "popup_req" },
         "include_player_ids": UsersArray
     }
 
@@ -290,3 +290,11 @@ def send_notification(UsersArray):
 
     response = requests.post(url, headers=headers, data=payload_json)
     return response
+
+
+
+def create_error_log(method, error):
+    error_log = frappe.new_doc("Error Log")
+    error_log.method = method
+    error_log.error = error
+    error_log.save(ignore_permissions=True)
