@@ -31,12 +31,14 @@
   "store_fees",
   "discount",
   "net_store_fees",
+  "column_break_wbkz",
   "column_break_mhwx",
   "delivery_fees",
   "tax",
   "net_delivery_fees",
   "section_break_biyy",
   "order_log",
+  "request",
   "column_break_tpje",
   "delivery",
   "store",
@@ -79,7 +81,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Pending\nWaiting for delivery\nAccepted\nArrived\nPicked\nOn The Way\nArrived For Destination\nDelivered\nRetunred\nDelivery Cancel\nStore Cancel\nCancel"
+   "options": "Pending\nAccepted\nArrived\nPicked\nOn The Way\nArrived For Destination\nDelivered\nRetunred\nDelivery Cancel\nStore Cancel\nCancel"
   },
   {
    "fieldname": "total_order",
@@ -219,11 +221,21 @@
    "fieldname": "net_delivery_fees",
    "fieldtype": "Float",
    "label": "Net Delivery Fees"
+  },
+  {
+   "fieldname": "column_break_wbkz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "request",
+   "fieldtype": "Link",
+   "label": "Request",
+   "options": "Request Delivery"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-06 19:24:07.831891",
+ "modified": "2024-10-09 09:34:02.611475",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",

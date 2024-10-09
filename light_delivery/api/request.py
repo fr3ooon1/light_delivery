@@ -73,7 +73,7 @@ def request_history(*args, **kwargs):
 @frappe.whitelist(allow_guest=False)
 def delivery_request_status(*args , **kwargs):
 	user = frappe.session.user
-	delivery = frappe.get_value("Delivery", {"user": user}, ['name','delivery_category'],as_dict=1)
+	delivery = frappe.get_value("Delivery", {"user": user}, ['name','delivery_category','status'],as_dict=1)
 	res = {}
 	
 	if delivery:
@@ -84,6 +84,8 @@ def delivery_request_status(*args , **kwargs):
 		delivery_cancel = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Delivery Cancel"})
 		store_cacnel = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Store Cancel"})
 
+		delivery_status = delivery.get("status")
+
 
 		price_list = frappe.get_value("Delivery Category" , delivery.get("delivery_category"), ['minimum_orders' , 'maximum_orders' , 'maximum_order_by_request' , 'minimum_rate' , 'rate_of_km'],as_dict=1)
 
@@ -92,7 +94,8 @@ def delivery_request_status(*args , **kwargs):
 			"accepted":len(accepted),
 			"delivery_cancel":len(delivery_cancel),
 			"store_cacnel":len(store_cacnel),
-			"price_list":price_list
+			"price_list":price_list,
+			"delivery_status":delivery_status
 		}
 		return res
 	else:
@@ -101,7 +104,8 @@ def delivery_request_status(*args , **kwargs):
 			"accepted":0,
 			"delivery_cancel":0,
 			"store_cacnel":0,
-			"price_list":0
+			"price_list":0,
+			"delivery_status":delivery.get("status")
 		}
 		return res
 

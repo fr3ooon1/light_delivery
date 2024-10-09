@@ -24,9 +24,24 @@ class Order(Document):
 		self.change_request_status()
 
 	def change_request_status(self):
-
+		status = []
 		if self.status == "Delivered":
-			pass
+			if self.request:
+				request = frappe.get_doc("Request Delivery", self.request)
+				orders = request.get("order_request")
+
+				for order in orders:
+					status.append(frappe.get_value("Order", order.order, 'status'))
+
+				if all(one in ['Delivered', 'CancelCancel', 'Delivery Cancel', 'Store Cancel'] for one in status):
+					request.status = "Delivered"
+					request.save(ignore_permissions=True)
+					frappe.db.commit()
+
+
+
+
+
 	def begain_order(self):
 		status = self.status
 		self.append("order_log",{
