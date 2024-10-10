@@ -128,7 +128,7 @@ def registration (*args , **kwargs):
 			store_logo = download_image(files.get('store_logo'))
 			store_cover = download_image(files.get('store_cover'))
 			store_obj = frappe.new_doc("Store")
-			store_obj.store_name = data.full_name
+			store_obj.store_name = data.store_name
 			store_obj.status = "Pending"
 			store_obj.user = new_user.name
 			store_obj.zone = data.zone
@@ -137,8 +137,6 @@ def registration (*args , **kwargs):
 			store_obj.store_logo = store_logo.file_url
 			store_obj.store_cover = store_cover.file_url
 			store_obj.insert(ignore_permissions=True)
-			store_obj.save(ignore_permissions=True)
-			frappe.db.commit()
 		else:
 			delivery_obj = frappe.new_doc("Delivery")
 			# delivery_obj.delivery_category = "gold"
@@ -148,8 +146,7 @@ def registration (*args , **kwargs):
 			delivery_obj.status = "Pending"
 			delivery_obj.user = new_user.name
 			delivery_obj.insert(ignore_permissions=True)
-			delivery_obj.save(ignore_permissions=True)
-			frappe.db.commit()
+
 
 		customer_obj = frappe.new_doc("Customer")
 		customer_obj.customer_name = store_obj.name if float(data.is_store) == 1 else delivery_obj.name
