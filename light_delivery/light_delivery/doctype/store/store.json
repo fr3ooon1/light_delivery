@@ -15,6 +15,8 @@
   "store_logo",
   "store_cover",
   "store_location",
+  "pointer_x",
+  "pointer_y",
   "price_list_section",
   "minimum_price",
   "rate_of_km",
@@ -100,11 +102,21 @@
    "fieldtype": "Table",
    "label": "Store Discount",
    "options": "Store Discount"
+  },
+  {
+   "fieldname": "pointer_x",
+   "fieldtype": "Data",
+   "label": "pointer x"
+  },
+  {
+   "fieldname": "pointer_y",
+   "fieldtype": "Data",
+   "label": "pointer y"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-31 16:57:46.302394",
+ "modified": "2024-10-10 11:34:04.329644",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Store",
