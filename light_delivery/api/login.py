@@ -164,7 +164,7 @@ def registration (*args , **kwargs):
 			"is_primary_mobile_no":1
 		})
 		contact.append('links',{
-			"link_doctype":"Store",
+			"link_doctype":"Customer" ,
 			"link_name":store_obj.name if store_obj else delivery_obj.name , 
 			"link_type":store_obj.store_name if store_obj else data.full_name
 		})
