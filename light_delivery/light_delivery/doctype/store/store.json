@@ -8,6 +8,7 @@
   "store_name",
   "status",
   "user",
+  "username",
   "zone",
   "address",
   "store_category",
@@ -112,11 +113,18 @@
    "fieldname": "pointer_y",
    "fieldtype": "Data",
    "label": "pointer y"
+  },
+  {
+   "fetch_from": "user.username",
+   "fieldname": "username",
+   "fieldtype": "Data",
+   "label": "Username",
+   "options": "User"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-10 11:34:04.329644",
+ "modified": "2024-10-10 13:33:34.179411",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Store",

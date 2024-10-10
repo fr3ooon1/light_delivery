@@ -145,6 +145,7 @@ def registration (*args , **kwargs):
 			store_obj.store_logo = store_logo.file_url
 			store_obj.store_cover = store_cover.file_url
 			store_obj.name = new_user.name
+			store_obj.username = new_user.username
 			store_obj.insert(ignore_permissions=True)
 		else:
 			delivery_obj = frappe.new_doc("Delivery")
@@ -154,7 +155,7 @@ def registration (*args , **kwargs):
 			delivery_obj.date_of_joining = nowdate() 
 			delivery_obj.status = "Pending"
 			delivery_obj.user = new_user.name
-			delivery_obj.name = new_user.username
+			delivery_obj.username = new_user.username
 			delivery_obj.insert(ignore_permissions=True)
 
 

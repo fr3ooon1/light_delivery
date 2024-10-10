@@ -1,7 +1,6 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{delivery_name}-{#####}",
  "creation": "2024-07-23 16:13:36.446585",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -10,6 +9,7 @@
   "delivery_name",
   "status",
   "user",
+  "username",
   "column_break_hfwd",
   "national_id",
   "date_of_joining",
@@ -102,15 +102,21 @@
    "fieldname": "valuation",
    "fieldtype": "Rating",
    "label": "Rating"
+  },
+  {
+   "fetch_from": "user.username",
+   "fieldname": "username",
+   "fieldtype": "Data",
+   "label": "Username",
+   "unique": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-10 13:53:49.381616",
+ "modified": "2024-10-10 13:33:58.406669",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Delivery",
- "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
