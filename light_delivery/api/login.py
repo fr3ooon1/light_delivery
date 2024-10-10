@@ -95,12 +95,11 @@ def generate_keys(user , notification_key):
 
 	if not user_details.api_key:
 		api_key = frappe.generate_hash(length=15)
-		user_details.api_key = api_key
-		user_details.save(ignore_permissions=1)
-	frappe.db.commit()
+		user_details.api_key = api_key	
 
 	user_details.api_secret = api_secret
 	user_details.save()	
+	frappe.db.commit()
 	return {"api_secret": api_secret}
 
 @frappe.whitelist()
