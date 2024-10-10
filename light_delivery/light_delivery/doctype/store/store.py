@@ -26,5 +26,5 @@ class Store(Document):
 						}
 					]
 				}
-			self.delivery_location = json.dumps(coordinates)
+			self.store_location = json.dumps(coordinates)
 			frappe.db.commit()
