@@ -122,8 +122,8 @@ def registration (*args , **kwargs):
 	files = frappe.request.files
 	data = frappe.form_dict
 	if  frappe.db.exists("User",{"phone":kwargs.get("phone"),"email":kwargs.get("email")}):
-		frappe.local.response['http_status_code'] = 200
-		frappe.local.response['message'] = _("Employee With Email And Phone Number Already Exist")
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = _("User With Email And Phone Number Already Exist")
 		return
 	try:
 		new_user = create_user_if_not_exists(**kwargs)
