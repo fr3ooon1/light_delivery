@@ -124,6 +124,9 @@ def registration (*args , **kwargs):
 		new_user = create_user_if_not_exists(**kwargs)
 		login(email = new_user.email, pwd = kwargs.get('password'))
 
+
+		store_obj = None
+		delivery_obj = None
 		if float(data.is_store) == 1:
 			store_logo = download_image(files.get('store_logo'))
 			store_cover = download_image(files.get('store_cover'))
