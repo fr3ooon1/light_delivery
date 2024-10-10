@@ -1,6 +1,6 @@
 {
  "actions": [],
- "autoname": "format: {store_name}-{#####}",
+ "autoname": "format:{username}",
  "creation": "2024-07-23 16:02:30.101307",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -124,7 +124,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-10 13:33:34.179411",
+ "modified": "2024-10-10 13:35:45.715993",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Store",
