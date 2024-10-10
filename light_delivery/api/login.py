@@ -125,8 +125,8 @@ def registration (*args , **kwargs):
 		login(email = new_user.email, pwd = kwargs.get('password'))
 
 
-		store_obj = None
-		delivery_obj = None
+		store_obj = {}
+		delivery_obj = {}
 		if float(data.is_store) == 1:
 			store_logo = download_image(files.get('store_logo'))
 			store_cover = download_image(files.get('store_cover'))
@@ -142,7 +142,7 @@ def registration (*args , **kwargs):
 			store_obj.insert(ignore_permissions=True)
 		else:
 			delivery_obj = frappe.new_doc("Delivery")
-			# delivery_obj.delivery_category = "gold"
+
 			delivery_obj.national_id = data.national_id
 			delivery_obj.delivery_name = data.full_name
 			delivery_obj.date_of_joining = nowdate() 
@@ -158,7 +158,7 @@ def registration (*args , **kwargs):
 		frappe.db.commit()
 
 		contact = frappe.new_doc('Contact')
-		contact.first_name = store_obj.store_name if store_obj else delivery_obj.delivery_name
+		contact.first_name = store_obj.store_name if store_obj else data.full_name
 		contact.append('phone_nos',{
 			"phone":kwargs.get('phone'),
 			"is_primary_mobile_no":1
@@ -166,7 +166,7 @@ def registration (*args , **kwargs):
 		contact.append('links',{
 			"link_doctype":"Store",
 			"link_name":store_obj.name if store_obj else delivery_obj.name , 
-			"link_type":store_obj.store_name if store_obj else delivery_obj.delivery_name
+			"link_type":store_obj.store_name if store_obj else data.full_name
 		})
 		contact.append('email_ids',{
 			"email_id":kwargs.get("email"),
