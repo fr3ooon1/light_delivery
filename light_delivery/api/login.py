@@ -132,6 +132,9 @@ def registration (*args , **kwargs):
 
 		store_obj = {}
 		delivery_obj = {}
+		customer_group = None
+		customer_name = None
+
 		if float(data.is_store) == 1:
 			store_logo = download_image(files.get('store_logo'))
 			store_cover = download_image(files.get('store_cover'))
@@ -147,9 +150,10 @@ def registration (*args , **kwargs):
 			store_obj.name = new_user.name
 			store_obj.username = new_user.username
 			store_obj.insert(ignore_permissions=True)
-		else:
+			customer_group = "Store"
+			customer_name = store_obj.name
+		elif float(data.is_store) == 0:
 			delivery_obj = frappe.new_doc("Delivery")
-
 			delivery_obj.national_id = data.national_id
 			delivery_obj.delivery_name = data.full_name
 			delivery_obj.date_of_joining = nowdate() 
@@ -157,10 +161,13 @@ def registration (*args , **kwargs):
 			delivery_obj.user = new_user.name
 			delivery_obj.username = new_user.username
 			delivery_obj.insert(ignore_permissions=True)
+			customer_group = "Delivery"
+			customer_name = delivery_obj.name
 
 
 		customer_obj = frappe.new_doc("Customer")
-		customer_obj.customer_name = store_obj.name if float(data.is_store) == 1 else delivery_obj.name
+		customer_obj.customer_name = customer_name
+		customer_obj.customer_group = customer_group
 		customer_obj.insert(ignore_permissions=True)
 		customer_obj.save(ignore_permissions=True)
 		frappe.db.commit()
@@ -173,8 +180,8 @@ def registration (*args , **kwargs):
 		})
 		contact.append('links',{
 			"link_doctype":"Customer" ,
-			"link_name":store_obj.name if store_obj else delivery_obj.name , 
-			"link_type":store_obj.store_name if store_obj else data.full_name
+			"link_name":customer_obj.name , 
+			"link_type":customer_obj.name
 		})
 		contact.append('email_ids',{
 			"email_id":kwargs.get("email"),
@@ -186,7 +193,7 @@ def registration (*args , **kwargs):
 		
 
 	except Exception as er:
-			frappe.local.response['http_status_code'] = 401
+			frappe.local.response['http_status_code'] = 400
 			frappe.local.response['message'] =str(er)
 			frappe.local.response['data'] = {"errors" : "Not Completed Data"}
 			return

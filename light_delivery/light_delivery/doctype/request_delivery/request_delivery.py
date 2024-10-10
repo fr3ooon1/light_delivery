@@ -15,9 +15,11 @@ class RequestDelivery(Document):
 	def validate(self):
 		if self.status not in ['Pending' ,'Accepted','Collect Money']:
 			self.follow_request_status()
-			self.request_accepted()
+			
 		if self.status == "Accepted":
-			pass
+			self.request_accepted()
+
+			
 		if self.status in ['Arrived' , 'Picked' , 'Delivery Cancel' , 'Store Cancel' , 'Cancel', 'Accepted']:
 			self.change_status_for_orders()
 
@@ -106,8 +108,8 @@ class RequestDelivery(Document):
 
 			# self.order_request[i] = self.delivery
 
-			order.delivery = order_request[i].get("delivery")
-			order.store = order_request[i].get("store")
+			order.delivery = self.delivery
+			order.store = self.store
 			order.status = self.status
 
 			total_request_amount += float(order.get("total_order") or 0)
