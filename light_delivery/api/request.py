@@ -75,6 +75,7 @@ def delivery_request_status(*args , **kwargs):
 	user = frappe.session.user
 	delivery = frappe.get_value("Delivery", {"user": user}, ['name','delivery_category','status'],as_dict=1)
 	res = {}
+	wallet = calculate_balane(delivery.get("name"))
 	
 	if delivery:
 
@@ -95,7 +96,8 @@ def delivery_request_status(*args , **kwargs):
 			"delivery_cancel":len(delivery_cancel),
 			"store_cacnel":len(store_cacnel),
 			"price_list":price_list,
-			"delivery_status":delivery_status
+			"delivery_status":delivery_status,
+			"wallet":float(wallet or 0)
 		}
 		return res
 	else:
@@ -105,7 +107,8 @@ def delivery_request_status(*args , **kwargs):
 			"delivery_cancel":0,
 			"store_cacnel":0,
 			"price_list":0,
-			"delivery_status":delivery.get("status")
+			"delivery_status":delivery.get("status"),
+			"wallet":float(wallet or 0)
 		}
 		return res
 

@@ -74,7 +74,7 @@ def login(*args,**kwargs):
 		res["status"]=  frappe.get_value("Delivery",{"user":frappe.session.user},"status") 
 
 
-	res['wallet'] = calculate_balane(user_obj.username)
+	res['wallet'] = float(calculate_balane(user_obj.username) or 0)
 
 
 		
