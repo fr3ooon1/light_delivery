@@ -158,15 +158,15 @@ def registration (*args , **kwargs):
 		frappe.db.commit()
 
 		contact = frappe.new_doc('Contact')
-		contact.first_name = store_obj.store_name
+		contact.first_name = store_obj.store_name if store_obj else delivery_obj.full_name
 		contact.append('phone_nos',{
 			"phone":kwargs.get('phone'),
 			"is_primary_mobile_no":1
 		})
 		contact.append('links',{
 			"link_doctype":"Store",
-			"link_name":store_obj.name,
-			"link_type":store_obj.store_name,
+			"link_name":store_obj.name if store_obj else delivery_obj.name , 
+			"link_type":store_obj.store_name if store_obj else delivery_obj.full_name
 		})
 		contact.append('email_ids',{
 			"email_id":kwargs.get("email"),
