@@ -5,6 +5,8 @@ from frappe import _
 from light_delivery.api.apis import download_image
 from frappe.utils import nowdate 
 import json
+from light_delivery.api.delivery_request import calculate_balane
+
 
 
 @frappe.whitelist(allow_guest=True)
@@ -70,6 +72,9 @@ def login(*args,**kwargs):
 	if frappe.db.exists("Delivery",{"user":frappe.session.user}):
 		res['cash'] =frappe.get_value("Delivery",{"user":frappe.session.user},"cash") 
 		res["status"]=  frappe.get_value("Delivery",{"user":frappe.session.user},"status") 
+
+
+	res['wallet'] = calculate_balane(frappe.get_value(""))
 
 
 		
@@ -139,6 +144,7 @@ def registration (*args , **kwargs):
 			store_obj.store_category = data.store_category
 			store_obj.store_logo = store_logo.file_url
 			store_obj.store_cover = store_cover.file_url
+			store_obj.name = new_user.name
 			store_obj.insert(ignore_permissions=True)
 		else:
 			delivery_obj = frappe.new_doc("Delivery")
@@ -148,6 +154,7 @@ def registration (*args , **kwargs):
 			delivery_obj.date_of_joining = nowdate() 
 			delivery_obj.status = "Pending"
 			delivery_obj.user = new_user.name
+			delivery_obj.name = new_user.username
 			delivery_obj.insert(ignore_permissions=True)
 
 
