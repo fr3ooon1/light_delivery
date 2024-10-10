@@ -191,13 +191,18 @@ def create_user_if_not_exists(**kwargs):
 	if frappe.db.exists("User", kwargs.get('email')):
 		return
 	new_user = frappe.new_doc("User")
+	user_name = None 
+	if kwargs.get('store_name') :
+		user_name = kwargs.get("store_name").lower().replace(" ","_")+ frappe.generate_hash(length=4)
+	else:
+		user_name = kwargs.get('full_name').lower().replace(" ","_")+ frappe.generate_hash(length=4)
 	new_user.update({
 			"doctype": "User",
 			"send_welcome_email": 0,
 			"user_type": "System User",
 			"first_name": kwargs.get('store_name') if kwargs.get('store_name') else kwargs.get('full_name'),
 			"email": kwargs.get('email'),
-			"username": kwargs.get("store_name").lower().replace(" ","_")+ frappe.generate_hash(length=4),
+			"username": user_name,
 			"enabled": 1,
 			"phone": kwargs.get('phone'),
 			"mobile_no": kwargs.get('phone'),
