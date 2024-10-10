@@ -9,7 +9,6 @@ import json
 class Store(Document):
 	def validate(self):
 		self.draw_location()
-		self.rate_delivery()
 	
 	def draw_location(self):
 		if self.pointer_x and self.pointer_y:
