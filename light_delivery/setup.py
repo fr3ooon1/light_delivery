@@ -128,6 +128,23 @@ def get_all_status():
     return all_status
 
 
+@frappe.whitelist()
+def get_status_for_order_type(order_type):
+	status = frappe.db.sql(f"""
+            SELECT 
+				s.index,
+                ots.status as en,
+                s.status_name_in_arabic as ar
+            FROM 
+                `tabOrder Type Status` ots
+            JOIN
+                `tabStatus` s
+            ON
+                ots.status = s.name
+            WHERE 
+                ots.parent = '{order_type}'""", as_dict=1)
+
+	return status
 
 @frappe.whitelist()
 def get_status(index):
