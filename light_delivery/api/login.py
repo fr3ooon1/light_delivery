@@ -121,9 +121,9 @@ def get_user_permissions(user):
 def registration (*args , **kwargs):
 	files = frappe.request.files
 	data = frappe.form_dict
-	if  frappe.db.exists("User",{"phone":kwargs.get("phone"),"email":kwargs.get("email")}):
+	if  frappe.db.exists("User",{"email":kwargs.get("email")}) or frappe.db.exists("User",{"phone":kwargs.get("phone")}):
 		frappe.local.response['http_status_code'] = 400
-		frappe.local.response['message'] = _("User With Email And Phone Number Already Exist")
+		frappe.local.response['message'] = _("User With Email or Phone Number Already Exist")
 		return _("User With Email And Phone Number Already Exist")
 	try:
 		new_user = create_user_if_not_exists(**kwargs)
