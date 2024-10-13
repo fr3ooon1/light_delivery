@@ -124,7 +124,7 @@ def registration (*args , **kwargs):
 	if  frappe.db.exists("User",{"phone":kwargs.get("phone"),"email":kwargs.get("email")}):
 		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = _("User With Email And Phone Number Already Exist")
-		return
+		return _("User With Email And Phone Number Already Exist")
 	try:
 		new_user = create_user_if_not_exists(**kwargs)
 		login(email = new_user.email, pwd = kwargs.get('password'))
@@ -200,14 +200,16 @@ def registration (*args , **kwargs):
 	except frappe.DuplicateEntryError:
 		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = _("A user with this email already exists.")
+		return _("A user with this email already exists.")
 	except frappe.ValidationError as e:
 		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = str(e)
+		return _(str(e))
 	except Exception as e:
-		# Catch any other exceptions and return a 500 error
 		frappe.local.response['http_status_code'] = 500
 		frappe.local.response['message'] = _("An unexpected error occurred: {0}").format(str(e))
-		frappe.log_error(frappe.get_traceback(), _("User Creation Error"))
+		return _("An unexpected error occurred: {0}").format(str(e))
+		# frappe.log_error(frappe.get_traceback(), _("User Creation Error"))
 
 
 
@@ -257,12 +259,15 @@ def create_user_if_not_exists(**kwargs):
 	except frappe.DuplicateEntryError:
 		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = _("A user with this email already exists.")
+		return _("A user with this email already exists.")
 	except frappe.ValidationError as e:
 		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = str(e)
+		return _(str(e))
 	except Exception as e:
 		# Catch any other exceptions and return a 500 error
 		frappe.local.response['http_status_code'] = 500
 		frappe.local.response['message'] = _("An unexpected error occurred: {0}").format(str(e))
-		frappe.log_error(frappe.get_traceback(), _("User Creation Error"))
+		return _("An unexpected error occurred: {0}").format(str(e))
+		# frappe.log_error(frappe.get_traceback(), _("User Creation Error"))
 
