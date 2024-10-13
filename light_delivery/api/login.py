@@ -207,39 +207,63 @@ def registration (*args , **kwargs):
 
 @frappe.whitelist(allow_guest=True)
 def create_user_if_not_exists(**kwargs):
-	"""
-	this function will create user and set Store
-	
-	"""
-	if frappe.db.exists("User", kwargs.get('email')):
-		frappe.local.response['http_status_code'] = 400
-		frappe.local.response['message'] =_("the email already exists")
-		
-	new_user = frappe.new_doc("User")
-	user_name = None 
-	if kwargs.get('store_name') :
-		user_name = kwargs.get("store_name").lower().replace(" ","_")+ frappe.generate_hash(length=4)
-	else:
-		user_name = kwargs.get('full_name').lower().replace(" ","_")+ frappe.generate_hash(length=4)
-	new_user.update({
-			"doctype": "User",
-			"send_welcome_email": 0,
-			"user_type": "System User",
-			"first_name": kwargs.get('store_name') if kwargs.get('store_name') else kwargs.get('full_name'),
-			"email": kwargs.get('email'),
-			"username": user_name,
-			"enabled": 1,
-			"phone": kwargs.get('phone'),
-			"mobile_no": kwargs.get('phone'),
-			"new_password":kwargs.get('password'),
-			"roles": [{"role" :"System Manager"}],
-		})
-		
-	new_user.insert(ignore_permissions=True)
-	new_user.save(ignore_permissions=True)
-	role = frappe.get_doc("Role Profile" , 'Purchase')
-	roles = [role.role for role in role.roles]
-	new_user.add_roles(*roles)
-	new_user.save(ignore_permissions=True)
-	frappe.db.commit()
-	return new_user
+    """
+    This function will create a user and set Store.
+    """
+    try:
+        # Check if the user already exists
+        if frappe.db.exists("User", kwargs.get('email')):
+            frappe.local.response['http_status_code'] = 400
+            frappe.local.response['message'] = _("The email already exists")
+            return
+
+        # Create a new User document
+        new_user = frappe.new_doc("User")
+        user_name = None
+        if kwargs.get('store_name'):
+            user_name = kwargs.get("store_name").lower().replace(" ", "_") + frappe.generate_hash(length=4)
+        else:
+            user_name = kwargs.get('full_name').lower().replace(" ", "_") + frappe.generate_hash(length=4)
+
+        # Update the User document with the provided data
+        new_user.update({
+            "doctype": "User",
+            "send_welcome_email": 0,
+            "user_type": "System User",
+            "first_name": kwargs.get('store_name') if kwargs.get('store_name') else kwargs.get('full_name'),
+            "email": kwargs.get('email'),
+            "username": user_name,
+            "enabled": 1,
+            "phone": kwargs.get('phone'),
+            "mobile_no": kwargs.get('phone'),
+            "new_password": kwargs.get('password'),
+            "roles": [{"role": "System Manager"}],
+        })
+
+        # Insert the new User document
+        new_user.insert(ignore_permissions=True)
+
+        # Assign roles from a Role Profile
+        role = frappe.get_doc("Role Profile", 'Purchase')
+        roles = [role.role for role in role.roles]
+        new_user.add_roles(*roles)
+
+        # Save the User document and commit the transaction
+        new_user.save(ignore_permissions=True)
+        frappe.db.commit()
+
+        # Return the newly created user document
+        return new_user
+
+    except frappe.DuplicateEntryError:
+        frappe.local.response['http_status_code'] = 400
+        frappe.local.response['message'] = _("A user with this email already exists.")
+    except frappe.ValidationError as e:
+        frappe.local.response['http_status_code'] = 400
+        frappe.local.response['message'] = str(e)
+    except Exception as e:
+        # Catch any other exceptions and return a 500 error
+        frappe.local.response['http_status_code'] = 500
+        frappe.local.response['message'] = _("An unexpected error occurred: {0}").format(str(e))
+        frappe.log_error(frappe.get_traceback(), _("User Creation Error"))
+
