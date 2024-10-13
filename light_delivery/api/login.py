@@ -166,6 +166,7 @@ def registration (*args , **kwargs):
 			customer_group = "Delivery"
 			customer_name = delivery_obj.name
 		elif float(data.is_store)==2:
+			customer_name = data.full_name
 			customer_group = "Consumer"
 
 
