@@ -9,7 +9,8 @@
   "type",
   "name_in_arabic",
   "column_break_epof",
-  "purpose"
+  "purpose",
+  "status"
  ],
  "fields": [
   {
@@ -34,11 +35,17 @@
    "fieldtype": "Select",
    "label": "Purpose",
    "options": "\nDeliver\nRefund\nReplace"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Table",
+   "label": "Status",
+   "options": "Order Type Status"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-30 11:37:24.198773",
+ "modified": "2024-10-13 16:29:40.526315",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order Type",
