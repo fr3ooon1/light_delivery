@@ -135,6 +135,8 @@ def registration (*args , **kwargs):
 		customer_group = None
 		customer_name = None
 
+
+
 		if float(data.is_store) == 1:
 			store_logo = download_image(files.get('store_logo'))
 			store_cover = download_image(files.get('store_cover'))
@@ -163,6 +165,8 @@ def registration (*args , **kwargs):
 			delivery_obj.insert(ignore_permissions=True)
 			customer_group = "Delivery"
 			customer_name = delivery_obj.name
+		elif float(data.is_store)==2:
+			customer_group = "Consumer"
 
 
 		customer_obj = frappe.new_doc("Customer")

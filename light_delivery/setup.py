@@ -32,3 +32,8 @@ def create_customer_groups():
 		end_user.customer_group_name = "End User"
 		end_user.insert(ignore_permissions=True)
 	
+	if not frappe.db.exists("Customer Group","Consumer"):
+		end_user = frappe.new_doc("Customer Group")
+		end_user.customer_group_name = "Consumer"
+		end_user.insert(ignore_permissions=True)
+	

@@ -59,7 +59,7 @@ def search_by_phone(phone_number , order_type = False):
 		if order_type in ['Replacing','Refund']:
 			orders = frappe.get_list("Order" , {"phone_number":phone_number},['name'] , pluck='name')
 			res['order'] = orders 
-		return res
+		return _(res)
 	except Exception as e:
 		frappe.log_error(frappe.get_traceback(), "search_by_phone API error")
 		return {"status": "error", "message": str(e)}
@@ -516,7 +516,7 @@ def cancel_order(*args,**kwargs):
 
 
 @frappe.whitelist(allow_guest=False)
-def change_order_status_del(*args,**kwargs):
+def get_current_request(*args,**kwargs):
 	order = kwargs.get("order")
 	status = kwargs.get("status")
 
