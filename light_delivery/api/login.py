@@ -212,7 +212,9 @@ def create_user_if_not_exists(**kwargs):
 	
 	"""
 	if frappe.db.exists("User", kwargs.get('email')):
-		return
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] =_("the email already exists")
+		
 	new_user = frappe.new_doc("User")
 	user_name = None 
 	if kwargs.get('store_name') :
