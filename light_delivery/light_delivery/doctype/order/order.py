@@ -26,16 +26,19 @@ class Order(Document):
 	def change_request_status(self):
 		status = []
 		if self.request:
-			request = frappe.get_doc("Request Delivery", self.request)
-			orders = request.get("order_request")
+			if self.status == "Delivered":
+				request = frappe.get_doc("Request Delivery", self.request)
+				orders = request.get("order_request")
 
-			for order in orders:
-				status.append(frappe.get_value("Order", order.order, 'status'))
+				for order in orders:
+					if not order.order == self.name:
+						status.append(frappe.get_value("Order", order.order, 'status'))
+					status.append(self.status)
 
-			if all(one in ['Delivered', 'CancelCancel', 'Delivery Cancel', 'Store Cancel'] for one in status):
-				request.status = "Delivered"
-				request.save(ignore_permissions=True)
-				frappe.db.commit()
+				if all(one in ['Delivered', 'CancelCancel', 'Delivery Cancel', 'Store Cancel'] for one in status):
+					request.status = "Delivered"
+					request.save(ignore_permissions=True)
+					frappe.db.commit()
 
 
 
