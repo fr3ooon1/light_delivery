@@ -47,7 +47,7 @@ def create_status():
 			"index":1
 		},
 		{
-			"status":"Accetped",
+			"status":"Accepted",
 			"status_name_in_arabic":"مقبول",
 			"index":2
 		},
