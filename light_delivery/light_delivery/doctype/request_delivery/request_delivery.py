@@ -69,6 +69,7 @@ class RequestDelivery(Document):
 		if self.delivery:
 			doc = frappe.get_doc("Delivery",self.delivery)
 			doc.status = "Offline"
+			doc.cash = 0
 			doc.save(ignore_permissions=True)
 			frappe.db.commit()
 			
@@ -79,9 +80,16 @@ class RequestDelivery(Document):
 		doc.request_delivery = self.name
 		doc.status = "Waiting for Delivery"
 		doc.store = self.store
-		doc.cash = self.total
-		doc.number_of_order = self.number_of_order
-		deliveries = search_delivary(self.total , self.store)
+
+		total_request_amount = 0
+
+		order_request = self.order_request
+		self.number_of_order = len(order_request)
+		for i in range(len(order_request)):
+			total_request_amount += frappe.get_value("Order" , self.get('order_request')[i].get("order") , "total_order")
+		doc.cash = total_request_amount
+		doc.number_of_order = len(order_request)
+		deliveries = search_delivary(total_request_amount , self.store)
 
 		if deliveries:
 			for i in deliveries:

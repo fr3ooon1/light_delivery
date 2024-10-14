@@ -98,6 +98,7 @@ def new_order(*args , **kwargs):
 			doc.invoice= file_url
 		doc.total_order = data.get('total_order')
 		doc.store = store.name
+		doc.status = "Pending"
 		doc.save(ignore_permissions=True)
 		frappe.db.commit()
 		frappe.local.response['http_status_code'] = 200
