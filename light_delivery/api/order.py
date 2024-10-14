@@ -516,7 +516,7 @@ def cancel_order(*args,**kwargs):
 
 
 @frappe.whitelist(allow_guest=False)
-def get_current_request(*args,**kwargs):
+def change_order_status_del(*args,**kwargs):
 	order = kwargs.get("order")
 	status = kwargs.get("status")
 
