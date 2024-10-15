@@ -248,6 +248,10 @@ def change_delivery_status(*args, **kwargs):
 		frappe.db.commit()
 		frappe.local.response['http_status_code'] = 200
 		frappe.local.response['message'] = _("The delivery status has been changed to Available.")
+		return {
+			"message": _("The delivery status has been changed to Available."),
+			"cash": float(kwargs.get("cash", 0))
+		}
 
 	elif new_status == "Offline" and delivery.status == "Avaliable":
 		delivery.status = "Offline"
