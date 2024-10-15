@@ -20,7 +20,7 @@ class RequestDelivery(Document):
 			self.request_accepted()
 
 			
-		if self.status in ['Arrived' , 'Picked' , 'Cancel']:
+		if self.status in ['Arrived' , 'Picked' , 'Cancel' , 'Delivery Cancel','Store Cancel']:
 			self.change_status_for_orders()
 
 		if self.status == "Waiting for delivery":
@@ -130,7 +130,7 @@ class RequestDelivery(Document):
 		order_request = self.get('order_request')
 		for order in order_request:
 			doc = frappe.get_doc("Order" , order.order)
-			if doc.status not in ['Cancel' , 'Delivery Cancel','Store Cancel','Delivered']:
+			if doc.status not in ['Cancel' , 'Delivered']:
 				if self.status not in ["Collect Money"]:
 					if self.status in ['Delivery Cancel','Cancel','Store Cancel']:
 						doc.status = "Cancel"
