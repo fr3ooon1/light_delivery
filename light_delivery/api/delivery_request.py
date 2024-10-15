@@ -55,15 +55,23 @@ def sending_request():
 
 			if doc.deliveries:
 				delivery = doc.deliveries[0]
+				delivery_obj = frappe.get_doc("Delivery",delivery.get("delivery"))
+				if delivery_obj.status == "Hold":
+					return "The Delivery has a request"
 				
 				if delivery.get("notification_key"):
 					res = send_notification(delivery.get("notification_key"), "new request")
 					
 					if res.status_code == 200:
 						doc.delivery = delivery.get("delivery")
+						
+						delivery_obj.status = "Hold"
+						delivery_obj.save(ignore_permissions=True)
 					
 					else:
 						create_error_log("sending_request", res.text)
+				else:
+					create_error_log("sending_request", "User not had a notification key")
 				doc.deliveries = doc.deliveries[1:]
 				doc.save(ignore_permissions=True)
 				frappe.db.commit()
@@ -79,10 +87,10 @@ def delivery_accepted_request(*args , **kwargs):
 
 	request = kwargs.get("request")
 	doc = frappe.get_doc("Request",request)
+	delivery = frappe.get_doc("Delivery",{"user":frappe.session.user})
 
 	if kwargs.get("status") == "Accepted":
 		doc.status = "Accepted"
-		delivery = frappe.get_doc("Delivery",{"user":frappe.session.user})
 		delivery.status = "Inorder"
 
 		delivery.save(ignore_permissions=True)
@@ -91,8 +99,13 @@ def delivery_accepted_request(*args , **kwargs):
 
 		frappe.local.response['http_status_code'] = 200
 		frappe.local.response['message'] = _(f"""the request accepted""")
-	elif kwargs.get("status") == "Rejected":
-		frappe.local.response['http_status_code'] = 300
+
+	elif kwargs.get("status") != "Accepted":
+		delivery.status = "Avaliable"
+		delivery.save(ignore_permissions=True)
+		frappe.db.commit()
+
+		frappe.local.response['http_status_code'] = 200
 		frappe.local.response['message'] = _(f"""the request rejected""")
 
 

@@ -242,7 +242,7 @@ def change_delivery_status(*args, **kwargs):
 		frappe.local.response['message'] = _("Cannot change status while processing a delivery order.")
 		return
 
-	if new_status == "Online" and delivery.status == "Offline":
+	if new_status == "Online" and delivery.status in ["Offline","Hold"]:
 		delivery.status = "Avaliable"
 		delivery.cash = float(kwargs.get("cash", 0))
 		delivery.save(ignore_permissions=True)
