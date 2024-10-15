@@ -74,7 +74,7 @@ def request_history(*args, **kwargs):
 def delivery_request_status(*args , **kwargs):
 	delivery = frappe.get_value("Delivery", {"user": frappe.session.user}, ['name','delivery_category','status','cash'],as_dict=1)
 	res = {}
-	wallet = calculate_balane(delivery.get("name"))
+	wallet = calculate_balane(delivery.get("name")) if delivery else 0
 	
 	if delivery:
 
