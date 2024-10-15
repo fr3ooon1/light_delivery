@@ -97,7 +97,7 @@ def delivery_request_status(*args , **kwargs):
 			"price_list":price_list,
 			"delivery_status":delivery_status,
 			"wallet":float(wallet or 0),
-			"cash": delivery.get("delivery_category" or 0)
+			"cash": delivery.get("cash" or 0)
 		}
 		return res
 	else:
@@ -109,7 +109,7 @@ def delivery_request_status(*args , **kwargs):
 			"price_list":0,
 			"delivery_status":delivery.get("status"),
 			"wallet":float(wallet or 0),
-			"cash": delivery.get("delivery_category" or 0)
+			"cash": delivery.get("cash" or 0)
 		}
 		return res
 
