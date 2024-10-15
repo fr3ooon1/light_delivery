@@ -152,6 +152,8 @@ def registration (*args , **kwargs):
 			store_obj.store_cover = store_cover.file_url
 			store_obj.name = new_user.name
 			store_obj.username = new_user.username
+			store_obj.pointer_y = data.late
+			store_obj.pointer_x = data.lng
 			store_obj.insert(ignore_permissions=True)
 			customer_group = "Store"
 			customer_name = store_obj.name
