@@ -72,8 +72,7 @@ def request_history(*args, **kwargs):
 
 @frappe.whitelist(allow_guest=False)
 def delivery_request_status(*args , **kwargs):
-	user = frappe.session.user
-	delivery = frappe.get_value("Delivery", {"user": user}, ['name','delivery_category','status'],as_dict=1)
+	delivery = frappe.get_value("Delivery", {"user": frappe.session.user}, ['name','delivery_category','status','cash'],as_dict=1)
 	res = {}
 	wallet = calculate_balane(delivery.get("name"))
 	
@@ -97,7 +96,8 @@ def delivery_request_status(*args , **kwargs):
 			"store_cacnel":len(store_cacnel),
 			"price_list":price_list,
 			"delivery_status":delivery_status,
-			"wallet":float(wallet or 0)
+			"wallet":float(wallet or 0),
+			"cash": delivery.get("delivery_category" or 0)
 		}
 		return res
 	else:
@@ -108,7 +108,8 @@ def delivery_request_status(*args , **kwargs):
 			"store_cacnel":0,
 			"price_list":0,
 			"delivery_status":delivery.get("status"),
-			"wallet":float(wallet or 0)
+			"wallet":float(wallet or 0),
+			"cash": delivery.get("delivery_category" or 0)
 		}
 		return res
 
