@@ -132,7 +132,10 @@ class RequestDelivery(Document):
 			doc = frappe.get_doc("Order" , order.order)
 			if doc.status not in ['Cancel' , 'Delivery Cancel','Store Cancel','Delivered']:
 				if self.status not in ["Collect Money"]:
-					doc.status = self.status
+					if self.status in ['Delivery Cancel','Cancel','Store Cancel']:
+						doc.status = "Cancel"
+					else:
+						doc.status = self.status
 					doc.save(ignore_permissions=True)
 
 
