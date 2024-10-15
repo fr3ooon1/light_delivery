@@ -7,10 +7,6 @@ def update_location(*args,**kwargs):
 	try:
 		if frappe.db.exists("Delivery",{"user":frappe.session.user}):
 			doc = frappe.get_doc("Delivery",{"user":frappe.session.user})
-			if doc.status != "Avaliable":
-				frappe.local.response['http_status_code'] = 400
-				frappe.local.response['message'] = _(f"""Cannot change the location of delivery when offline""")
-				return "Cannot change the location of delivery when offline"
 			doc.pointer_x = kwargs.get("pointer_x")
 			doc.pointer_y = kwargs.get("pointer_y")
 			doc.save(ignore_permissions=True)
