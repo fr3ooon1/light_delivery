@@ -77,6 +77,12 @@ def new_order(*args , **kwargs):
 			}
 		store = frappe.get_doc("Store" , {"user":user})
 
+		if store.status =="Pending":
+			frappe.local.response['http_status_code'] = 404
+			frappe.local.response['message'] = _('This Store not activate by Admin.')
+			return _('This Store not activate by Admin.')
+		
+
 		files = frappe.request.files.get('invoice')
 		data = frappe.form_dict
 
