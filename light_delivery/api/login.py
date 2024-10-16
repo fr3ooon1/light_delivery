@@ -76,8 +76,8 @@ def login(*args,**kwargs):
 		status = frappe.get_value("Delivery",{"user":frappe.session.user},"status") 
 		if status in ['Hold','Offline']:
 			status = "Offline"
-		else:
-			status = "Online"
+		# else:
+		# 	status = "Online"
 		res["status"]=  status
 
 
