@@ -73,7 +73,12 @@ def login(*args,**kwargs):
 	
 	if frappe.db.exists("Delivery",{"user":frappe.session.user}):
 		res['cash'] =frappe.get_value("Delivery",{"user":frappe.session.user},"cash") 
-		res["status"]=  frappe.get_value("Delivery",{"user":frappe.session.user},"status") 
+		status = frappe.get_value("Delivery",{"user":frappe.session.user},"status") 
+		if status in ['Hold','Offline']:
+			status = "Offline"
+		else:
+			status = "Online"
+		res["status"]=  status
 
 
 	res['wallet'] = float(calculate_balane(user_obj.username) or 0)
