@@ -7,6 +7,8 @@ def update_location(*args,**kwargs):
 	try:
 		if frappe.db.exists("Delivery",{"user":frappe.session.user}):
 			doc = frappe.get_doc("Delivery",{"user":frappe.session.user})
+			if doc.status not in ['Avaliable','Inorder']:
+				return 
 			doc.pointer_x = kwargs.get("pointer_x")
 			doc.pointer_y = kwargs.get("pointer_y")
 			doc.save(ignore_permissions=True)
