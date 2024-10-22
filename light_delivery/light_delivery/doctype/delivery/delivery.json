@@ -11,9 +11,11 @@
   "status",
   "user",
   "username",
+  "image",
   "column_break_hfwd",
   "national_id",
   "date_of_joining",
+  "license_expire",
   "cash",
   "num_rates",
   "total_rates",
@@ -110,11 +112,21 @@
    "fieldtype": "Data",
    "label": "Username",
    "unique": 1
+  },
+  {
+   "fieldname": "license_expire",
+   "fieldtype": "Date",
+   "label": "License expire"
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach",
+   "label": "Image"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-15 15:50:10.011059",
+ "modified": "2024-10-22 15:02:29.678725",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Delivery",
