@@ -84,7 +84,13 @@ def delivery_request_status(*args , **kwargs):
 		delivery_cancel = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Delivery Cancel"})
 		store_cacnel = frappe.get_list("Request Delivery" , {"delivery":delivery.get("name") , "status":"Store Cancel"})
 
+
+		status = None
 		delivery_status = delivery.get("status")
+		if delivery_status in ['Hold','Offline','Pending']:
+			status = "Offline"
+		else:
+			status = "Online"
 
 
 		price_list = frappe.get_value("Delivery Category" , delivery.get("delivery_category"), ['minimum_orders' , 'maximum_orders' , 'maximum_order_by_request' , 'minimum_rate' , 'rate_of_km'],as_dict=1)
@@ -95,7 +101,7 @@ def delivery_request_status(*args , **kwargs):
 			"delivery_cancel":len(delivery_cancel),
 			"store_cacnel":len(store_cacnel),
 			"price_list":price_list,
-			"delivery_status":delivery_status,
+			"delivery_status":status,
 			"wallet":float(wallet or 0),
 			"cash": delivery.get("cash" or 0)
 		}
