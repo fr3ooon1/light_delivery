@@ -292,7 +292,7 @@ def get_zone_address():
 	
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=False)
 def get_order_history(status = None):
 	# status = status.split(",")
 
@@ -302,7 +302,7 @@ def get_order_history(status = None):
 		orders = []
 
 		if status == None or status == "All" or status == "ALL" or status == "all":
-			orders = frappe.get_list("Order" , {"store":store} ,fields=['name', 'creation', 'status', 'total_order'])
+			orders = frappe.get_list("Order" , {"store":store} ,['name', 'creation', 'status', 'total_order'])
 		else:
 			status = status.strip("[]").split(",")
 			orders = frappe.get_list("Order" , filters = {'status':['in', status],"store":store} ,  fields=['name', 'creation', 'status' , 'total_order'])
@@ -335,6 +335,7 @@ def get_order_history(status = None):
 			}
 		}
 	except Exception as e:
+		frappe.local.response['http_status_code'] = 500
 		frappe.log_error(message=str(e), title=_('Error in get_order_history'))
 		return {
 			"status_code": 500,
