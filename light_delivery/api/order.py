@@ -298,13 +298,14 @@ def get_order_history(status = None):
 
 	# return status
 	try:
+		store = frappe.get_value("Store",{"user":frappe.session.user},'name')
 		orders = []
 
 		if status == None or status == "All" or status == "ALL" or status == "all":
-			orders = frappe.get_list("Order" ,  fields=['name', 'creation', 'status', 'total_order'])
+			orders = frappe.get_list("Order" , {"store":store} ,fields=['name', 'creation', 'status', 'total_order'])
 		else:
 			status = status.strip("[]").split(",")
-			orders = frappe.get_list("Order" , filters = {'status':['in', status]} ,  fields=['name', 'creation', 'status' , 'total_order'])
+			orders = frappe.get_list("Order" , filters = {'status':['in', status],"store":store} ,  fields=['name', 'creation', 'status' , 'total_order'])
 		
 		
 		for order in orders:
