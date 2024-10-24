@@ -294,9 +294,6 @@ def get_zone_address():
 
 @frappe.whitelist(allow_guest=False)
 def get_order_history(status = None):
-	# status = status.split(",")
-
-	# return status
 	try:
 		store = frappe.get_value("Store",{"user":frappe.session.user},'name')
 		orders = []
@@ -337,10 +334,7 @@ def get_order_history(status = None):
 	except Exception as e:
 		frappe.local.response['http_status_code'] = 500
 		frappe.log_error(message=str(e), title=_('Error in get_order_history'))
-		return {
-			"status_code": 500,
-			"message": str(e)
-		}
+		return str(e)
 
 
 
