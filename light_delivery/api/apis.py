@@ -44,14 +44,19 @@ def search_delivary(cash , store = None ):
 					}
 					distance.append(delivery_data)
 			sorted_deliveries = sorted(distance, key=lambda x: x['distance'])
-			result = [entry for entry in sorted_deliveries if entry["distance"]]  #skip for < 2000 Meter for now
+			result = [entry for entry in sorted_deliveries if entry["distance"]<= 2000]  #skip for < 2000 Meter for now
 
+			if not result:
+				frappe.local.response['http_status_code'] = 400
+
+				
 			return result
 		else:
 			frappe.local.response['http_status_code'] = 400
 			frappe.local.response['message'] = _(f"""Their are no store assign to this user: {frappe.session.user}""")
 	except Exception as e:
 		frappe.log_error(message=str(e), title=_('Error in search_delivary'))
+		frappe.local.response['http_status_code'] = 400
 		return {
 			"status_code": 500,
 			"message": str(e)
