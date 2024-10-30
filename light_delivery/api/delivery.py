@@ -96,9 +96,28 @@ def delivery_tracing(*args,**kwargs):
 	}
 	
 	try:
-		request = kwargs.request
-		if frappe.db.exists("Delivery",{"user":frappe.session.user}):
-			pass
+		point_list = []
+		request = kwargs.get("request")
+		if frappe.db.exists("Request Delivery",request):
+			doc = frappe.get_doc("Request Delivery",request)
+			orders = doc.get("order_request")
+			if orders:
+				for order in orders:
+					order_obj = frappe.get_doc("Order",order.order)
+					road = order_obj.get("road")
+					for i in road:
+						point_list.append({"GeoPoint":{
+											"latitude": i.pointer_y,
+											"longitude": i.pointer_x,
+											}})
+			res = {
+				"start":point_list[0],
+				"end":point_list[-1],
+				"point_list":point_list
+			}
+			return res
+		else:
+			frappe.local.response['http_status_code'] = 400
 
 	except Exception as e:
 		frappe.local.response['http_status_code'] = 400
