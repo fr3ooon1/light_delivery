@@ -50,6 +50,5 @@ def get_price_list_for_store():
 @frappe.whitelist(allow_guest=False)
 def get_pending_requst(*args,**kwargs):
 	store = frappe.get_value("Store",{"user":frappe.session.user})
-	requests = frappe.get_list("Request Delivery",{"store":store , "status":"Pending","number_of_order":["in",[1,2,3]]},pluck='name')
-	len(requests)
+	requests = frappe.get_list("Request Delivery",{"store":store , "status":"Pending","number_of_order":["in",[1,2,3]]},['name','number_of_order'])
 	return requests
