@@ -188,8 +188,7 @@ def get_requests(*args, **kwargs):
 		req['orders'] = order_details  # Append order details to the current request
 	if not requests:
 		frappe.local.response['http_status_code'] = 400
-		frappe.local.response['message'] = _("No requests for this store.")	
-		return _("No requests for this store.")	
+		# frappe.local.response['message'] = _("No requests for this store.")	
 	return requests
 
 

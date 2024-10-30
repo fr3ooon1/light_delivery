@@ -19,7 +19,8 @@ def update_location(*args,**kwargs):
 					order.append("road",{
 						"pointer_x":kwargs.get("pointer_x"),
 						"pointer_y":kwargs.get("pointer_y"),
-						"delivery":doc.name
+						"delivery":doc.name,
+						"time":frappe.utils.now()
 					})
 					order.save(ignore_permissions=True)
 			frappe.db.commit()

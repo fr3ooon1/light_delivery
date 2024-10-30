@@ -84,3 +84,23 @@ def change_profile_pic():
 	except Exception as e:
 		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = _(e)
+
+
+
+@frappe.whitelist(allow_guest=False)
+def delivery_tracing(*args,**kwargs):
+	res = {
+		"start":[],
+		"end":[],
+		"point_list":[]
+	}
+	
+	try:
+		request = kwargs.request
+		if frappe.db.exists("Delivery",{"user":frappe.session.user}):
+			pass
+
+	except Exception as e:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = _(e)
+	
