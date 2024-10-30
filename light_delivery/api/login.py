@@ -230,6 +230,8 @@ def create_address_for_customer(user , **kwargs ):
 			"link_name":user , 
 			"link_type":user
 		})
+	doc.insert(ignore_permissions=True)
+	frappe.db.commit()
 
 @frappe.whitelist(allow_guest=True)
 def create_user_if_not_exists(**kwargs):
