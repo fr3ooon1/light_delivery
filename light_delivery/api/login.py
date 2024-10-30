@@ -224,6 +224,7 @@ def registration (*args , **kwargs):
 def create_address_for_customer(user , address ):
 	doc = frappe.new_doc("Address")
 	doc.address_line1 = address
+	doc.address_type = "Personal"
 	doc.city = "Cairo"
 	doc.append('links',{
 			"link_doctype":"Customer" ,
