@@ -177,6 +177,8 @@ def registration (*args , **kwargs):
 			customer_name = new_user.username
 			customer_group = "Consumer"
 
+			create_address_for_customer( new_user.username , **kwargs)
+
 
 		customer_obj = frappe.new_doc("Customer")
 		customer_obj.customer_name = customer_name
@@ -219,7 +221,15 @@ def registration (*args , **kwargs):
 		return _("An unexpected error occurred: {0}").format(str(e))
 		# frappe.log_error(frappe.get_traceback(), _("User Creation Error"))
 
-
+def create_address_for_customer(user , **kwargs ):
+	doc = frappe.new_doc("Address")
+	doc.address_line1 = kwargs.get("address")
+	doc.city = "Cairo"
+	doc.append('links',{
+			"link_doctype":"Customer" ,
+			"link_name":user , 
+			"link_type":user
+		})
 
 @frappe.whitelist(allow_guest=True)
 def create_user_if_not_exists(**kwargs):
