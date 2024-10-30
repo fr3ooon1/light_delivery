@@ -177,7 +177,7 @@ def registration (*args , **kwargs):
 			customer_name = new_user.username
 			customer_group = "Consumer"
 
-			create_address_for_customer( new_user.username , **kwargs)
+			
 
 
 		customer_obj = frappe.new_doc("Customer")
@@ -186,7 +186,7 @@ def registration (*args , **kwargs):
 		customer_obj.insert(ignore_permissions=True)
 		customer_obj.save(ignore_permissions=True)
 		frappe.db.commit()
-
+		create_address_for_customer( new_user.username , **kwargs)
 		contact = frappe.new_doc('Contact')
 		contact.first_name = store_obj.store_name if store_obj else data.full_name
 		contact.append('phone_nos',{
