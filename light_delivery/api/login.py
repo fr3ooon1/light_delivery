@@ -232,6 +232,11 @@ def create_address_for_customer(user , address ):
 			"link_type":user
 		})
 	doc.insert(ignore_permissions=True)
+
+	fav = frappe.new_doc("Favorite")
+	fav.customer = user
+	fav.insert(ignore_permissions=True)
+	
 	frappe.db.commit()
 
 @frappe.whitelist(allow_guest=True)

@@ -1,0 +1,31 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-30 18:16:54.376783",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "menu"
+ ],
+ "fields": [
+  {
+   "fieldname": "menu",
+   "fieldtype": "Attach",
+   "in_list_view": 1,
+   "label": "menu"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-10-30 18:17:21.937747",
+ "modified_by": "Administrator",
+ "module": "Light Delivery",
+ "name": "Menu",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

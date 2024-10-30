@@ -12,6 +12,7 @@
   "zone",
   "address",
   "store_category",
+  "menu",
   "column_break_oynk",
   "store_logo",
   "store_cover",
@@ -120,11 +121,17 @@
    "fieldtype": "Data",
    "label": "Username",
    "options": "User"
+  },
+  {
+   "fieldname": "menu",
+   "fieldtype": "Table",
+   "label": "Menu",
+   "options": "Menu"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-10 13:35:45.715993",
+ "modified": "2024-10-30 18:17:37.660571",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Store",
