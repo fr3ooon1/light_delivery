@@ -11,6 +11,7 @@ from light_delivery.api.apis import search_delivary
 
 class RequestDelivery(Document):
 	def before_naming(self):
+		self.calculate_orders()
 		self.follow_request_status()
 	def validate(self):
 		if self.status not in ['Pending' ,'Accepted','Collect Money']:
@@ -32,6 +33,15 @@ class RequestDelivery(Document):
 			
 		if self.status == "Collect Money":
 			self.pay_to_store()
+
+	def calculate_orders(self):
+		total_request_amount = 0
+		order_request = self.order_request
+		self.number_of_order = len(order_request)
+		for i in range(len(order_request)):
+			total_request_amount += frappe.get_value("Order" , self.get('order_request')[i].get("order") , "total_order")
+		self.total = total_request_amount
+
 
 
 	def pay_to_store(self):
