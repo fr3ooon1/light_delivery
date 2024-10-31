@@ -128,7 +128,7 @@ def get_orders():
 			}
 		store = frappe.get_doc("Store" , {"user":user})
 		if store:
-			pending_request =frappe.get_list("Request Delivery",{"store":store.name},pluck='name',ignore_permissions=True)
+			pending_request =frappe.get_list("Request Delivery",{"store":store.name,"status":"Pending"},pluck='name',ignore_permissions=True)
 			all_orders = frappe.get_list(
 				"Order",
 				filters={"store": store.name, "status": "Pending"},
