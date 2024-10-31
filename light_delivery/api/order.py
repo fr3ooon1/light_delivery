@@ -489,13 +489,15 @@ def cancel_order(*args,**kwargs):
 	if frappe.db.exists("Order" , order):
 		order_obj = frappe.get_doc("Order" , order )
 		if kwargs.get("type") == 'store':
-			order_obj.status = "Store Cancel"
+			order_obj.status = "Cancel"
+			order_obj.cancel_from = "Store"
 			msg = f"""Order had been cancel by Store"""
 			delivery = frappe.get_value("Delivery",order_obj.delivery,"user")
 			notification_key = frappe.get_value("User",delivery,'notification_key')
 
 		if kwargs.get("type") == 'delivery':
-			order_obj.status = "Delivery Cancel"
+			order_obj.status = "Cancel"
+			order_obj.cancel_from = "Delivery"
 			msg = f"""Order had been cancel by Store"""
 
 			user = frappe.get_value("Store",order_obj.store,"user")
