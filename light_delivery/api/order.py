@@ -128,7 +128,7 @@ def get_orders():
 			}
 		store = frappe.get_doc("Store" , {"user":user})
 		if store:
-
+			pending_request =frappe.get_list("Request Delivery",{"store":store.name},pluck='name',ignore_permissions=True)
 			all_orders = frappe.get_list(
 				"Order",
 				filters={"store": store.name, "status": "Pending"},
@@ -153,14 +153,16 @@ def get_orders():
 				res = {
 					'status_code': 200,
 					'message': _('All Orders'),
-					'data': all_orders
+					'data': all_orders,
+					"pending_request":pending_request
 				}
 			else:
 				frappe.local.response['http_status_code'] = 200
 				res = {
 					'status_code': 200,
 					'message': _('No Orders Found'),
-					'data': all_orders
+					'data': all_orders,
+					"pending_request":pending_request
 				}
 			return res
 		else:
