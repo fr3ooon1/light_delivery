@@ -9,6 +9,31 @@ from light_delivery.api.apis import send_notification
 
 
 @frappe.whitelist(allow_guest=False)
+def add_order_to_request(*args,**kwargs):
+	order = kwargs.get("order")
+	request = kwargs.get("request")
+
+
+	if frappe.db.exists("Delivery Request",request):
+		doc = frappe.get_doc("Delivery Request",request)
+
+		if doc.status not in ['Pending','Waiting for Delviery']:
+			frappe.local.response['http_status_code'] = 400
+			return "Can't add order to request"
+		
+		if doc.number_of_order < 4:
+			frappe.local.response['http_status_code'] = 400
+			return "Can't add order to request"
+
+		doc.append("order_request",{
+			"order":order
+		})
+		doc.save(ignore_permissions=True)
+		frappe.db.commit()
+		frappe.local.response['http_status_code'] = 200
+		return "The order added to request"
+
+@frappe.whitelist(allow_guest=False)
 def update_order(*args , **kwargs):
 	try:
 		files = frappe.request.files.get('invoice')
@@ -128,7 +153,7 @@ def get_orders():
 			}
 		store = frappe.get_doc("Store" , {"user":user})
 		if store:
-			pending_request =frappe.get_list("Request Delivery",{"store":store.name,"status":"Pending"},pluck='name',ignore_permissions=True)
+			pending_request =frappe.get_list("Request Delivery",{"store":store.name,"status":["in",["Waiting for delivery","Pending"]],"number_of_order":["in",[1,2,3]]},pluck='name',ignore_permissions=True)
 			all_orders = frappe.get_list(
 				"Order",
 				filters={"store": store.name, "status": "Pending"},
