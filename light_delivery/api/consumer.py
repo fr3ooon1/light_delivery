@@ -167,6 +167,9 @@ def search_for_store(*args,**kwargs):
     frappe.local.response['data'] = res
 
 
+# @frappe.whitelist(allow_guest=True)
+# def profile
+
 def is_favorite(customer , store):
     fav_stores = frappe.get_list("Stores",{"parent":customer},pluck='store',ignore_permissions=True)
     if store in fav_stores:

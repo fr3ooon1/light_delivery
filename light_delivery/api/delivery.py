@@ -36,15 +36,13 @@ def get_all_customers(user = None):
 @frappe.whitelist(allow_guest=False)
 def get_profile():
 	try:
-		user = frappe.get_value("User",frappe.session.user,['full_name','mobile_no'],as_dict=True)
+		user = frappe.get_value("User",frappe.session.user,['full_name','mobile_no','email','username'],as_dict=True)
 		
 		res = {}
 		if frappe.db.exists("Delivery",{"user":frappe.session.user}):
 			delivery = frappe.get_value("Delivery",{"user":frappe.session.user},['date_of_joining','license_expire','name','image','national_id','delivery_category'], as_dict=1)
 			price_list = frappe.get_value("Delivery Category" , delivery.get("delivery_category"), ['minimum_orders' , 'maximum_orders' , 'maximum_order_by_request' , 'minimum_rate' , 'rate_of_km'],as_dict=1)
 			res = {
-				"full_name":user.get("full_name"),
-				"phone_number":user.get("mobile_no"),
 				"date_of_joining":delivery.get("date_of_joining"),
 				"license_expire":delivery.get("license_expire"),
 				"national_id":delivery.get("national_id"),
@@ -52,10 +50,18 @@ def get_profile():
 				"price_list":price_list,
 				"image":delivery.get("image")
 			}
-		# if frappe.db.exists("Store",frappe.session.user):
-		# 	store = frappe.get_doc("Store",frappe.session.user)
+		elif frappe.db.exists("Store",{"user":frappe.session.user}):
+			pass
+		
+		address = frappe.db.sql(f"""select a.address_line1 from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{user.get("username")}'""")
+		res = {
+			"full_name":user.get("full_name"),
+			"phone_number":user.get("mobile_no"),
+			"email":user.get("email"),
+			"address":address[0].get("address_line1") if address else None,
+			"user_image":frappe.get_value("Customer",user.get("username"),'image'),
 
-
+		}
 		return res
 		
 	except Exception as e:
