@@ -13,33 +13,27 @@ def add_order_to_request(*args, **kwargs):
     order = kwargs.get("order")
     request = kwargs.get("request")
 
-    # Check if both order and request exist
     if not frappe.db.exists("Request Delivery", request) or not frappe.db.exists("Order", order):
         frappe.local.response['http_status_code'] = 400
         frappe.local.response['message'] = "No order or request like this"
         return
 
-    # Fetch the Delivery Request document
     doc = frappe.get_doc("Request Delivery", request)
 
-    # Check if the request status allows adding an order
-    if doc.status not in ['Pending', 'Waiting for Delivery']:
+    if doc.status not in ['Pending', 'Waiting for delivery']:
         frappe.local.response['http_status_code'] = 400
         frappe.local.response['message'] = "Cannot add order to this request due to status restrictions."
         return
 
-    # Ensure the request has fewer than 4 orders before adding
     if doc.number_of_order >= 4:
         frappe.local.response['http_status_code'] = 400
         frappe.local.response['message'] = "Cannot add order to request; maximum order limit reached."
         return
 
-    # Add the order to the request
     doc.append("order_request", {"order": order})
     doc.save(ignore_permissions=True)
     frappe.db.commit()
 
-    # Return success response
     frappe.local.response['http_status_code'] = 200
     frappe.local.response['message'] = "The order has been added to the request."
 
