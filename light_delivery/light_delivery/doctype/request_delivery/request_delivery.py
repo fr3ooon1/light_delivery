@@ -86,6 +86,8 @@ class RequestDelivery(Document):
 		
 
 	def create_request(self):
+		if frappe.db.exists("Request",self.name):
+			return 
 		doc = frappe.new_doc("Request")
 		doc.request_delivery = self.name
 		doc.status = "Waiting for Delivery"
