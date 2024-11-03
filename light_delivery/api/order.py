@@ -9,33 +9,39 @@ from light_delivery.api.apis import send_notification
 
 
 @frappe.whitelist(allow_guest=False)
-def add_order_to_request(*args,**kwargs):
-	order = kwargs.get("order")
-	request = kwargs.get("request")
+def add_order_to_request(*args, **kwargs):
+    order = kwargs.get("order")
+    request = kwargs.get("request")
 
-	if not frappe.db.exists("Delivery Request",request) or not frappe.db.exists("Order",order):
-		frappe.local.response['http_status_code'] = 400
-		frappe.local.response['message'] = "No order or request like this"
+    # Check if both order and request exist
+    if not frappe.db.exists("Delivery Request", request) or not frappe.db.exists("Order", order):
+        frappe.local.response['http_status_code'] = 400
+        frappe.local.response['message'] = "No order or request like this"
+        return
 
+    # Fetch the Delivery Request document
+    doc = frappe.get_doc("Delivery Request", request)
 
-	if frappe.db.exists("Delivery Request",request):
-		doc = frappe.get_doc("Delivery Request",request)
+    # Check if the request status allows adding an order
+    if doc.status not in ['Pending', 'Waiting for Delivery']:
+        frappe.local.response['http_status_code'] = 400
+        frappe.local.response['message'] = "Cannot add order to this request due to status restrictions."
+        return
 
-		if doc.status not in ['Pending','Waiting for Delviery']:
-			frappe.local.response['http_status_code'] = 400
-			return "Can't add order to request"
-		
-		if doc.number_of_order < 4:
-			frappe.local.response['http_status_code'] = 400
-			return "Can't add order to request"
+    # Ensure the request has fewer than 4 orders before adding
+    if doc.number_of_order >= 4:
+        frappe.local.response['http_status_code'] = 400
+        frappe.local.response['message'] = "Cannot add order to request; maximum order limit reached."
+        return
 
-		doc.append("order_request",{
-			"order":order
-		})
-		doc.save(ignore_permissions=True)
-		frappe.db.commit()
-		frappe.local.response['http_status_code'] = 200
-		frappe.local.response['message'] = "The order added to request"
+    # Add the order to the request
+    doc.append("order_request", {"order": order})
+    doc.save(ignore_permissions=True)
+    frappe.db.commit()
+
+    # Return success response
+    frappe.local.response['http_status_code'] = 200
+    frappe.local.response['message'] = "The order has been added to the request."
 
 @frappe.whitelist(allow_guest=False)
 def update_order(*args , **kwargs):
