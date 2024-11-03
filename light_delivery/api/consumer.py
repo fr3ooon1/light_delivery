@@ -3,7 +3,41 @@ from frappe import _
 
 @frappe.whitelist(allow_guest=False)
 def get_stores(*args,**kwargs):
-    pass
+    idx=0
+    tot_stores = frappe.db.count('Store')
+    pages = (tot_stores/10)
+    if pages%10 > 0:
+        pages = int(pages) +1
+
+    if kwargs.get("idx"):
+        idx = float(kwargs.get("idx") or 0) -1
+
+    start = idx * 10
+    page_length=10
+    order_by = "creation desc"
+
+    stores = frappe.db.get_list("Store",['name as id'],order_by=order_by,start=start,page_length=page_length,ignore_permissions=True)
+    res = []
+
+    user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
+    
+    for store in stores:
+        doc = frappe.get_doc("Store",store.get("id"))
+        res.append({
+            "id":doc.name,
+            "is_favorite":is_favorite(user.get("username") , store.get("id")),
+            "cover":doc.store_cover,
+            "logo":doc.store_logo,
+            "store_name":frappe.get_value("User",doc.user,"full_name"),
+            "location":[doc.pointer_y,doc.pointer_x],
+            "phone": frappe.get_value("User",doc.user,"mobile_no"),
+            "delivery_time":10,
+            "menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True)
+        })
+    frappe.local.response['http_status_code'] = 200
+    frappe.local.response['data'] = res
+    frappe.local.response['message'] = pages
+
 
 
 
@@ -22,7 +56,7 @@ def get_favorite(*args,**kwargs):
                 "logo":doc.store_logo,
                 "store_name":frappe.get_value("User",doc.user,"full_name"),
                 "location":[doc.pointer_y,doc.pointer_x],
-                "phone":user.get("mobile_no"),
+                "phone": frappe.get_value("User",doc.user,"mobile_no"),
                 "delivery_time":10,
                 "menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True)
             })
@@ -36,7 +70,6 @@ def get_favorite(*args,**kwargs):
     
 
 
-
 @frappe.whitelist(allow_guest=False)
 def add_to_favorite(*args, **kwargs):
     user = frappe.get_value("User", frappe.session.user, ["username", "full_name"], as_dict=True)
@@ -44,6 +77,11 @@ def add_to_favorite(*args, **kwargs):
     if not store:
         frappe.local.response['http_status_code'] = 400
         frappe.local.response['message'] = "Store is required."
+        return
+    
+    if not frappe.db.exists("Store", store):
+        frappe.local.response['http_status_code'] = 400
+        frappe.local.response['message'] = "Store not found."
         return
     
     if frappe.db.exists("Favorite", user.get("username")):
@@ -92,8 +130,41 @@ def add_to_favorite(*args, **kwargs):
 
 @frappe.whitelist(allow_guest=False)
 def search_for_store(*args,**kwargs):
-    res = frappe.get_list("Store",{""})
-    pass
+    if not kwargs.get("search"):
+        return get_stores(*args,**kwargs)
+
+    store_search = kwargs.get("search")
+    stores = frappe.db.sql("""
+        SELECT
+            s.name AS id,
+            u.full_name AS full_name
+        FROM
+            `tabStore` AS s
+        JOIN
+            `tabUser` AS u
+        ON
+            s.user = u.name
+        WHERE
+            u.full_name LIKE %s
+    """, (f"%{store_search}%",), as_dict=True)
+    res = []
+    user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
+    
+    for store in stores:
+        doc = frappe.get_doc("Store",store.get("id"))
+        res.append({
+            "id":doc.name,
+            "is_favorite":is_favorite(user.get("username") , store.get("id")),
+            "cover":doc.store_cover,
+            "logo":doc.store_logo,
+            "store_name":frappe.get_value("User",doc.user,"full_name"),
+            "location":[doc.pointer_y,doc.pointer_x],
+            "phone": frappe.get_value("User",doc.user,"mobile_no"),
+            "delivery_time":10,
+            "menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True)
+        })
+    frappe.local.response['http_status_code'] = 200
+    frappe.local.response['data'] = res
 
 
 def is_favorite(customer , store):
