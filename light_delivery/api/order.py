@@ -14,7 +14,7 @@ def add_order_to_request(*args, **kwargs):
     request = kwargs.get("request")
 
     # Check if both order and request exist
-    if not frappe.db.exists("Delivery Request", request) or not frappe.db.exists("Order", order):
+    if not frappe.db.exists("Request Delivery", request) or not frappe.db.exists("Order", order):
         frappe.local.response['http_status_code'] = 400
         frappe.local.response['message'] = "No order or request like this"
         return
