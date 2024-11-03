@@ -48,7 +48,7 @@ def get_profile():
 				"national_id":delivery.get("national_id"),
 				"wallet": float(calculate_balane(delivery.get("name")) or 0),
 				"price_list":price_list,
-				"image":delivery.get("image")
+				# "image":delivery.get("image")
 			}
 		elif frappe.db.exists("Store",{"user":frappe.session.user}):
 			pass
@@ -59,7 +59,7 @@ def get_profile():
 			"phone_number":user.get("mobile_no"),
 			"email":user.get("email"),
 			"address":address[0].get("address_line1") if address else None,
-			"user_image":frappe.get_value("Customer",user.get("username"),'image'),
+			"image":frappe.get_value("Customer",user.get("username"),'image'),
 
 		}
 		return res
@@ -76,16 +76,17 @@ def change_profile_pic():
 		files = frappe.request.files
 		image = download_image(files.get('image'))
 
-		if frappe.db.exists("Delivery",{"user":frappe.session.user}):
-			delivery = frappe.get_doc("Delivery",{"user":frappe.session.user})
-			delivery.image = image.file_url
-			delivery.save(ignore_permissions=True)
+		username = frappe.get_value("User",frappe.session.user,'username')
+
+		if frappe.db.exists("Customer",username):
+			doc = frappe.get_doc("Customer",username)
+			doc.image = image.file_url
+			doc.save(ignore_permissions=True)
 			frappe.db.commit()
 			return f"""image updated successfully"""
 		else:
 			frappe.local.response['http_status_code'] = 400
-			return f"""no delivery like this name {frappe.session.user}"""
-
+			return f"""no user like {frappe.session.user}"""
 		
 	except Exception as e:
 		frappe.local.response['http_status_code'] = 400
