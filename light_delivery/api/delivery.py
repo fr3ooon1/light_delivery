@@ -105,11 +105,12 @@ def delivery_tracing(*args,**kwargs):
 				for order in orders:
 					order_obj = frappe.get_doc("Order",order.order)
 					road = order_obj.get("road")
-					for i in road:
-						point_list.append({"GeoPoint":{
-											"latitude": i.pointer_y,
-											"longitude": i.pointer_x,
-											}})
+					if road:
+						for i in road:
+							point_list.append({"GeoPoint":{
+												"latitude": i.pointer_y,
+												"longitude": i.pointer_x,
+												}})
 			res = {
 				"start":point_list[0],
 				"end":point_list[-1],
