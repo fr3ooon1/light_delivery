@@ -20,7 +20,7 @@ def add_order_to_request(*args, **kwargs):
         return
 
     # Fetch the Delivery Request document
-    doc = frappe.get_doc("Delivery Request", request)
+    doc = frappe.get_doc("Request Delivery", request)
 
     # Check if the request status allows adding an order
     if doc.status not in ['Pending', 'Waiting for Delivery']:
