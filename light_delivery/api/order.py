@@ -13,6 +13,10 @@ def add_order_to_request(*args,**kwargs):
 	order = kwargs.get("order")
 	request = kwargs.get("request")
 
+	if not frappe.db.exists("Delivery Request",request) or not frappe.db.exists("Order",order):
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = "No order or request like this"
+
 
 	if frappe.db.exists("Delivery Request",request):
 		doc = frappe.get_doc("Delivery Request",request)
@@ -31,7 +35,7 @@ def add_order_to_request(*args,**kwargs):
 		doc.save(ignore_permissions=True)
 		frappe.db.commit()
 		frappe.local.response['http_status_code'] = 200
-		return "The order added to request"
+		frappe.local.response['message'] = "The order added to request"
 
 @frappe.whitelist(allow_guest=False)
 def update_order(*args , **kwargs):
