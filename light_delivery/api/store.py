@@ -58,7 +58,7 @@ def get_pending_requst(*args,**kwargs):
 
 @frappe.whitelist(allow_guest=True)
 def get_wallet():
-	store = frappe.get_value("Store",{"user",frappe.session.user},"name")
+	store = frappe.get_value("Store",{"user":frappe.session.user},"name")
 	sql = f"""
 			select
 				*
