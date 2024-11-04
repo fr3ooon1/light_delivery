@@ -145,6 +145,7 @@ class RequestDelivery(Document):
 			if doc.status not in ['Cancel' , 'Delivered']:
 				if self.status not in ["Collect Money"]:
 					if self.status in ['Delivery Cancel','Cancel','Store Cancel']:
+						return
 						doc.status = "Cancel"
 					else:
 						doc.status = self.status
