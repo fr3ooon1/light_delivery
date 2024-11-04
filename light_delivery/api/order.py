@@ -39,7 +39,9 @@ def add_order_to_request(*args, **kwargs):
 			frappe.local.response['http_status_code'] = 400
 			frappe.local.response['message'] = "Order is already added to this request."
 			return
-		
+		order_obj = frappe.get_doc("Order",order)
+		order_obj.request = request
+		order_obj.save(ignore_permissions=True)
 		doc.append("order_request", {"order": order})
 		doc.save(ignore_permissions=True)
 		frappe.db.commit()

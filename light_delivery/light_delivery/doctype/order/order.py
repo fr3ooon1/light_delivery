@@ -22,6 +22,9 @@ class Order(Document):
 		self.get_previous_order_amount()
 		self.rate_delivery()
 		self.change_request_status()
+		road(self)	
+
+	
 
 	def change_request_status(self):
 		status = []
@@ -141,82 +144,99 @@ class Order(Document):
 				print(message)
 				self.total_distance = 0
 				return message
-			for idx in range(len(road)-1):
-				first_point = [float(road[idx].get("pointer_x")), float(road[idx].get("pointer_y"))]
+			
+
+			# for idx in range(len(road)-1):
+			# 	first_point = [float(road[idx].get("pointer_x")), float(road[idx].get("pointer_y"))]
 				
-				end_point = [float(road[idx+1].get("pointer_x") ), float(road[idx+1].get("pointer_y"))]
-				counter = haversine(first_point,end_point)
-				distance += counter
-			total_distance = float(distance)
-			self.total_distance = total_distance
+			# 	end_point = [float(road[idx+1].get("pointer_x") ), float(road[idx+1].get("pointer_y"))]
+			# 	counter = haversine(first_point,end_point)
+			# 	distance += counter
+			# total_distance = float(distance)
+			# self.total_distance = total_distance
 
-			if self.delivery:
-				if frappe.db.exists("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category')):
-					delivery_category = frappe.get_doc("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category'))
-					temp = total_distance * float(delivery_category.rate_of_km or 0) 
-					if delivery_category.minimum_rate > temp:
-						total = float(delivery_category.minimum_rate or 0)
-					else:
-						total = temp
-					total = total - (total / 100 * self.discount)
-					tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
-					tax_rate = float(tax or 0) / total
-					self.tax = tax_rate
-					total = total - tax_rate 
+			# if self.delivery:
+			# 	if frappe.db.exists("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category')):
+			# 		delivery_category = frappe.get_doc("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category'))
+			# 		temp = total_distance * float(delivery_category.rate_of_km or 0) 
+			# 		if delivery_category.minimum_rate > temp:
+			# 			total = float(delivery_category.minimum_rate or 0)
+			# 		else:
+			# 			total = temp
+			# 		total = total - (total / 100 * self.discount)
+			# 		tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
+			# 		tax_rate = float(tax or 0) / total
+			# 		self.tax = tax_rate
+			# 		total = total - tax_rate 
 
-					self.delivery_fees = total
+			# 		self.delivery_fees = total
 
 					
 
-					doc = frappe.new_doc("Transactions")
-					doc.party = "Delivery"
-					doc.party_type = self.delivery
-					doc.in_wallet = total
-					doc.aganist = "Store"
-					doc.aganist_from = self.store
-					doc.order = self.name
-					doc.save(ignore_permissions=True)
-					doc.submit()
+			# 		doc = frappe.new_doc("Transactions")
+			# 		doc.party = "Delivery"
+			# 		doc.party_type = self.delivery
+			# 		doc.in_wallet = total
+			# 		doc.aganist = "Store"
+			# 		doc.aganist_from = self.store
+			# 		doc.order = self.name
+			# 		doc.save(ignore_permissions=True)
+			# 		doc.submit()
 			
-			if self.store:
-				store = frappe.get_doc("Store" , self.store)
-				temp = total_distance * float(store.rate_of_km or 0) 
-				if store.minimum_price > temp:
-					total = float(store.minimum_price or 0)
-				else:
-					total = temp
-				total = total - (total / 100 * self.discount)
-				self.store_fees = total
+			# if self.store:
+			# 	store = frappe.get_doc("Store" , self.store)
+			# 	temp = total_distance * float(store.rate_of_km or 0) 
+			# 	if store.minimum_price > temp:
+			# 		total = float(store.minimum_price or 0)
+			# 	else:
+			# 		total = temp
+			# 	total = total - (total / 100 * self.discount)
+			# 	self.store_fees = total
 
-				doc = frappe.new_doc("Transactions")
-				doc.party = "Store"
-				doc.party_type = self.store
-				doc.out = total
-				doc.aganist = "Delivery"
-				doc.aganist_from = self.delivery
-				doc.order = self.name
-				doc.save(ignore_permissions=True)
-				doc.submit()
+			# 	doc = frappe.new_doc("Transactions")
+			# 	doc.party = "Store"
+			# 	doc.party_type = self.store
+			# 	doc.out = total
+			# 	doc.aganist = "Delivery"
+			# 	doc.aganist_from = self.delivery
+			# 	doc.order = self.name
+			# 	doc.save(ignore_permissions=True)
+			# 	doc.submit()
 
-			frappe.db.commit()
+			# frappe.db.commit()
 
-			coord = []
-			if road:
-				for i in road:
-					coord.append([float(i.pointer_x),float(i.pointer_y)])
-				coordinates = {
-					"type":"FeatureCollection",
-					"features":[
-						{
-							"type":"Feature",
-							"properties":{},
-							"geometry":{
-								"type":"LineString",
-								"coordinates":coord
-							}
-						}
-					]
-				}
-				self.road_map = json.dumps(coordinates)
-				# self.save()
-				frappe.db.commit()
+			# coord = []
+			# if road:
+			# 	for i in road:
+			# 		coord.append([float(i.pointer_x),float(i.pointer_y)])
+			# 	coordinates = {
+			# 		"type":"FeatureCollection",
+			# 		"features":[
+			# 			{
+			# 				"type":"Feature",
+			# 				"properties":{},
+			# 				"geometry":{
+			# 					"type":"LineString",
+			# 					"coordinates":coord
+			# 				}
+			# 			}
+			# 		]
+			# 	}
+			# 	self.road_map = json.dumps(coordinates)
+			# 	# self.save()
+			# 	frappe.db.commit()
+def road(self):
+	if self.status == "On The Way":
+		self.start_lat = float(frappe.db.get_value("Delivery",self.delivery,"pointer_x"))
+		self.start_lon = float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))
+
+	if self.status == "Delivered":
+		self.end_lat = float(frappe.db.get_value("Delivery",self.delivery,"pointer_x"))
+		self.end_lon = float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))
+
+		start_coordi = [float(self.start_lon) , float(self.start_lat)]
+		end_coordi = [float(frappe.db.get_value("Delivery",self.delivery,"pointer_x")) , float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))]
+
+
+		res = calculate_distance_and_duration(start_coordi,end_coordi)
+		print(res)

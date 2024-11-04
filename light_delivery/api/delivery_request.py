@@ -13,16 +13,16 @@ def update_location(*args,**kwargs):
 			doc.pointer_y = kwargs.get("pointer_y")
 			doc.save(ignore_permissions=True)
 
-			if doc.status == "Inorder":
-				if frappe.db.exists("Order",{"status":"On The Way","delivery":doc.name}): 
-					order = frappe.get_doc("Order",{"status":"On The Way","delivery":doc.name})
-					order.append("road",{
-						"pointer_x":kwargs.get("pointer_x"),
-						"pointer_y":kwargs.get("pointer_y"),
-						"delivery":doc.name,
-						"time":frappe.utils.now()
-					})
-					order.save(ignore_permissions=True)
+			# if doc.status == "Inorder":
+			# 	if frappe.db.exists("Order",{"status":"On The Way","delivery":doc.name}): 
+			# 		order = frappe.get_doc("Order",{"status":"On The Way","delivery":doc.name})
+			# 		order.append("road",{
+			# 			"pointer_x":kwargs.get("pointer_x"),
+			# 			"pointer_y":kwargs.get("pointer_y"),
+			# 			"delivery":doc.name,
+			# 			"time":frappe.utils.now()
+			# 		})
+			# 		order.save(ignore_permissions=True)
 			frappe.db.commit()
 			frappe.local.response['http_status_code'] = 200
 			frappe.local.response['message'] = _(f"""Update location""")

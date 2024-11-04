@@ -28,6 +28,10 @@
   "column_break_gwex",
   "duration",
   "total_distance",
+  "start_lat",
+  "start_lon",
+  "end_lat",
+  "end_lon",
   "section_break_hfbg",
   "store_fees",
   "discount",
@@ -238,11 +242,31 @@
    "fieldtype": "Select",
    "label": "Cancel From",
    "options": "\nDelivery\nStore"
+  },
+  {
+   "fieldname": "start_lat",
+   "fieldtype": "Data",
+   "label": "Start lat"
+  },
+  {
+   "fieldname": "start_lon",
+   "fieldtype": "Data",
+   "label": "Start lon"
+  },
+  {
+   "fieldname": "end_lat",
+   "fieldtype": "Data",
+   "label": "End lat"
+  },
+  {
+   "fieldname": "end_lon",
+   "fieldtype": "Data",
+   "label": "End lon"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-31 12:55:47.523682",
+ "modified": "2024-11-04 11:47:51.923684",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",

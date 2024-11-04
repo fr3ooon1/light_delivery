@@ -85,8 +85,8 @@ def res_for_delivary(req_del_name , status):
 
 
 @frappe.whitelist(allow_guest=1)
-def calculate_distance_and_duration(del_coord , store_coord ):
-	coordinates = [del_coord,store_coord]
+def calculate_distance_and_duration(start , end ):
+	coordinates = [start,end]
 	light_integration = frappe.get_doc("Light Integration")
 	url = light_integration.api_url
 	api_key = light_integration.api_key
@@ -99,6 +99,7 @@ def calculate_distance_and_duration(del_coord , store_coord ):
 		}
 	response = requests.post(url, json=data, headers=headers)
 	route_info = response.json()
+	return route_info
 	distance = route_info['routes'][0]['summary']['distance']
 	duration = route_info['routes'][0]['summary']['duration']
 	res = {
