@@ -200,6 +200,12 @@ def cancel_request(*args,**kwargs):
 		request_obj = frappe.get_doc("Request Delivery" , kwargs.get("request"))
 		if kwargs.get("type") == 'store':
 			request_obj.status = "Store Cancel"
+			orders = request_obj.get("order_request")
+			for order in orders:
+				doc = frappe.get_doc("Order",order.order)
+				doc.status = "Cancel"
+				doc.cancel_from = "Store"
+				doc.save(ignore_permissions=True)
 			msg = f"""Request had been cancel by Store"""
 
 			delivery = frappe.get_value("Delivery",request_obj.delivery,"user")
@@ -209,6 +215,12 @@ def cancel_request(*args,**kwargs):
 
 		if kwargs.get("type") == 'delivery':
 			request_obj.status = "Delivery Cancel"
+			orders = request_obj.get("order_request")
+			for order in orders:
+				doc = frappe.get_doc("Order",order.order)
+				doc.status = "Cancel"
+				doc.cancel_from = "Delivery"
+				doc.save(ignore_permissions=True)
 			msg = f"""Request had been cancel by Store"""
 
 			store = frappe.get_value("Store",request_obj.store,"user")
