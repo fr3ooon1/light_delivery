@@ -65,8 +65,7 @@ def get_wallet():
 			from 
 				`tabTransactions`
 			where
-				(party_type = '{store}'
-				or aganist_from = '{store}')
+				party_type = '{store}'
 				AND paid = 0
 	"""
 
