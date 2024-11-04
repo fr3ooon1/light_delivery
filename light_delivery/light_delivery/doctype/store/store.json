@@ -14,6 +14,7 @@
   "store_category",
   "menu",
   "column_break_oynk",
+  "show_in_home",
   "store_logo",
   "store_cover",
   "store_location",
@@ -127,11 +128,17 @@
    "fieldtype": "Table",
    "label": "Menu",
    "options": "Menu"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_home",
+   "fieldtype": "Check",
+   "label": "Show in Home"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-30 18:17:37.660571",
+ "modified": "2024-11-04 14:50:07.662645",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Store",
