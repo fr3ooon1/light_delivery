@@ -234,9 +234,16 @@ def road(self):
 		self.end_lat = float(frappe.db.get_value("Delivery",self.delivery,"pointer_x"))
 		self.end_lon = float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))
 
-		start_coordi = [float(self.start_lon) , float(self.start_lat)]
+		start_coordi = [float(self.start_lat) , float(self.start_lon)]
 		end_coordi = [float(frappe.db.get_value("Delivery",self.delivery,"pointer_x")) , float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))]
+		start = [31.3456224,30.0589113]
+		end = [31.3329884,30.0930851]
 
 
 		res = calculate_distance_and_duration(start_coordi,end_coordi)
+		self.duration = res['routes'][0]['summary']['duration']
+		self.total_distance = res['routes'][0]['summary']['distance']
 		print(res)
+		# print("dynamic ==========",start_coordi , end_coordi)
+
+		# print("fixed ==========",start , end)

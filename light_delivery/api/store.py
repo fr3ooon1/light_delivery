@@ -1,5 +1,6 @@
 import frappe
 from frappe import _
+from light_delivery.api.delivery_request import calculate_balane
 
 @frappe.whitelist(allow_guest = 1)
 def get_category():
@@ -52,3 +53,27 @@ def get_pending_requst(*args,**kwargs):
 	store = frappe.get_value("Store",{"user":frappe.session.user})
 	requests = frappe.get_list("Request Delivery",{"store":store , "status":"Pending"},['name','number_of_order'])
 	return requests
+
+
+
+@frappe.whitelist(allow_guest=True)
+def get_wallet():
+	store = frappe.get_value("Store",{"user",frappe.session.user},"name")
+
+	sql = f"""
+			select
+				*
+			from 
+				`tabTransactions`
+			where
+				(party_type = '{store}'
+				or aganist_from = '{store}')
+				AND paid = 0
+	"""
+
+	transactions = frappe.db.sql(sql,as_dict=True)
+	balance = calculate_balane(store)
+
+	frappe.local.response['http_status_code'] = 200
+	frappe.local.response['transactions'] = transactions
+	frappe.local.response['balance'] = balance
