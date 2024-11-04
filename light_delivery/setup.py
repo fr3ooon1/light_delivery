@@ -47,49 +47,54 @@ def create_status():
 			"index":1
 		},
 		{
+			"status":"Waiting for Delivery",
+			"status_name_in_arabic":"بانتظار المندوب",
+			"index":2
+		},
+		{
 			"status":"Accepted",
 			"status_name_in_arabic":"مقبول",
-			"index":2
+			"index":3
 		},
 		{
 			"status":"Arrived",
 			"status_name_in_arabic":"وصل",
-			"index":3
+			"index":4
 		},
 		{
 			"status":"Picked",
 			"status_name_in_arabic":"تم التقاط الطلب",
-			"index":4
+			"index":5
 		},
 		{
 			"status":"On The Way",
 			"status_name_in_arabic":"في الطريق",
-			"index":5
+			"index":6
 		},
 		{
 			"status":"Arrived For Destination",
 			"status_name_in_arabic":"وصول إلى الوجهة",
-			"index":6
+			"index":7
 		},
 		{
 			"status":"Delivered",
 			"status_name_in_arabic":"تم التوصيل",
-			"index":7
+			"index":8
 		},
 		{
 			"status":"Refused",
 			"status_name_in_arabic":"رفض",
-			"index":8
+			"index":9
 		},
 		{
 			"status":"Return to store",
 			"status_name_in_arabic":"العودة إلى المتجر",
-			"index":9
+			"index":10
 		},
 		{
 			"status":"Cancel",
 			"status_name_in_arabic":"تم الإلغاء",
-			"index":10
+			"index":11
 		},
 	]
 	for i in status:
