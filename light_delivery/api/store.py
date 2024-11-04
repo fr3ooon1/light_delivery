@@ -75,5 +75,5 @@ def get_wallet():
 
 	frappe.local.response['http_status_code'] = 200
 	frappe.local.response['transactions'] = transactions
-	frappe.local.response['balance'] = balance
+	frappe.local.response['balance'] = float(balance or 0)
 
