@@ -96,36 +96,51 @@ def change_profile_pic():
 
 @frappe.whitelist(allow_guest=False)
 def delivery_tracing(*args,**kwargs):
-	res = {
-		"start":[],
-		"end":[],
-		"point_list":[]
-	}
+	# res = {
+	# 	"start":[],
+	# 	"end":[],
+	# 	"point_list":[]
+	# }
 	
+	# try:
+	# 	point_list = []
+	# 	request = kwargs.get("request")
+	# 	if frappe.db.exists("Request Delivery",request):
+	# 		doc = frappe.get_doc("Request Delivery",request)
+	# 		orders = doc.get("order_request")
+	# 		if orders:
+	# 			for order in orders:
+	# 				order_obj = frappe.get_doc("Order",order.order)
+	# 				road = order_obj.get("road")
+	# 				if road:
+	# 					for i in road:
+	# 						point_list.append({"GeoPoint":{
+	# 											"latitude": i.pointer_y,
+	# 											"longitude": i.pointer_x,
+	# 											}})
+	# 		res = {
+	# 			"start":point_list[0],
+	# 			"end":point_list[-1],
+	# 			"point_list":point_list
+	# 		}
+	# 		return res
+	# 	else:
+	# 		frappe.local.response['http_status_code'] = 400
 	try:
-		point_list = []
+
 		request = kwargs.get("request")
 		if frappe.db.exists("Request Delivery",request):
-			doc = frappe.get_doc("Request Delivery",request)
-			orders = doc.get("order_request")
-			if orders:
-				for order in orders:
-					order_obj = frappe.get_doc("Order",order.order)
-					road = order_obj.get("road")
-					if road:
-						for i in road:
-							point_list.append({"GeoPoint":{
-												"latitude": i.pointer_y,
-												"longitude": i.pointer_x,
-												}})
-			res = {
-				"start":point_list[0],
-				"end":point_list[-1],
-				"point_list":point_list
+			delivery = frappe.get_value("Request Delivery" , request , "delivery")
+			doc = frappe.get_doc("Delivery",delivery)
+			coordi = {
+				"latitude":doc.pointer_y,
+				"longitude":doc.pointer_x
 			}
-			return res
-		else:
-			frappe.local.response['http_status_code'] = 400
+			last_modification = str(doc.modified)
+
+			frappe.local.response['http_status_code'] = 200
+			frappe.local.response['GeoPoint'] = coordi
+			frappe.local.response['last_modification'] = last_modification
 
 	except Exception as e:
 		frappe.local.response['http_status_code'] = 400
