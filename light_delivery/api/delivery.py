@@ -118,10 +118,10 @@ def delivery_tracing(*args,**kwargs):
 												"latitude": i.pointer_y,
 												"longitude": i.pointer_x,
 										}})
-			return point_list
 			if not point_list:
 				frappe.local.response['http_status_code'] = 400
 				frappe.local.response['message'] = _(f"""no point found""")
+				return
 			res = {
 				"start":point_list[0],
 				"end":point_list[-1],
