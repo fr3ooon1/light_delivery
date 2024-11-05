@@ -205,26 +205,26 @@ class Order(Document):
 
 			# frappe.db.commit()
 
-			# coord = []
-			# if road:
-			# 	for i in road:
-			# 		coord.append([float(i.pointer_x),float(i.pointer_y)])
-			# 	coordinates = {
-			# 		"type":"FeatureCollection",
-			# 		"features":[
-			# 			{
-			# 				"type":"Feature",
-			# 				"properties":{},
-			# 				"geometry":{
-			# 					"type":"LineString",
-			# 					"coordinates":coord
-			# 				}
-			# 			}
-			# 		]
-			# 	}
-			# 	self.road_map = json.dumps(coordinates)
-			# 	# self.save()
-			# 	frappe.db.commit()
+			coord = []
+			if road:
+				for i in road:
+					coord.append([float(i.pointer_x),float(i.pointer_y)])
+				coordinates = {
+					"type":"FeatureCollection",
+					"features":[
+						{
+							"type":"Feature",
+							"properties":{},
+							"geometry":{
+								"type":"LineString",
+								"coordinates":coord
+							}
+						}
+					]
+				}
+				self.road_map = json.dumps(coordinates)
+				# self.save()
+				frappe.db.commit()
 def road(self):
 	return
 	if self.status == "On The Way":
