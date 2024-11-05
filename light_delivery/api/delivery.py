@@ -117,7 +117,8 @@ def delivery_tracing(*args,**kwargs):
 							point_list.append({"GeoPoint":{
 												"latitude": i.pointer_y,
 												"longitude": i.pointer_x,
-											}})
+										}})
+			return point_list
 			if not point_list:
 				frappe.local.response['http_status_code'] = 400
 				frappe.local.response['message'] = _(f"""no point found""")
