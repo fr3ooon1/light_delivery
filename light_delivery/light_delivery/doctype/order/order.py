@@ -226,6 +226,7 @@ class Order(Document):
 			# 	# self.save()
 			# 	frappe.db.commit()
 def road(self):
+	return
 	if self.status == "On The Way":
 		self.start_lat = float(frappe.db.get_value("Delivery",self.delivery,"pointer_x"))
 		self.start_lon = float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))
