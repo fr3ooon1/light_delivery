@@ -67,6 +67,8 @@ def get_wallet():
 			where
 				party_type = '{store}'
 				AND paid = 0
+			ORDER BY
+            	creation
 	"""
 
 	transactions = frappe.db.sql(sql,as_dict=True)
