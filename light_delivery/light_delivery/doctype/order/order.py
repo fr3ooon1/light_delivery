@@ -220,8 +220,9 @@ class Order(Document):
 				total = float(store.minimum_price or 0)
 			else:
 				total = amount
-			total = total - (total / 100 * self.discount)
 			self.store_fees = total
+			total = total - (total / 100 * self.discount)
+			self.net_store_fees = total
 
 			doc = frappe.new_doc("Transactions")
 			doc.party = "Store"
