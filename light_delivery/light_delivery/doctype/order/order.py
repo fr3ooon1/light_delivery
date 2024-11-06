@@ -69,7 +69,7 @@ class Order(Document):
 						duration = segments[0].get("duration",0)
 						self.duration = duration
 						self.total_distance = distance
-		self.draw_roads()
+			self.draw_roads()
 	
 
 	def change_request_status(self):
