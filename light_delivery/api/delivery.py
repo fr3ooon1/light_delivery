@@ -136,7 +136,7 @@ def delivery_tracing(*args,**kwargs):
 			res = {
 				"start":start,
 				"end":end,
-				"point_list":start
+				"point_list":[start,end]
 			}
 			return res
 		else:
