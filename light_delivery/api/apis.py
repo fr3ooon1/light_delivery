@@ -86,6 +86,11 @@ def res_for_delivary(req_del_name , status):
 
 @frappe.whitelist(allow_guest=1)
 def calculate_distance_and_duration(start , end ):
+
+	"""
+	https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248e919248db9ed498bbca7120ad13698fc&start=31.0559739,29.907215&end=31.3456224,30.0589113
+	
+	"""
 	coordinates = [start,end]
 	light_integration = frappe.get_doc("Light Integration")
 	url = light_integration.api_url
@@ -95,9 +100,11 @@ def calculate_distance_and_duration(start , end ):
 			 'Content-Type': 'application/json; charset=utf-8'
 		}
 	data = {
-			 "coordinates": coordinates
+			"api_key":api_key,
+			"start": '31.0559739,29.907215',
+			"end":'31.3456224,30.0589113'
 		}
-	response = requests.post(url, json=data, headers=headers)
+	response = requests.get(url, params=data, headers=headers)
 	route_info = response.json()
 	return route_info
 	distance = route_info['routes'][0]['summary']['distance']

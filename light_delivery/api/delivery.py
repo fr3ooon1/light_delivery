@@ -106,26 +106,37 @@ def delivery_tracing(*args,**kwargs):
 		point_list = []
 		request = kwargs.get("request")
 		if frappe.db.exists("Request Delivery",request):
-			doc = frappe.get_doc("Request Delivery",request)
-			orders = doc.get("order_request")
-			if orders:
-				for order in orders:
-					order_obj = frappe.get_doc("Order",order.order)
-					road = order_obj.get("road")
-					if road:
-						for i in road:
-							point_list.append({"GeoPoint":{
-												"latitude": i.pointer_y,
-												"longitude": i.pointer_x,
-										}})
-			if not point_list:
-				frappe.local.response['http_status_code'] = 400
-				frappe.local.response['message'] = _(f"""no point found""")
-				return
+			delivery = frappe.get_value("Request Delivery",request,"delivery")
+			start = {
+				"GeoPoint":{
+						"latitude": float(frappe.get_value("Request Delivery",request,"lon")),
+						"longitude": float(frappe.get_value("Request Delivery",request,"lat")),
+				}}
+			end = {
+				"GeoPoint":{
+						"latitude": float(frappe.get_value("Delivery",delivery,"pointer_y")),
+						"longitude": float(frappe.get_value("Delivery",delivery,"pointer_x")),
+				}}
+			# orders = doc.get("order_request")
+			# orders = frappe.get_list("Order Request",{"parent":request},pluck='order',ignore_permissions=True)
+			# if orders:
+			# 	for order in orders:
+			# 		order_obj = frappe.get_doc("Order",order.order)
+			# 		road = order_obj.get("road")
+			# 		if road:
+			# 			for i in road:
+			# 				point_list.append({"GeoPoint":{
+			# 									"latitude": i.pointer_y,
+			# 									"longitude": i.pointer_x,
+			# 							}})
+			# if not point_list:
+			# 	frappe.local.response['http_status_code'] = 400
+			# 	frappe.local.response['message'] = _(f"""no point found""")
+			# 	return
 			res = {
-				"start":point_list[0],
-				"end":point_list[-1],
-				"point_list":point_list
+				"start":start,
+				"end":end,
+				"point_list":start
 			}
 			return res
 		else:

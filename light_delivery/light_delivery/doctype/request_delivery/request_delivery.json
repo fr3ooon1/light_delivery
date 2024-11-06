@@ -14,8 +14,10 @@
   "total",
   "column_break_zsov",
   "store",
+  "lat",
   "column_break_qnyl",
   "status",
+  "lon",
   "section_break_oyzm",
   "order_request",
   "request_log"
@@ -86,11 +88,21 @@
    "fieldname": "total",
    "fieldtype": "Float",
    "label": "Total of Request"
+  },
+  {
+   "fieldname": "lat",
+   "fieldtype": "Data",
+   "label": "lat"
+  },
+  {
+   "fieldname": "lon",
+   "fieldtype": "Data",
+   "label": "lon"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-06 19:21:36.611694",
+ "modified": "2024-11-06 16:11:38.102469",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Request Delivery",

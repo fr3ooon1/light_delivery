@@ -22,6 +22,7 @@ class RequestDelivery(Document):
 
 			
 		if self.status in ['Arrived' , 'Picked' , 'Cancel' , 'Delivery Cancel','Store Cancel','Waiting for delivery']:
+			
 			self.change_status_for_orders()
 
 		if self.status == "Waiting for delivery":
@@ -33,6 +34,18 @@ class RequestDelivery(Document):
 			
 		if self.status == "Collect Money":
 			self.pay_to_store()
+
+
+		if self.status == "Picked":
+			self.start_point()
+
+
+	def start_point(self):
+		self.lat = frappe.get_value("Delivery",self.delivery,"pointer_x")
+		self.lon = frappe.get_value("Delivery",self.delivery,"pointer_y")
+
+
+
 
 	def calculate_orders(self):
 		total_request_amount = 0
