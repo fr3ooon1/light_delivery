@@ -101,8 +101,8 @@ def calculate_distance_and_duration(start , end ):
 		}
 	data = {
 			"api_key":api_key,
-			"start": '31.0559739,29.907215',
-			"end":'31.3456224,30.0589113'
+			"start": start,
+			"end":end
 		}
 	response = requests.get(url, params=data, headers=headers)
 	route_info = response.json()
