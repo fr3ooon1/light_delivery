@@ -93,7 +93,7 @@ class Order(Document):
 							"properties":{},
 							"geometry":{
 								"type":"LineString",
-								"coordinates":coordinations
+								"coordinates":locations
 							}
 						}
 					]
