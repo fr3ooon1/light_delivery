@@ -97,39 +97,77 @@ def osm_v1(start_point, end_point):
 	return route_info
 	
 
-
+import frappe
+import requests
 
 @frappe.whitelist(allow_guest=1)
-def calculate_distance_and_duration(start , end ):
-
+def calculate_distance_and_duration(start, end):
 	"""
-	https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248e919248db9ed498bbca7120ad13698fc&start=31.0559739,29.907215&end=31.3456224,30.0589113
+	Calculate distance and duration between start and end coordinates using OpenRouteService.
 	
+	Args:
+		start (str): Start coordinates in "longitude,latitude" format.
+		end (str): End coordinates in "longitude,latitude" format.
+	
+	Returns:
+		dict: Distance and duration data from the response.
 	"""
-	coordinates = [start,end]
-	light_integration = frappe.get_doc("Light Integration")
-	url = light_integration.api_url
-	api_key = light_integration.api_key
-	headers = {
-			 'Authorization': api_key,
-			 'Content-Type': 'application/json; charset=utf-8'
-		}
-	data = {
-			"api_key":api_key,
-			"start": start,
-			"end":end
-		}
-	response = requests.get(url, params=data, headers=headers)
-	return response
-	route_info = response.json()
-	return route_info
-	distance = route_info['routes'][0]['summary']['distance']
-	duration = route_info['routes'][0]['summary']['duration']
-	res = {
-		"distance":distance,
-		"duration":duration
-		}
-	return res
+	try:
+		# Get API details from "Light Integration" doctype
+		light_integration = frappe.get_doc("Light Integration")
+		api_key = light_integration.api_key
+		url = f"{light_integration.api_url}/v2/directions/driving-car"
+
+		# Construct the complete request URL with parameters
+		request_url = f"{url}?api_key={api_key}&start={start}&end={end}"
+
+		# Send GET request to the OpenRouteService API
+		response = requests.get(request_url)
+		return response
+
+		# Check if response is successful
+		if response.status_code == 200:
+			return response.json()  # Parse JSON and return
+		else:
+			frappe.log_error(f"Error in OpenRouteService API: {response.status_code} - {response.text}")
+			return {"error": "Failed to get data from OpenRouteService."}
+
+	except Exception as e:
+		frappe.log_error(f"Exception in calculate_distance_and_duration: {str(e)}")
+		return {"error": "An exception occurred while processing the request."}
+
+
+# @frappe.whitelist(allow_guest=1)
+# def calculate_distance_and_duration(start , end ):
+
+# 	"""
+# 	https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248e919248db9ed498bbca7120ad13698fc&start=31.0559739,29.907215&end=31.3456224,30.0589113
+	
+# 	"""
+# 	coordinates = [start,end]
+# 	light_integration = frappe.get_doc("Light Integration")
+# 	url = light_integration.api_url
+# 	api_key = light_integration.api_key
+# 	headers = {
+# 			 'Authorization': api_key,
+# 			 'Content-Type': 'application/json; charset=utf-8'
+# 		}
+# 	data = {
+# 			"api_key":api_key,
+# 			"start": start,
+# 			"end":end
+# 		}
+# 	response = requests.get(url, params=data, headers=headers)
+# 	return response
+# 	route_info = response.json()
+# 	return route_info
+# 	distance = route_info['routes'][0]['summary']['distance']
+# 	duration = route_info['routes'][0]['summary']['duration']
+# 	res = {
+# 		"distance":distance,
+# 		"duration":duration
+# 		}
+# 	return res
 	
 
 def haversine(coord1, coord2):
