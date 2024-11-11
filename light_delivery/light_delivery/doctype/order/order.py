@@ -36,11 +36,8 @@ class Order(Document):
 			self.end_lon = float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))
 
 			start_coordi = [float(self.start_lat) , float(self.start_lon)]
-			end_coordi = [float(frappe.db.get_value("Delivery",self.delivery,"pointer_y")) , float(frappe.db.get_value("Delivery",self.delivery,"pointer_x"))]
+			end_coordi = [float(frappe.db.get_value("Delivery",self.delivery,"pointer_x")) , float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))]
 			
-
-			res = None
-
 			res = calculate_distance_and_duration(start_coordi,end_coordi)
 
 			if res.status_code == 200:
