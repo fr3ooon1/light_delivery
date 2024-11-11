@@ -104,7 +104,7 @@ class Order(Document):
 
 
 
-		# self.draw_roads()
+		self.draw_roads()
 	
 
 	def change_request_status(self):
