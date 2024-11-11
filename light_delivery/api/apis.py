@@ -92,6 +92,7 @@ def osm_v1(start_point, end_point):
 	end2 = end_point[1]
 	url = f"""https://routing.openstreetmap.de/routed-car/route/v1/driving/{start1},{start2};{end1},{end2}?alternatives=false&overview=full&steps=true"""
 	response = requests.get(url)
+	return response
 	route_info = response.json()
 	return route_info
 	
@@ -119,6 +120,7 @@ def calculate_distance_and_duration(start , end ):
 			"end":end
 		}
 	response = requests.get(url, params=data, headers=headers)
+	return response
 	route_info = response.json()
 	return route_info
 	distance = route_info['routes'][0]['summary']['distance']

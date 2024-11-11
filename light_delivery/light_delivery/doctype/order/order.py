@@ -41,9 +41,10 @@ class Order(Document):
 
 			res = None
 
-			fero = 1
-			if fero == 1:
-				res = calculate_distance_and_duration(start_coordi,end_coordi)
+			res = calculate_distance_and_duration(start_coordi,end_coordi)
+
+			if res.status_code == 200:
+				res = res.json()
 				features = res.get("features",None)
 				if features:
 					geometry = features[0].get("geometry",None)
@@ -74,7 +75,37 @@ class Order(Document):
 							duration = segments[0].get("duration",0)
 							self.duration = duration
 							self.total_distance = distance
-			# self.draw_roads()
+			else:
+				res = osm_v1(start_coordi,end_coordi)
+				res = res.json()
+				routes = res.get("routes")
+				steps = routes[0].get("legs")[0].get("steps")
+				locations = []
+				for step in steps:
+					for intersection in step["intersections"]:
+						locations.append(intersection["location"])
+						
+				coordinates = {
+					"type":"FeatureCollection",
+					"features":[
+						{
+							"type":"Feature",
+							"properties":{},
+							"geometry":{
+								"type":"LineString",
+								"coordinates":coordinations
+							}
+						}
+					]
+				}
+				self.road_map = json.dumps(coordinates)
+				frappe.db.commit()
+
+
+
+
+
+		# self.draw_roads()
 	
 
 	def change_request_status(self):

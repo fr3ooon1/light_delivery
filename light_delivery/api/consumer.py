@@ -43,10 +43,10 @@ def get_stores(*args,**kwargs):
 def get_home_stories():
 	try:
 		res = []
-		stores = frappe.get_list("Store",{"show_in_home":1},['store'],ignore_permissions=True)
+		stores = frappe.get_list("Store",{"show_in_home":1},['name'],ignore_permissions=True)
 		user = frappe.get_value("User",frappe.session.user,["username","full_name","mobile_no"],as_dict=True)
 		for store in stores:
-			doc = frappe.get_doc("Store",store.get("store"))
+			doc = frappe.get_doc("Store",store.get("name"))
 			res.append({
 				"id":doc.name,
 				"is_favorite":is_favorite(user.get("username") , store.get("store")),
