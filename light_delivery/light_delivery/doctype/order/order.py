@@ -6,7 +6,7 @@ from frappe.model.document import Document
 from frappe import _
 import json
 from frappe.utils import now_datetime
-from light_delivery.api.apis import calculate_distance_and_duration , haversine
+from light_delivery.api.apis import calculate_distance_and_duration ,osm_v1, haversine
 from datetime import datetime
 
 
@@ -38,38 +38,43 @@ class Order(Document):
 			start_coordi = [float(self.start_lat) , float(self.start_lon)]
 			end_coordi = [float(frappe.db.get_value("Delivery",self.delivery,"pointer_y")) , float(frappe.db.get_value("Delivery",self.delivery,"pointer_x"))]
 			
-			res = calculate_distance_and_duration(start_coordi,end_coordi)
-			features = res.get("features",None)
-			if features:
-				geometry = features[0].get("geometry",None)
-				if geometry:
-					coordinations = geometry.get("coordinates" , [])
-					print(coordinations)
-					if coordinations:
-						coordinates = {
-							"type":"FeatureCollection",
-							"features":[
-								{
-									"type":"Feature",
-									"properties":{},
-									"geometry":{
-										"type":"LineString",
-										"coordinates":coordinations
+
+			res = None
+
+			fero = 1
+			if fero == 1:
+				res = calculate_distance_and_duration(start_coordi,end_coordi)
+				features = res.get("features",None)
+				if features:
+					geometry = features[0].get("geometry",None)
+					if geometry:
+						coordinations = geometry.get("coordinates" , [])
+						print(coordinations)
+						if coordinations:
+							coordinates = {
+								"type":"FeatureCollection",
+								"features":[
+									{
+										"type":"Feature",
+										"properties":{},
+										"geometry":{
+											"type":"LineString",
+											"coordinates":coordinations
+										}
 									}
-								}
-							]
-						}
-						self.road_map = json.dumps(coordinates)
-						frappe.db.commit()
-				properties = features[0].get("properties",None)
-				if properties:
-					segments = properties.get("segments",None)
-					if segments:
-						distance = segments[0].get("distance",0)
-						duration = segments[0].get("duration",0)
-						self.duration = duration
-						self.total_distance = distance
-			self.draw_roads()
+								]
+							}
+							self.road_map = json.dumps(coordinates)
+							frappe.db.commit()
+					properties = features[0].get("properties",None)
+					if properties:
+						segments = properties.get("segments",None)
+						if segments:
+							distance = segments[0].get("distance",0)
+							duration = segments[0].get("duration",0)
+							self.duration = duration
+							self.total_distance = distance
+			# self.draw_roads()
 	
 
 	def change_request_status(self):

@@ -83,6 +83,20 @@ def res_for_delivary(req_del_name , status):
 	
 
 
+@frappe.whitelist(allow_guest=0)
+def osm_v1(start_point, end_point):
+	start1 = start_point[0]
+	start2 = start_point[1]
+
+	end1 = end_point[0]
+	end2 = end_point[1]
+	url = f"""https://routing.openstreetmap.de/routed-car/route/v1/driving/{start1},{start2};{end1},{end2}?alternatives=false&overview=full&steps=true"""
+	response = requests.get(url)
+	route_info = response.json()
+	return route_info
+	
+
+
 
 @frappe.whitelist(allow_guest=1)
 def calculate_distance_and_duration(start , end ):
