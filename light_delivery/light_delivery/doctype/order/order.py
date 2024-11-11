@@ -6,7 +6,7 @@ from frappe.model.document import Document
 from frappe import _
 import json
 from frappe.utils import now_datetime
-from light_delivery.api.apis import calculate_distance_and_duration ,osm_v1, haversine
+from light_delivery.api.apis import osm_v2 ,osm_v1, haversine
 from datetime import datetime
 
 
@@ -38,7 +38,7 @@ class Order(Document):
 			start_coordi = [float(self.start_lat) , float(self.start_lon)]
 			end_coordi = [float(frappe.db.get_value("Delivery",self.delivery,"pointer_x")) , float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))]
 			
-			res = calculate_distance_and_duration(start_coordi,end_coordi)
+			res = osm_v2(start_coordi,end_coordi)
 
 			if res.status_code == 200:
 				res = res.json()

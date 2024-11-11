@@ -93,15 +93,13 @@ def osm_v1(start_point, end_point):
 	url = f"""https://routing.openstreetmap.de/routed-car/route/v1/driving/{start1},{start2};{end1},{end2}?alternatives=false&overview=full&steps=true"""
 	response = requests.get(url)
 	return response
-	route_info = response.json()
-	return route_info
 	
 
 import frappe
 import requests
 
 @frappe.whitelist(allow_guest=1)
-def calculate_distance_and_duration(start, end):
+def osm_v2(start, end):
 	"""
 	Calculate distance and duration between start and end coordinates using OpenRouteService.
 	
@@ -113,27 +111,24 @@ def calculate_distance_and_duration(start, end):
 		dict: Distance and duration data from the response.
 	"""
 	try:
-		# Get API details from "Light Integration" doctype
+
 		light_integration = frappe.get_doc("Light Integration")
 		api_key = light_integration.api_key
 		url = f"{light_integration.api_url}/v2/directions/driving-car"
 
-		# Construct the complete request URL with parameters
 		request_url = f"{url}?api_key={api_key}&start={start}&end={end}"
 
-		# Send GET request to the OpenRouteService API
 		response = requests.get(request_url)
+
+		if response.status_code != 200:
+			frappe.log_error(f"Error in OpenRouteService API: {response.status_code} - {response.text}")
+		
 		return response
 
 		# Check if response is successful
-		if response.status_code == 200:
-			return response.json()  # Parse JSON and return
-		else:
-			frappe.log_error(f"Error in OpenRouteService API: {response.status_code} - {response.text}")
-			return {"error": "Failed to get data from OpenRouteService."}
 
 	except Exception as e:
-		frappe.log_error(f"Exception in calculate_distance_and_duration: {str(e)}")
+		frappe.log_error(f"Exception in osm_v2: {str(e)}")
 		return {"error": "An exception occurred while processing the request."}
 
 
