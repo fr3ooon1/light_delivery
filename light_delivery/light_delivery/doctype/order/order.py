@@ -100,7 +100,7 @@ class Order(Document):
 				}
 				self.road_map = json.dumps(coordinates)
 				self.duration = routes[0].get("duration")
-				self.distance = routes[0].get("distance")
+				self.total_distance = routes[0].get("distance")
 				frappe.db.commit()
 
 
