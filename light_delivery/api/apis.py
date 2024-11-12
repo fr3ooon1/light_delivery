@@ -95,9 +95,6 @@ def osm_v1(start_point, end_point):
 	return response
 	
 
-import frappe
-import requests
-
 @frappe.whitelist(allow_guest=1)
 def osm_v2(start, end):
 	"""
@@ -114,18 +111,13 @@ def osm_v2(start, end):
 
 		light_integration = frappe.get_doc("Light Integration")
 		api_key = light_integration.api_key
-		url = f"{light_integration.api_url}/v2/directions/driving-car"
+		api_url = light_integration.api_url
 
-		request_url = f"{url}?api_key={api_key}&start={start}&end={end}"
+		request_url = f"{api_url}?api_key={api_key}&start={start}&end={end}"
 
 		response = requests.get(request_url)
 
-		# if response.status_code != 200:
-		# 	frappe.log_error(f"Error in OpenRouteService API: {response.status_code} - {response.text}")
-		
 		return response
-
-		# Check if response is successful
 
 	except Exception as e:
 		frappe.log_error(f"Exception in osm_v2: {str(e)}")
