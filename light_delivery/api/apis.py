@@ -120,8 +120,8 @@ def osm_v2(start, end):
 
 		response = requests.get(request_url)
 
-		if response.status_code != 200:
-			frappe.log_error(f"Error in OpenRouteService API: {response.status_code} - {response.text}")
+		# if response.status_code != 200:
+		# 	frappe.log_error(f"Error in OpenRouteService API: {response.status_code} - {response.text}")
 		
 		return response
 
