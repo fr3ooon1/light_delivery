@@ -7,6 +7,55 @@ import requests
 import json
 
 #from light_delivery.api.apis import
+COMPANY = frappe.defaults.get_defaults().get("company")
+Deductions = frappe.get_doc("Deductions")
+
+import frappe
+from frappe import _
+from frappe.utils import now_datetime
+
+@frappe.whitelist()
+def make_journal_entry(kwargs):
+	try:
+
+		# Create the Journal Entry document
+		doc = frappe.get_doc({
+			"doctype": "Journal Entry",
+			"voucher_type": "Journal Entry",
+			"naming_series": "ACC-JV-.YYYY.-",
+			"company": COMPANY,
+			"cheque_no": kwargs.get("order"),
+			"cheque_date": now_datetime(),
+			"posting_date": now_datetime()
+		})
+
+		# Append the debit entry
+		doc.append("accounts", {
+			"account": kwargs.get("account_debit"),
+			"party_type":kwargs.get("party_type_debit"),
+			"party":kwargs.get("party_debit"),
+			"debit_in_account_currency": kwargs.get("amount_debit", 0),
+			"credit_in_account_currency": 0,
+		})
+
+		# Append the credit entry
+		doc.append("accounts", {
+			"account": kwargs.get("account_credit"),
+			"party_type":kwargs.get("party_type_credit"),
+			"party":kwargs.get("party_credit"),
+			"debit_in_account_currency": 0,
+			"credit_in_account_currency": kwargs.get("amount_credit", 0),
+		})
+		doc.docstatus = 1
+		doc.insert(ignore_permissions=True)
+		frappe.db.commit()
+
+		return doc.name
+
+	except Exception as e:
+		frappe.log_error(message=str(e), title=_('Error in make_journal_entry'))
+		frappe.throw(_("An error occurred while creating the Journal Entry: {0}").format(str(e)))
+	
 
 @frappe.whitelist(allow_guest = False)
 def search_delivary(cash , store = None ):

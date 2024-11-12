@@ -45,6 +45,7 @@
    "unique": 1
   },
   {
+   "default": "Gold",
    "fieldname": "delivery_category",
    "fieldtype": "Link",
    "label": "Delivery Category",
@@ -126,7 +127,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-22 15:02:29.678725",
+ "modified": "2024-11-12 16:00:30.291745",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Delivery",

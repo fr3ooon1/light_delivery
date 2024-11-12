@@ -27,7 +27,21 @@
   "column_break_sxvt",
   "rate2",
   "column_break_ylxe",
-  "rate_of_tax"
+  "rate_of_tax",
+  "section_break_onoh",
+  "delivery_account",
+  "store_account",
+  "balance",
+  "accounts_section",
+  "column_break_lblz",
+  "bank",
+  "column_break_prld",
+  "tax_account",
+  "column_break_xeec",
+  "bank_expense",
+  "section_break_trbk",
+  "light_account",
+  "expens_account"
  ],
  "fields": [
   {
@@ -143,12 +157,85 @@
    "fieldname": "rate_of_tax",
    "fieldtype": "Float",
    "label": "Rate of Tax"
+  },
+  {
+   "fieldname": "accounts_section",
+   "fieldtype": "Section Break",
+   "label": "Accounts"
+  },
+  {
+   "fieldname": "delivery_account",
+   "fieldtype": "Link",
+   "label": "Delivery Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "column_break_prld",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "store_account",
+   "fieldtype": "Link",
+   "label": "Store Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "column_break_xeec",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "light_account",
+   "fieldtype": "Link",
+   "label": "Income Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "tax_account",
+   "fieldtype": "Link",
+   "label": "Tax Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "bank_expense",
+   "fieldtype": "Link",
+   "label": "Bank Expense",
+   "options": "Account"
+  },
+  {
+   "fieldname": "section_break_trbk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "expens_account",
+   "fieldtype": "Link",
+   "label": "Expens account ",
+   "options": "Account"
+  },
+  {
+   "fieldname": "bank",
+   "fieldtype": "Link",
+   "label": "Bank",
+   "options": "Account"
+  },
+  {
+   "fieldname": "section_break_onoh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_lblz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "balance",
+   "fieldtype": "Link",
+   "label": "Balance",
+   "options": "Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-09-16 09:30:15.547990",
+ "modified": "2024-11-12 14:30:52.844032",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Deductions",

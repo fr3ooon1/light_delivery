@@ -179,49 +179,70 @@ def registration (*args , **kwargs):
 
 			
 
+		if float(data.is_store) != 0:
+			customer_obj = frappe.new_doc("Customer")
+			customer_obj.customer_name = customer_name
+			customer_obj.customer_group = customer_group
+			customer_obj.insert(ignore_permissions=True)
+			customer_obj.save(ignore_permissions=True)
+			frappe.db.commit()
+			create_address( new_user.username , data.address)
+			contact = frappe.new_doc('Contact')
+			contact.first_name = store_obj.store_name if store_obj else data.full_name
+			contact.append('phone_nos',{
+				"phone":kwargs.get('phone'),
+				"is_primary_mobile_no":1
+			})
+			contact.append('links',{
+				"link_doctype":"Customer" ,
+				"link_name":customer_obj.name , 
+				"link_type":customer_obj.name
+			})
+			contact.append('email_ids',{
+				"email_id":kwargs.get("email"),
+				"is_primary":1
+			})
+			contact.insert(ignore_permissions=True)
+			contact.save(ignore_permissions=True)
+		else:
+			supplier = frappe.new_doc("Supplier")
+			supplier.supplier_name = data.full_name
+			supplier.supplier_type = "Individual"
+			supplier.insert(ignore_permissions=True)
 
-		customer_obj = frappe.new_doc("Customer")
-		customer_obj.customer_name = customer_name
-		customer_obj.customer_group = customer_group
-		customer_obj.insert(ignore_permissions=True)
-		customer_obj.save(ignore_permissions=True)
-		frappe.db.commit()
-		create_address_for_customer( new_user.username , data.address)
-		contact = frappe.new_doc('Contact')
-		contact.first_name = store_obj.store_name if store_obj else data.full_name
-		contact.append('phone_nos',{
-			"phone":kwargs.get('phone'),
-			"is_primary_mobile_no":1
-		})
-		contact.append('links',{
-			"link_doctype":"Customer" ,
-			"link_name":customer_obj.name , 
-			"link_type":customer_obj.name
-		})
-		contact.append('email_ids',{
-			"email_id":kwargs.get("email"),
-			"is_primary":1
-		})
-		contact.insert(ignore_permissions=True)
-		contact.save(ignore_permissions=True)
+			contact = frappe.new_doc('Contact')
+			contact.first_name = data.full_name
+			contact.append('phone_nos',{
+				"phone":kwargs.get('phone'),
+				"is_primary_mobile_no":1
+			})
+			contact.append('links',{
+				"link_doctype":"Supplier" ,
+				"link_name":supplier.name , 
+				"link_type":supplier.name
+			})
+			contact.append('email_ids',{
+				"email_id":kwargs.get("email"),
+				"is_primary":1
+			})
+			contact.insert(ignore_permissions=True)
+			contact.save(ignore_permissions=True)
+
+
 		frappe.db.commit()
 		
 
 	except frappe.DuplicateEntryError:
 		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = _("A user with this email already exists.")
-		return _("A user with this email already exists.")
 	except frappe.ValidationError as e:
 		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = str(e)
-		return _(str(e))
 	except Exception as e:
 		frappe.local.response['http_status_code'] = 500
 		frappe.local.response['message'] = _("An unexpected error occurred: {0}").format(str(e))
-		return _("An unexpected error occurred: {0}").format(str(e))
-		# frappe.log_error(frappe.get_traceback(), _("User Creation Error"))
 
-def create_address_for_customer(user , address ):
+def create_address(user , address ):
 	doc = frappe.new_doc("Address")
 	doc.address_line1 = address
 	doc.address_type = "Personal"

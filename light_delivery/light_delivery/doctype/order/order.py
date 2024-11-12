@@ -6,7 +6,7 @@ from frappe.model.document import Document
 from frappe import _
 import json
 from frappe.utils import now_datetime
-from light_delivery.api.apis import osm_v2 ,osm_v1, haversine
+from light_delivery.api.apis import osm_v2 ,osm_v1, make_journal_entry , Deductions
 from datetime import datetime
 
 
@@ -103,8 +103,44 @@ class Order(Document):
 
 
 
+			delivery = {
+				"account_debit": Deductions.delivery_account,
+				"party_type_debit": "Supplier",
+				"party_debit": "Zuckerman Security Ltd.",
+				"amount_debit":self.delivery_fees,
 
-		self.draw_roads()
+				"account_credit": Deductions.expens_account,
+				"amount_credit": self.delivery_fees,
+
+				"order":self.name
+				}
+			make_journal_entry(delivery)
+			tax = {
+				"account_debit": Deductions.delivery_account,
+				"party_type_debit": "Supplier",
+				"party_debit": "Zuckerman Security Ltd.",
+				"amount_debit":self.tax,
+
+				"account_credit": Deductions.tax_account,
+				"amount_credit": self.tax,
+
+				"order":self.name
+				}
+			make_journal_entry(tax)
+			store = {
+				"account_debit": Deductions.light_account,
+				"amount_debit":self.net_store_fees,
+
+				"account_credit": Deductions.store_account,
+				"party_type_credit": "Customer",
+				"party_credit": "osama_office318e4",
+				"amount_credit": self.net_store_fees,
+
+				"order":self.name
+				}
+			make_journal_entry(store)
+
+			self.draw_roads()
 	
 
 	def change_request_status(self):
