@@ -93,7 +93,7 @@ def search_delivary(cash , store = None ):
 					}
 					distance.append(delivery_data)
 			sorted_deliveries = sorted(distance, key=lambda x: x['distance'])
-			result = [entry for entry in sorted_deliveries if entry["distance"]<= 2000]  #skip for < 2000 Meter for now
+			result = [entry for entry in sorted_deliveries if entry["distance"]<= 151651961891618000]  #skip for < 2000 Meter for now
 
 			if not result:
 				frappe.local.response['http_status_code'] = 400
