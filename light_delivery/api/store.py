@@ -70,10 +70,10 @@ def get_wallet():
 			ORDER BY
             	creation DESC
 	"""
-	
+
 
 	transactions = frappe.db.sql(sql,as_dict=True)
-	balance = get_balance(store.get("first_name"))
+	balance = get_balance(store.get("username"))
 
 	frappe.local.response['http_status_code'] = 200
 	frappe.local.response['transactions'] = transactions
