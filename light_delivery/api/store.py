@@ -58,24 +58,30 @@ def get_pending_requst(*args,**kwargs):
 
 @frappe.whitelist(allow_guest=True)
 def get_wallet():
-	store = frappe.get_value("User",frappe.session.user,["username","first_name"],as_dict=1)
-	sql = f"""
-			select
-				*
-			from 
-				`tabTransactions`
-			where
-				party_type = '{store.get("username")}'
-				AND paid = 0
+	try:
+		store = frappe.get_value("User",frappe.session.user,["username","first_name"],as_dict=1)
+		sql = f"""
+			SELECT 
+				name AS name,
+				DATE(creation) AS creation,
+				10 AS against_from, 
+				debit AS `out`,
+				credit AS `in`
+			FROM
+				`tabGL Entry`
+			WHERE
+				party = '{store.get("username")}'
 			ORDER BY
-            	creation DESC
-	"""
+				creation DESC
+		"""
 
+		transactions = frappe.db.sql(sql,as_dict=True)
+		balance = get_balance(store.get("username"))
 
-	transactions = frappe.db.sql(sql,as_dict=True)
-	balance = get_balance(store.get("username"))
-
-	frappe.local.response['http_status_code'] = 200
-	frappe.local.response['transactions'] = transactions
-	frappe.local.response['balance'] = float(balance or 0)
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['transactions'] = transactions
+		frappe.local.response['balance'] = float(balance or 0)
+	except Exception as e:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = e
 
