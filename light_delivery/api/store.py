@@ -60,32 +60,32 @@ def get_pending_requst(*args,**kwargs):
 def get_wallet():
 	try:
 		store = frappe.get_value("User",frappe.session.user,["username","first_name"],as_dict=1)
-		# sql = f"""
-		# 		select
-		# 			*
-		# 		from 
-		# 			`tabTransactions`
-		# 		where
-		# 			party_type = '{store.get("username")}'
-		# 			AND paid = 0
-		# 		ORDER BY
-		#         	creation DESC
-		# """
-
 		sql = f"""
-			SELECT 
-				name,
-				DATE(creation)as creation,
-				null AS against_from, 
-				debit as `out`,
-				credit AS `in`
-			FROM
-				`tabGL Entry`
-			WHERE
-				party = '{store.get("username")}'
-			ORDER BY
-				creation DESC
+				select
+					*
+				from 
+					`tabTransactions`
+				where
+					party_type = '{store.get("username")}'
+					AND paid = 0
+				ORDER BY
+		        	creation DESC
 		"""
+
+		# sql = f"""
+		# 	SELECT 
+		# 		name,
+		# 		DATE(creation)as creation,
+		# 		null AS against_from, 
+		# 		debit as `out`,
+		# 		credit AS `in`
+		# 	FROM
+		# 		`tabGL Entry`
+		# 	WHERE
+		# 		party = '{store.get("username")}'
+		# 	ORDER BY
+		# 		creation DESC
+		# """
 
 		transactions = frappe.db.sql(sql,as_dict=True)
 		balance = get_balance(store.get("username"))
