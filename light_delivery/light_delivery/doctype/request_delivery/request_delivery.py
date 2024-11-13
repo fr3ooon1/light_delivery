@@ -5,7 +5,7 @@ import frappe
 from frappe.model.document import Document
 from frappe.utils import now_datetime
 from light_delivery.api.delivery_request import create_transaction , get_balance
-from light_delivery.api.apis import search_delivary
+from light_delivery.api.apis import search_delivary , make_journal_entry , Deductions
 
 
 
@@ -67,6 +67,22 @@ class RequestDelivery(Document):
 		if balance >= self.total:
 			temp = self.total
 
+		print(temp)
+
+		transaction = {
+				"account_credit": Deductions.store_account,
+				"party_type_credit": "Customer",
+				"party_credit": frappe.get_value("Store",self.store,'username'),
+				"amount_credit":temp,
+
+				"account_debit": Deductions.delivery_account,
+				"party_type_debit": "Supplier",
+				"party_debit": frappe.get_value("User",{"username",self.store},'first_name'),
+				"amount_debit": temp,
+
+				"order":f"""total Amount of Request {self.name}"""
+				}
+		make_journal_entry(transaction)
 		
 
 		doc = frappe.new_doc("Transactions")
