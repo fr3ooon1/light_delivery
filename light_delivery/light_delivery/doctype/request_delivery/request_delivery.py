@@ -81,7 +81,7 @@ class RequestDelivery(Document):
 					"party_debit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
 					"amount_debit": temp,
 
-					"order":f"""total Amount of Request {self.name}"""
+					"order":f"""{self.name}"""
 					}
 			make_journal_entry(transaction)
 			
