@@ -58,14 +58,14 @@ def get_pending_requst(*args,**kwargs):
 
 @frappe.whitelist(allow_guest=True)
 def get_wallet():
-	store = frappe.get_value("Store",{"user":frappe.session.user},"name","first_name",as_dict=1)
+	store = frappe.get_value("User",frappe.session.user,["username","first_name"],as_dict=1)
 	sql = f"""
 			select
 				*
 			from 
 				`tabTransactions`
 			where
-				party_type = '{store.get("name")}'
+				party_type = '{store.get("username")}'
 				AND paid = 0
 			ORDER BY
             	creation DESC
