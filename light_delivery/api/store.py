@@ -74,10 +74,10 @@ def get_wallet():
 
 		sql = f"""
 			SELECT 
-				name AS name,
-				DATE(creation) AS creation,
-				10 AS against_from, 
-				debit AS `out`,
+				name,
+				DATE(creation)as creation,
+				null AS against_from, 
+				debit as `out`,
 				credit AS `in`
 			FROM
 				`tabGL Entry`
