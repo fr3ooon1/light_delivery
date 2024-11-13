@@ -67,43 +67,44 @@ class RequestDelivery(Document):
 		if balance >= self.total:
 			temp = self.total
 
-		print(temp)
+		if temp > 0 :
+			print(temp)
 
-		transaction = {
-				"account_credit": Deductions.store_account,
-				"party_type_credit": "Customer",
-				"party_credit": frappe.get_value("Store",self.store,'username'),
-				"amount_credit":temp,
+			transaction = {
+					"account_credit": Deductions.store_account,
+					"party_type_credit": "Customer",
+					"party_credit": frappe.get_value("Store",self.store,'username'),
+					"amount_credit":temp,
 
-				"account_debit": Deductions.delivery_account,
-				"party_type_debit": "Supplier",
-				"party_debit": frappe.get_value("User",{"username",self.store},'first_name'),
-				"amount_debit": temp,
+					"account_debit": Deductions.delivery_account,
+					"party_type_debit": "Supplier",
+					"party_debit": frappe.get_value("User",{"username",self.store},'first_name'),
+					"amount_debit": temp,
 
-				"order":f"""total Amount of Request {self.name}"""
-				}
-		make_journal_entry(transaction)
-		
+					"order":f"""total Amount of Request {self.name}"""
+					}
+			make_journal_entry(transaction)
+			
 
-		doc = frappe.new_doc("Transactions")
-		doc.party = "Delivery"
-		doc.party_type = self.delivery
-		doc.out = abs(temp)
-		doc.aganist = "Store"
-		doc.aganist_from = self.store
-		doc.save(ignore_permissions=True)
-		doc.submit()
+			doc = frappe.new_doc("Transactions")
+			doc.party = "Delivery"
+			doc.party_type = self.delivery
+			doc.out = abs(temp)
+			doc.aganist = "Store"
+			doc.aganist_from = self.store
+			doc.save(ignore_permissions=True)
+			doc.submit()
 
-		store = frappe.new_doc("Transactions")
-		store.party = "Store"
-		store.party_type = self.store
-		store.in_wallet = abs(temp)
-		store.aganist = "Delivery"
-		store.aganist_from = self.delivery
-		store.save(ignore_permissions=True)
-		store.submit()
+			store = frappe.new_doc("Transactions")
+			store.party = "Store"
+			store.party_type = self.store
+			store.in_wallet = abs(temp)
+			store.aganist = "Delivery"
+			store.aganist_from = self.delivery
+			store.save(ignore_permissions=True)
+			store.submit()
 
-		frappe.db.commit()
+			frappe.db.commit()
 
 	def close_request(self):
 		if self.delivery:
