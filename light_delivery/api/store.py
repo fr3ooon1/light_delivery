@@ -77,7 +77,7 @@ def get_wallet():
 				name AS name,
 				party AS party_type,
 				DATE(creation) AS creation,
-				null AS against_from, 
+				remarks AS against_from, 
 				debit AS `out`,
 				credit AS `in_wallet`
 			FROM
