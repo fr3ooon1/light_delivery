@@ -42,26 +42,24 @@ def get_profile():
 		if frappe.db.exists("Delivery",{"user":frappe.session.user}):
 			delivery = frappe.get_value("Delivery",{"user":frappe.session.user},['date_of_joining','license_expire','name','image','national_id','delivery_category','delivery_name'], as_dict=1)
 			price_list = frappe.get_value("Delivery Category" , delivery.get("delivery_category"), ['minimum_orders' , 'maximum_orders' , 'maximum_order_by_request' , 'minimum_rate' , 'rate_of_km'],as_dict=1)
-			res = {
-				"date_of_joining":delivery.get("date_of_joining"),
-				"license_expire":delivery.get("license_expire"),
-				"national_id":delivery.get("national_id"),
-				"wallet": float(get_balance(user.get("first_name")) or 0),
-				"price_list":price_list,
-				# "image":delivery.get("image")
-			}
+
+			res['date_of_joining'] = delivery.get("date_of_joining")
+			res['license_expire'] = delivery.get("license_expire")
+			res['national_id'] = delivery.get("national_id")
+			res['wallet'] = float(get_balance(user.get("first_name")) or 0)
+			res['price_list'] = price_list
+			# res['image'] = delivery.get("image")
+			
 		elif frappe.db.exists("Store",{"user":frappe.session.user}):
 			pass
 		
 		address = frappe.db.sql(f"""select a.address_line1 from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{user.get("username")}'""")
-		res = {
-			"full_name":user.get("full_name"),
-			"phone_number":user.get("mobile_no"),
-			"email":user.get("email"),
-			"address":address[0].get("address_line1") if address else None,
-			"image":frappe.get_value("Customer",user.get("username"),'image'),
 
-		}
+		res["full_name"]=user.get("full_name")
+		res["phone_number"]=user.get("mobile_no")
+		res["email"]=user.get("email")
+		res["address"]=address[0].get("address_line1") if address else None
+		res["image"]=frappe.get_value("Customer",user.get("username"),'image')
 		return res
 		
 	except Exception as e:
