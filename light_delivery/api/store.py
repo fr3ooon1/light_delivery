@@ -70,6 +70,7 @@ def get_wallet():
 			ORDER BY
             	creation DESC
 	"""
+	
 
 	transactions = frappe.db.sql(sql,as_dict=True)
 	balance = get_balance(store.get("first_name"))

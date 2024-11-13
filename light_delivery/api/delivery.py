@@ -36,7 +36,7 @@ def get_all_customers(user = None):
 @frappe.whitelist(allow_guest=False)
 def get_profile():
 	try:
-		user = frappe.get_value("User",frappe.session.user,['full_name','mobile_no','email','username'],as_dict=True)
+		user = frappe.get_value("User",frappe.session.user,['full_name','mobile_no','email','username','first_name'],as_dict=True)
 		
 		res = {}
 		if frappe.db.exists("Delivery",{"user":frappe.session.user}):
@@ -46,7 +46,7 @@ def get_profile():
 				"date_of_joining":delivery.get("date_of_joining"),
 				"license_expire":delivery.get("license_expire"),
 				"national_id":delivery.get("national_id"),
-				"wallet": float(get_balance(delivery.get("delivery_name")) or 0),
+				"wallet": float(get_balance(user.get("first_name")) or 0),
 				"price_list":price_list,
 				# "image":delivery.get("image")
 			}
