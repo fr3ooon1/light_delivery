@@ -72,21 +72,21 @@ def get_wallet():
 		        	creation DESC
 		"""
 
-		sql = f"""
-			SELECT 
-				name AS name,
-				party AS party_type,
-				DATE(creation) AS creation,
-				remarks AS against_from, 
-				debit AS `out`,
-				credit AS `in_wallet`
-			FROM
-				`tabGL Entry`
-			WHERE
-				party = '{store.get("username")}'
-			ORDER BY
-				creation DESC
-		"""
+		# sql = f"""
+		# 	SELECT 
+		# 		name AS name,
+		# 		party AS party_type,
+		# 		DATE(creation) AS creation,
+		# 		remarks AS against_from, 
+		# 		debit AS `out`,
+		# 		credit AS `in_wallet`
+		# 	FROM
+		# 		`tabGL Entry`
+		# 	WHERE
+		# 		party = '{store.get("username")}'
+		# 	ORDER BY
+		# 		creation DESC
+		# """
 
 		transactions = frappe.db.sql(sql,as_dict=True)
 		balance = get_balance(store.get("username"))
