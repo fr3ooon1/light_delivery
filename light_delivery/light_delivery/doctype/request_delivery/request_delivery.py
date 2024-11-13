@@ -4,7 +4,7 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import now_datetime
-from light_delivery.api.delivery_request import create_transaction , calculate_balane
+from light_delivery.api.delivery_request import create_transaction , get_balance
 from light_delivery.api.apis import search_delivary
 
 
@@ -58,7 +58,8 @@ class RequestDelivery(Document):
 
 
 	def pay_to_store(self):
-		balance =  float(calculate_balane(self.delivery) or 0)
+		delivery_name = frappe.get_value("Delivery",self.delivery,'delivery_name')
+		balance =  float(get_balance(delivery_name) or 0)
 
 		temp = 0
 		if balance < self.total:

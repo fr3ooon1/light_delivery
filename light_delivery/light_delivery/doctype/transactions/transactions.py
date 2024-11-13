@@ -3,7 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
-from light_delivery.api.delivery_request import calculate_balane
+from light_delivery.api.delivery_request import get_balance
 
 
 class Transactions(Document):
@@ -12,7 +12,8 @@ class Transactions(Document):
 
 
 	def calculate_balance(self):
+		first_name = frappe.get_value("User",{"username":self.party_type},'first_name')
 		if self.get("in_wallet"):
-			self.balance =  float(calculate_balane(self.party_type) or 0) + self.get('in_wallet') or 0
+			self.balance =  float(get_balance(first_name) or 0) + self.get('in_wallet') or 0
 		if self.get("out"):
-			self.balance =  float(calculate_balane(self.party_type) or 0) - self.get('out') or 0
+			self.balance =  float(get_balance(first_name) or 0) - self.get('out') or 0

@@ -30,8 +30,8 @@
   "rate_of_tax",
   "section_break_onoh",
   "delivery_account",
-  "store_account",
   "balance",
+  "store_account",
   "accounts_section",
   "column_break_lblz",
   "bank",
@@ -228,14 +228,14 @@
   {
    "fieldname": "balance",
    "fieldtype": "Link",
-   "label": "Balance",
+   "label": "Delivery Balance",
    "options": "Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-11-12 14:30:52.844032",
+ "modified": "2024-11-12 16:35:33.945455",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Deductions",

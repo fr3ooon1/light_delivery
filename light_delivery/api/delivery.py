@@ -1,6 +1,6 @@
 import frappe
 from frappe import _
-from light_delivery.api.delivery_request import calculate_balane
+from light_delivery.api.delivery_request import get_balance
 from light_delivery.api.apis import download_image
 
 
@@ -40,13 +40,13 @@ def get_profile():
 		
 		res = {}
 		if frappe.db.exists("Delivery",{"user":frappe.session.user}):
-			delivery = frappe.get_value("Delivery",{"user":frappe.session.user},['date_of_joining','license_expire','name','image','national_id','delivery_category'], as_dict=1)
+			delivery = frappe.get_value("Delivery",{"user":frappe.session.user},['date_of_joining','license_expire','name','image','national_id','delivery_category','delivery_name'], as_dict=1)
 			price_list = frappe.get_value("Delivery Category" , delivery.get("delivery_category"), ['minimum_orders' , 'maximum_orders' , 'maximum_order_by_request' , 'minimum_rate' , 'rate_of_km'],as_dict=1)
 			res = {
 				"date_of_joining":delivery.get("date_of_joining"),
 				"license_expire":delivery.get("license_expire"),
 				"national_id":delivery.get("national_id"),
-				"wallet": float(calculate_balane(delivery.get("name")) or 0),
+				"wallet": float(get_balance(delivery.get("delivery_name")) or 0),
 				"price_list":price_list,
 				# "image":delivery.get("image")
 			}

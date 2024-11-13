@@ -3,7 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
-from light_delivery.api.delivery_request import calculate_balane
+from light_delivery.api.delivery_request import get_balance
 
 
 class SendMoney(Document):
@@ -13,7 +13,8 @@ class SendMoney(Document):
 		self.create_transaction()
 
 	def check_balance(self):
-		if float(calculate_balane(self.party_type)) < self.amount:
+		
+		if float(get_balance(self.party_type)) < self.amount:
 			frappe.throw("Can not send Money because your balance is less than amount")
 	def create_transaction(self):
 		doc = frappe.new_doc("Transactions")

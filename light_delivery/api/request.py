@@ -6,7 +6,7 @@ from light_delivery.api.apis import get_url
 from light_delivery.api.apis import download_image
 import json
 from light_delivery.api.apis import send_notification 
-from light_delivery.api.delivery_request import calculate_balane
+from light_delivery.api.delivery_request import get_balance
 
 
 @frappe.whitelist(allow_guest=False)
@@ -72,9 +72,9 @@ def request_history(*args, **kwargs):
 
 @frappe.whitelist(allow_guest=False)
 def delivery_request_status(*args , **kwargs):
-	delivery = frappe.get_value("Delivery", {"user": frappe.session.user}, ['name','delivery_category','status','cash'],as_dict=1)
+	delivery = frappe.get_value("Delivery", {"user": frappe.session.user}, ['name','delivery_category','status','cash','delivery_name'],as_dict=1)
 	res = {}
-	wallet = calculate_balane(delivery.get("name")) if delivery else 0
+	wallet = get_balance(delivery.get("delivery_name")) if delivery else 0
 	
 	if delivery:
 
@@ -300,8 +300,8 @@ def get_request_details_for_del(*args, **kwargs):
 		limit=1
 	)
 	if request:
-
-		balance =  float(calculate_balane(request[0].get("delivery")) or 0)
+		delivery_name = frappe.get_value("Delivery",request[0].get("delivery"),'delivery_name')
+		balance =  float(get_balance(delivery_name or 0))
 		request[0]['balance'] = balance
 		tot = balance - request[0]['total']
 		request[0]['cash'] = abs(tot)

@@ -3,7 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
-from light_delivery.api.delivery_request import calculate_balane
+from light_delivery.api.delivery_request import get_balance
 from frappe.utils import nowdate 
 
 
@@ -15,7 +15,8 @@ class Closingoperations(Document):
 
 	
 	def make_balance_table(self):
-		balance = calculate_balane(self.party_type)
+		first_name = frappe.get_value("User",{"user_name":self.party_type},'first_name')
+		balance = get_balance(first_name)
 
 		company = frappe.db.get_single_value("Global Defaults", "default_company")
 

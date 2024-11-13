@@ -5,7 +5,7 @@ from frappe import _
 from light_delivery.api.apis import download_image
 from frappe.utils import nowdate 
 import json
-from light_delivery.api.delivery_request import calculate_balane
+from light_delivery.api.delivery_request import get_balance
 
 
 
@@ -81,7 +81,7 @@ def login(*args,**kwargs):
 		res["status"]=  status
 
 
-	res['wallet'] = float(calculate_balane(user_obj.username) or 0)
+	res['wallet'] = float(get_balance(user_obj.first_name) or 0)
 
 
 		

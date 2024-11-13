@@ -1,6 +1,6 @@
 import frappe
 from frappe import _
-from light_delivery.api.apis import send_notification , search_delivary ,create_error_log
+from light_delivery.api.apis import send_notification , search_delivary ,create_error_log , Deductions
 
 @frappe.whitelist(allow_guest=False)
 def update_location(*args,**kwargs):
@@ -279,6 +279,23 @@ def calculate_balane(party_type):
 	)
 	if balance_data :
 		balance = balance_data[0]["total"]
+	return balance
+
+@frappe.whitelist()
+def get_balance(party):
+	balance = 0
+	sql = f"""
+			SELECT 
+				SUM(jea.credit_in_account_currency) - SUM(jea.debit_in_account_currency) AS total
+			FROM
+				`tabJournal Entry Account` as jea
+			WHERE
+				jea.party = '{party}';
+
+	"""
+	sql = frappe.db.sql(sql,as_dict=1)
+	if sql:
+		balance = sql[0].get("total")
 	return balance
 
 # @frappe.whitelist(allow_guest = 0 )
