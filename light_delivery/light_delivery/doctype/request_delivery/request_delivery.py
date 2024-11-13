@@ -78,7 +78,7 @@ class RequestDelivery(Document):
 
 					"account_debit": Deductions.delivery_account,
 					"party_type_debit": "Supplier",
-					"party_debit": frappe.get_value("User",{"username",self.delivery},'first_name'),
+					"party_debit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
 					"amount_debit": temp,
 
 					"order":f"""total Amount of Request {self.name}"""
