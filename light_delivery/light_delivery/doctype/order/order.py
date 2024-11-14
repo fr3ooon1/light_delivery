@@ -100,65 +100,7 @@ class Order(Document):
 				frappe.db.commit()
 
 
-			store = {
-				"account_credit": Deductions.light_account,
-				"amount_credit":self.net_store_fees,
-
-				"account_debit": Deductions.store_account,
-				"party_type_debit": "Customer",
-				"party_debit": frappe.get_value("Store",self.store,'username'),
-				"amount_debit": self.net_store_fees,
-
-				"order":self.name
-				}
-			if self.net_store_fees > 0:
-				make_journal_entry(store)
-
-
-			delivery = {
-				"account_debit": Deductions.expens_account,
-				"amount_debit": self.delivery_fees,
-
-				"account_credit": Deductions.delivery_account,
-				"party_type_credit": "Supplier",
-				"party_credit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
-				"amount_credit":self.delivery_fees,	
-
-				"order":self.name
-				}
 			
-			if self.delivery_fees > 0 :
-				make_journal_entry(delivery)
-
-			prof_delivery = {
-				"account_debit": Deductions.delivery_account,
-				"party_type_debit": "Supplier",
-				"party_debit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
-				"amount_debit":self.delivery_fees,
-
-				"account_credit": Deductions.balance,
-				"party_type_credit": "Supplier",
-				"party_credit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
-				"amount_credit":self.delivery_fees,	
-
-				"order":self.name
-				}
-			if self.delivery_fees > 0:
-				make_journal_entry(prof_delivery)
-			
-			tax = {
-				"account_credit": Deductions.tax_account,
-				"amount_credit": self.tax,
-
-				"account_debit": Deductions.balance,
-				"party_type_debit": "Supplier",
-				"party_debit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
-				"amount_debit":self.tax,
-
-				"order":self.name
-				}
-			if self.tax > 0 :
-				make_journal_entry(tax)
 			
 
 			self.draw_roads()
@@ -325,5 +267,67 @@ class Order(Document):
 			doc.order = self.name
 			doc.save(ignore_permissions=True)
 			doc.submit()
-
 		frappe.db.commit()
+
+
+		store = {
+			"account_credit": Deductions.light_account,
+			"amount_credit":self.net_store_fees,
+
+			"account_debit": Deductions.store_account,
+			"party_type_debit": "Customer",
+			"party_debit": frappe.get_value("Store",self.store,'username'),
+			"amount_debit": self.net_store_fees,
+
+			"order":self.name
+			}
+		if self.net_store_fees > 0:
+			make_journal_entry(store)
+
+
+		delivery = {
+			"account_debit": Deductions.expens_account,
+			"amount_debit": self.delivery_fees,
+
+			"account_credit": Deductions.delivery_account,
+			"party_type_credit": "Supplier",
+			"party_credit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
+			"amount_credit":self.delivery_fees,	
+
+			"order":self.name
+			}
+		
+		if self.delivery_fees > 0 :
+			make_journal_entry(delivery)
+
+		prof_delivery = {
+			"account_debit": Deductions.delivery_account,
+			"party_type_debit": "Supplier",
+			"party_debit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
+			"amount_debit":self.delivery_fees,
+
+			"account_credit": Deductions.balance,
+			"party_type_credit": "Supplier",
+			"party_credit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
+			"amount_credit":self.delivery_fees,	
+
+			"order":self.name
+			}
+		if self.delivery_fees > 0:
+			make_journal_entry(prof_delivery)
+		
+		tax = {
+			"account_credit": Deductions.tax_account,
+			"amount_credit": self.tax,
+
+			"account_debit": Deductions.balance,
+			"party_type_debit": "Supplier",
+			"party_debit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
+			"amount_debit":self.tax,
+
+			"order":self.name
+			}
+		if self.tax > 0 :
+			make_journal_entry(tax)
+
+		
