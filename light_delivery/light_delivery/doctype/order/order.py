@@ -111,7 +111,8 @@ class Order(Document):
 
 				"order":self.name
 				}
-			make_journal_entry(store)
+			if self.net_store_fees > 0:
+				make_journal_entry(store)
 
 
 			delivery = {
@@ -125,7 +126,9 @@ class Order(Document):
 
 				"order":self.name
 				}
-			make_journal_entry(delivery)
+			
+			if self.delivery_fees > 0 :
+				make_journal_entry(delivery)
 
 			prof_delivery = {
 				"account_debit": Deductions.delivery_account,
@@ -140,7 +143,8 @@ class Order(Document):
 
 				"order":self.name
 				}
-			make_journal_entry(prof_delivery)
+			if self.delivery_fees > 0:
+				make_journal_entry(prof_delivery)
 			
 			tax = {
 				"account_credit": Deductions.tax_account,
@@ -153,7 +157,8 @@ class Order(Document):
 
 				"order":self.name
 				}
-			make_journal_entry(tax)
+			if self.tax > 0 :
+				make_journal_entry(tax)
 			
 
 			self.draw_roads()
