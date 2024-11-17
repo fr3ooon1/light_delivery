@@ -144,10 +144,7 @@ def registration (*args , **kwargs):
 
 
 		if float(data.is_store) == 1:
-			if files.get('store_logo'):
-				store_logo = download_image(files.get('store_logo'))
-			if files.get('store_cover'):
-				store_cover = download_image(files.get('store_cover'))
+			
 			store_obj = frappe.new_doc("Store")
 			store_obj.store_name = data.store_name
 			store_obj.status = "Pending"
@@ -155,8 +152,15 @@ def registration (*args , **kwargs):
 			store_obj.zone = data.zone
 			store_obj.address = data.address
 			store_obj.store_category = data.store_category
-			store_obj.store_logo = store_logo.file_url
-			store_obj.store_cover = store_cover.file_url
+
+			if files.get('store_logo'):
+				store_logo = download_image(files.get('store_logo'))
+				store_obj.store_logo = store_logo.file_url
+
+			if files.get('store_cover'):
+				store_cover = download_image(files.get('store_cover'))
+				store_obj.store_cover = store_cover.file_url
+				
 			store_obj.name = new_user.name
 			store_obj.username = new_user.username
 			store_obj.pointer_y = data.late
