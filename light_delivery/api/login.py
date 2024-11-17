@@ -243,6 +243,8 @@ def registration (*args , **kwargs):
 		frappe.local.response['message'] = _("An unexpected error occurred: {0}").format(str(e))
 
 def create_address(user , address ):
+	if not address:
+		return
 	doc = frappe.new_doc("Address")
 	doc.address_line1 = address
 	doc.address_type = "Personal"
