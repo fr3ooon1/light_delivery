@@ -244,7 +244,7 @@ def registration (*args , **kwargs):
 
 def create_address(user , address ):
 	if not address:
-		return
+		return True
 	doc = frappe.new_doc("Address")
 	doc.address_line1 = address
 	doc.address_type = "Personal"
