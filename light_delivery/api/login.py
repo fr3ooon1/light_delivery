@@ -144,8 +144,10 @@ def registration (*args , **kwargs):
 
 
 		if float(data.is_store) == 1:
-			store_logo = download_image(files.get('store_logo'))
-			store_cover = download_image(files.get('store_cover'))
+			if files.get('store_logo'):
+				store_logo = download_image(files.get('store_logo'))
+			if files.get('store_cover'):
+				store_cover = download_image(files.get('store_cover'))
 			store_obj = frappe.new_doc("Store")
 			store_obj.store_name = data.store_name
 			store_obj.status = "Pending"
