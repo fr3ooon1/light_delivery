@@ -1,5 +1,45 @@
 import frappe 
 from frappe import _
+from frappe.utils import add_to_date, today, nowdate
+
+@frappe.whitelist(allow_guest=True)
+def get_valid_offers():
+	today = nowdate() 
+	res = []
+	try:
+	
+		valid_stores = frappe.get_all(
+			"Offers", 
+			filters={
+				"valid_from": ["<=", today],
+				"valid_to": [">=", today]
+			},
+			fields=["from as store" , "offer as ads"] 
+		)
+		user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
+		
+		for store in valid_stores:
+			doc = frappe.get_doc("Store",store.get("store"))
+			res.append({
+				"ads":store.get("ads"),
+				"id":doc.name,
+				"is_favorite":is_favorite(user.get("username") , store.get("store")),
+				"cover":doc.store_cover,
+				"logo":doc.store_logo,
+				"store_name":frappe.get_value("User",doc.user,"full_name"),
+				"location":[doc.pointer_y,doc.pointer_x] if doc.pointer_y and doc.pointer_x else [],
+				"phone": frappe.get_value("User",doc.user,"mobile_no"),
+				"delivery_time":10,
+				"menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True)
+			})
+		
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = res
+
+	except Exception as e:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = f"An error occurred: {e}"
+
 
 @frappe.whitelist(allow_guest=False)
 def get_stores(*args,**kwargs):
