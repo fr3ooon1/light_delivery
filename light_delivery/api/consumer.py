@@ -3,7 +3,7 @@ from frappe import _
 from frappe.utils import add_to_date, today, nowdate
 
 @frappe.whitelist(allow_guest=True)
-def get_valid_offers():
+def get_slider():
 	today = nowdate() 
 	res = []
 	try:
