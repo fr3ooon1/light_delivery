@@ -30,7 +30,7 @@ class Order(Document):
 			self.start_lat = float(frappe.db.get_value("Delivery",self.delivery,"pointer_x"))
 			self.start_lon = float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))
 
-		if self.status in ["Delivered","Refused","Return to store"]:
+		if self.status in ["Delivered","Refused"]:
 			self.end_lat = float(frappe.db.get_value("Delivery",self.delivery,"pointer_x"))
 			self.end_lon = float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))
 
@@ -221,9 +221,9 @@ class Order(Document):
 				delivery_category = frappe.get_doc("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category'))
 				amount = (float(self.total_distance) / 1000) * float(delivery_category.rate_of_km or 0) 
 				if delivery_category.minimum_rate > amount:
-					total = float(delivery_category.minimum_rate or 0)
+					total = float(delivery_category.minimum_rate or 0) if self.status == "Delivered" else float(delivery_category.minimum_rate or 0) * 1.5
 				else:
-					total = amount
+					total = amount if self.status == "Delivered" else float(amount or 0) * 1.5
 				total = total - (total / 100 * self.discount)
 				self.delivery_fees = total
 				tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
@@ -292,7 +292,7 @@ class Order(Document):
 			"account_credit": Deductions.delivery_account,
 			"party_type_credit": "Supplier",
 			"party_credit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
-			"amount_credit":self.delivery_fees,	
+			"amount_credit":self.delivery_fees ,	
 
 			"order":self.name
 			}
