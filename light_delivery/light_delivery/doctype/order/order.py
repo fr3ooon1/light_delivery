@@ -109,7 +109,7 @@ class Order(Document):
 	def change_request_status(self):
 		status = []
 		if self.request:
-			if self.status in ["Delivered" , "Refused"]:
+			if self.status in ["Delivered" , "Return to store"]:
 				request = frappe.get_doc("Request Delivery", self.request)
 				orders = request.get("order_request")
 
