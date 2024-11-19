@@ -89,7 +89,7 @@ def get_home_stories():
 			doc = frappe.get_doc("Store",store.get("name"))
 			res.append({
 				"id":doc.name,
-				"is_favorite":is_favorite(user.get("username") , store.get("store")),
+				"is_favorite":is_favorite(user.get("username") , store.get("name")),
 				"cover":doc.store_cover,
 				"logo":doc.store_logo,
 				"store_name":frappe.get_value("User",doc.user,"full_name"),
