@@ -69,7 +69,7 @@ class Order(Document):
 						if segments:
 							distance = segments[0].get("distance",0)
 							duration = segments[0].get("duration",0)
-							self.duration = duration
+							self.duration = float(duration or 0) / 60
 							self.total_distance = distance
 			else:
 				res = osm_v1(start_coordi,end_coordi)
@@ -95,7 +95,8 @@ class Order(Document):
 					]
 				}
 				self.road_map = json.dumps(coordinates)
-				self.duration = routes[0].get("duration")
+				duration = routes[0].get("duration")
+				self.duration = float(duration or 0) / 60
 				self.total_distance = routes[0].get("distance")
 				frappe.db.commit()
 
