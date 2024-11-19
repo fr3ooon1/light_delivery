@@ -295,7 +295,7 @@ def get_balance(party):
 	"""
 	sql = frappe.db.sql(sql,as_dict=1)
 	if sql:
-		balance = sql[0].get("total")
+		balance = float(sql[0].get("total") or 0)
 	return balance
 
 # @frappe.whitelist(allow_guest = 0 )
