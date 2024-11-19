@@ -251,9 +251,9 @@ class Order(Document):
 			store = frappe.get_doc("Store" , self.store)
 			amount = (float(self.total_distance) / 1000) * float(store.rate_of_km or 0) 
 			if store.minimum_price > amount:
-				total = float(store.minimum_price or 0)
+				total = float(store.minimum_price or 0) if self.status == "Delivered" else float(store.minimum_rate or 0) * 1.5
 			else:
-				total = amount
+				total = amount if self.status == "Delivered" else float(amount or 0) * 1.5
 			self.store_fees = total
 			total = total - (total / 100 * self.discount)
 			self.net_store_fees = total
