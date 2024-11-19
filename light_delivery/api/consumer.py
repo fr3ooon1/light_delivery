@@ -28,6 +28,7 @@ def get_slider():
 				"logo":doc.store_logo,
 				"store_name":frappe.get_value("User",doc.user,"full_name"),
 				"location":[doc.pointer_y,doc.pointer_x] if doc.pointer_y and doc.pointer_x else [],
+				"address":doc.address,
 				"phone": frappe.get_value("User",doc.user,"mobile_no"),
 				"delivery_time":10,
 				"menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True)
@@ -70,6 +71,7 @@ def get_stores(*args,**kwargs):
 			"logo":doc.store_logo,
 			"store_name":frappe.get_value("User",doc.user,"full_name"),
 			"location":[doc.pointer_y,doc.pointer_x] if doc.pointer_y and doc.pointer_x else [],
+			"address":doc.address,
 			"phone": frappe.get_value("User",doc.user,"mobile_no"),
 			"delivery_time":10,
 			"menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True)
@@ -94,6 +96,7 @@ def get_home_stories():
 				"logo":doc.store_logo,
 				"store_name":frappe.get_value("User",doc.user,"full_name"),
 				"location":[doc.pointer_y,doc.pointer_x] if doc.pointer_y and doc.pointer_x else [],
+				"address":doc.address,
 				"phone": frappe.get_value("User",doc.user,"mobile_no"),
 				"delivery_time":10,
 				"menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True)
@@ -122,6 +125,7 @@ def get_favorite(*args,**kwargs):
 				"logo":doc.store_logo,
 				"store_name":frappe.get_value("User",doc.user,"full_name"),
 				"location":[doc.pointer_y,doc.pointer_x] if doc.pointer_y and doc.pointer_x else [],
+				"address":doc.address,
 				"phone": frappe.get_value("User",doc.user,"mobile_no"),
 				"delivery_time":10,
 				"menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True)
@@ -225,6 +229,7 @@ def search_for_store(*args,**kwargs):
 			"logo":doc.store_logo,
 			"store_name":frappe.get_value("User",doc.user,"full_name"),
 			"location":[doc.pointer_y,doc.pointer_x] if doc.pointer_y and doc.pointer_x else []  ,
+			"address":doc.address,
 			"phone": frappe.get_value("User",doc.user,"mobile_no"),
 			"delivery_time":10,
 			"menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True)
