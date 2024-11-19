@@ -79,7 +79,7 @@ def delivery_request_status(*args , **kwargs):
 	if delivery:
 
 
-		delivered = frappe.get_list("Order" , {"delivery":delivery.get("name") , "status":"Delivered"})
+		delivered = frappe.get_list("Order" , {"delivery":delivery.get("name") , "status":["IN",["Delivered","Return to store"]]})
 		accepted = frappe.get_list("Order" , {"delivery":delivery.get("name") , "status":"Accepted"})
 		delivery_cancel = frappe.get_list("Order" , {"delivery":delivery.get("name") , "status":"Cancel", "cancel_from":"Store"})
 		store_cacnel = frappe.get_list("Order" , {"delivery":delivery.get("name") , "status":"Cancel" , "cancel_from":"Store"})
