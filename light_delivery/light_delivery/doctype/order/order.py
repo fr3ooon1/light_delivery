@@ -104,7 +104,7 @@ class Order(Document):
 
 			
 			
-		if self.status in ['Deliverd','Return to store']:
+		if self.status in ['Delivered','Return to store']:
 			self.finish_order()
 	
 
