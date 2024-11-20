@@ -192,7 +192,7 @@ def registration (*args , **kwargs):
 			customer_obj.insert(ignore_permissions=True)
 			customer_obj.save(ignore_permissions=True)
 			frappe.db.commit()
-			create_address( new_user.username , data.address)
+			create_address( new_user.username , data.address , data.latitude , data.longitude)
 			contact = frappe.new_doc('Contact')
 			contact.first_name = store_obj.store_name if store_obj else data.full_name
 			contact.append('phone_nos',{
@@ -248,11 +248,13 @@ def registration (*args , **kwargs):
 		frappe.local.response['http_status_code'] = 500
 		frappe.local.response['message'] = _("An unexpected error occurred: {0}").format(str(e))
 
-def create_address(user , address ):
+def create_address(user , address , latitude , longitude):
 	if not address:
 		return True
 	doc = frappe.new_doc("Address")
 	doc.address_line1 = address
+	doc.latitude = latitude
+	doc.longitude = longitude
 	doc.address_type = "Personal"
 	doc.city = "Cairo"
 	doc.append('links',{

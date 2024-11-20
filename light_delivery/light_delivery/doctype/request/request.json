@@ -26,7 +26,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nAccepted\nWaiting for Delivery"
+   "options": "\nAccepted\nWaiting for Delivery\nCancel"
   },
   {
    "fieldname": "request_delivery",
@@ -96,7 +96,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-07 02:01:31.345616",
+ "modified": "2024-11-20 14:28:01.583185",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Request",

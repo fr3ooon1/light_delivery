@@ -1,10 +1,8 @@
 import frappe
 from frappe import _
-from frappe.utils import nowdate , get_first_day_of_week , get_first_day , getdate , get_site_base_path
+from frappe.utils import nowdate , get_first_day_of_week , get_first_day ,  get_datetime, now_datetime, time_diff_in_seconds
 from datetime import datetime
-from light_delivery.api.apis import get_url
-from light_delivery.api.apis import download_image
-from light_delivery.api.apis import send_notification 
+from light_delivery.api.apis import get_url , download_image , send_notification , Deductions
 
 
 
@@ -593,6 +591,17 @@ def change_order_status_del(*args,**kwargs):
 			error.method = "send_notification"
 			error.error = res.text
 			error.insert(ignore_permissions=True)
+		if status == "Refused":
+			doc = frappe.db.sql(f"""select status , time from `tabOrder Log` where parent = '{order}';""",as_dict=1)
+			if doc:
+				arrived_row = next((row for row in doc if row['status'] == "Arrived"), None)
+				if arrived_row:
+					time_difference = time_diff_in_seconds(now_datetime(), get_datetime(arrived_row.get("time")))
+					if time_difference < Deductions.time_of_waiting_customer_to_answer:
+						frappe.local.response['http_status_code'] = 400
+						frappe.local.response['message'] = _(f"""Can not Change status to {status} """)
+						return
+	
 		doc.status = status
 		doc.save(ignore_permissions=True)
 		frappe.db.commit()

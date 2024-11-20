@@ -22,8 +22,7 @@
   "total_order",
   "order_image",
   "section_break_uelk",
-  "road",
-  "column_break_wnxm",
+  "column_break_yvim",
   "road_map",
   "column_break_gwex",
   "duration",
@@ -102,12 +101,6 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "road",
-   "fieldtype": "Table",
-   "label": "Road",
-   "options": "Road"
-  },
-  {
    "fieldname": "column_break_gwex",
    "fieldtype": "Column Break"
   },
@@ -176,7 +169,7 @@
   },
   {
    "fieldname": "duration",
-   "fieldtype": "Float",
+   "fieldtype": "Data",
    "label": "Duration"
   },
   {
@@ -199,10 +192,6 @@
    "fieldname": "differente_amount",
    "fieldtype": "Float",
    "label": "Differente Amount"
-  },
-  {
-   "fieldname": "column_break_wnxm",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "section_break_hfbg",
@@ -262,11 +251,16 @@
    "fieldname": "end_lon",
    "fieldtype": "Data",
    "label": "End lon"
+  },
+  {
+   "columns": 10,
+   "fieldname": "column_break_yvim",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-04 11:47:51.923684",
+ "modified": "2024-11-20 13:59:06.404391",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",

@@ -103,7 +103,7 @@ def delivery_request_status(*args , **kwargs):
 			"price_list":price_list,
 			"delivery_status":status,
 			"wallet":float(wallet or 0),
-			"cash": delivery.get("cash" or 0)
+			"cash": float(delivery.get("cash" or 0) or 0)
 		}
 		return res
 	else:
@@ -198,8 +198,10 @@ def cancel_request(*args,**kwargs):
 	notification_key = None
 	if frappe.db.exists("Request Delivery" , request):
 		request_obj = frappe.get_doc("Request Delivery" , kwargs.get("request"))
+		request_obj_search = frappe.get_doc("Request" , kwargs.get("request"))
 		if kwargs.get("type") == 'store':
 			request_obj.status = "Store Cancel"
+			request_obj_search.status = "Cancel"
 			orders = request_obj.get("order_request")
 			for order in orders:
 				doc = frappe.get_doc("Order",order.order)
@@ -215,6 +217,7 @@ def cancel_request(*args,**kwargs):
 
 		if kwargs.get("type") == 'delivery':
 			request_obj.status = "Delivery Cancel"
+			request_obj_search.status = "Cancel"
 			orders = request_obj.get("order_request")
 			for order in orders:
 				doc = frappe.get_doc("Order",order.order)
@@ -234,11 +237,12 @@ def cancel_request(*args,**kwargs):
 			error.insert(ignore_permissions=True)
 
 		request_obj.save(ignore_permissions=True)
+		request_obj_search.save(ignore_permissions=True)
 		frappe.db.commit()
 		frappe.local.response['http_status_code'] = 200
 		frappe.local.response['message'] = _(msg)
 	else:
-		frappe.local.response['http_status_code'] = 300
+		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = _(f"""no request like {request}""")
 
 

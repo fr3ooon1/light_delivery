@@ -13,6 +13,22 @@ data = {
                 "read_only":1
 				},
 			],
+            'Address':[
+                {
+				"label": "latitude",
+				"fieldname": "latitude",
+				"fieldtype": "Data",
+				"insert_after": "address_line2" ,
+                "read_only":1
+				},
+                {
+				"label": "longitude",
+				"fieldname": "longitude",
+				"fieldtype": "Data",
+				"insert_after": "latitude" ,
+                "read_only":1
+				},
+			]
 	},
 		"properties": [
             		

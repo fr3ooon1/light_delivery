@@ -5,7 +5,7 @@ import frappe
 from frappe.model.document import Document
 from frappe import _
 import json
-from frappe.utils import now_datetime
+from frappe.utils import now_datetime , format_duration, get_datetime , time_diff_in_seconds
 from light_delivery.api.apis import osm_v2 ,osm_v1, make_journal_entry , Deductions
 from datetime import datetime
 
@@ -30,7 +30,7 @@ class Order(Document):
 			self.start_lat = float(frappe.db.get_value("Delivery",self.delivery,"pointer_x"))
 			self.start_lon = float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))
 
-		if self.status in ["Delivered","Refused"]:
+		if self.status in ["Arrived"]:
 			self.end_lat = float(frappe.db.get_value("Delivery",self.delivery,"pointer_x"))
 			self.end_lon = float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))
 
@@ -69,7 +69,7 @@ class Order(Document):
 						if segments:
 							distance = segments[0].get("distance",0)
 							duration = segments[0].get("duration",0)
-							self.duration = float(duration or 0) / 60
+							self.duration  = format_duration(duration)
 							self.total_distance = distance
 			else:
 				res = osm_v1(start_coordi,end_coordi)
@@ -96,15 +96,16 @@ class Order(Document):
 				}
 				self.road_map = json.dumps(coordinates)
 				duration = routes[0].get("duration")
-				self.duration = float(duration or 0) / 60
+				# self.duration = float(duration or 0) / 60
+				self.duration = format_duration(duration)
 				self.total_distance = routes[0].get("distance")
 				frappe.db.commit()
 
 
 			
 			
-
-			self.draw_roads()
+		if self.status in ['Deliverd','Return to store']:
+			self.finish_order()
 	
 
 	def change_request_status(self):
@@ -213,7 +214,7 @@ class Order(Document):
 			})
 
 
-	def draw_roads(self):
+	def finish_order(self):
 		amount = 0
 		total = 0
 
@@ -222,9 +223,9 @@ class Order(Document):
 				delivery_category = frappe.get_doc("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category'))
 				amount = (float(self.total_distance) / 1000) * float(delivery_category.rate_of_km or 0) 
 				if delivery_category.minimum_rate > amount:
-					total = float(delivery_category.minimum_rate or 0) if self.status == "Delivered" else float(delivery_category.minimum_rate or 0) * 1.5
+					total = float(delivery_category.minimum_rate or 0) if self.status == "Delivered" else float(delivery_category.minimum_rate or 0) * float(Deductions.rate2 or 1)
 				else:
-					total = amount if self.status == "Delivered" else float(amount or 0) * 1.5
+					total = amount if self.status == "Delivered" else float(amount or 0) * float(Deductions.rate2 or 1)
 				total = total - (total / 100 * self.discount)
 				self.delivery_fees = total
 				tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
@@ -252,9 +253,9 @@ class Order(Document):
 			store = frappe.get_doc("Store" , self.store)
 			amount = (float(self.total_distance) / 1000) * float(store.rate_of_km or 0) 
 			if store.minimum_price > amount:
-				total = float(store.minimum_price or 0) if self.status == "Delivered" else float(store.minimum_rate or 0) * 1.5
+				total = float(store.minimum_price or 0) if self.status == "Delivered" else float(store.minimum_price or 0) * float(Deductions.rate2 or 1)
 			else:
-				total = amount if self.status == "Delivered" else float(amount or 0) * 1.5
+				total = amount if self.status == "Delivered" else float(amount or 0) * float(Deductions.rate2 or 1)
 			self.store_fees = total
 			total = total - (total / 100 * self.discount)
 			self.net_store_fees = total
