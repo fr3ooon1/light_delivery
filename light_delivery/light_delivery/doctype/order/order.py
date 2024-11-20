@@ -30,7 +30,7 @@ class Order(Document):
 			self.start_lat = float(frappe.db.get_value("Delivery",self.delivery,"pointer_x"))
 			self.start_lon = float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))
 
-		if self.status in ["Arrived"]:
+		if self.status in ["Arrived For Destination"]:
 			self.end_lat = float(frappe.db.get_value("Delivery",self.delivery,"pointer_x"))
 			self.end_lon = float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))
 
