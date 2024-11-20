@@ -121,40 +121,73 @@ def delivery_request_status(*args , **kwargs):
 
 
 @frappe.whitelist(allow_guest=False)
-def change_request_status(*args , **kwargs):
-	status = kwargs.get("status")
-	request = kwargs.get("request")
-	notification_key=None
-	try:
-		if status and request:
-			if frappe.db.exists("Request Delivery" , request):
-				request_obj = frappe.get_doc("Request Delivery" , request)
-				request_obj.status = status
-				request_obj.save(ignore_permissions=True)
-				frappe.db.commit()
+def change_request_status(*args, **kwargs):
+    """
+    Change the status of a Request Delivery and send a notification to the appropriate user.
+    
+    Args:
+        *args: Additional positional arguments (not used).
+        **kwargs: Dictionary containing:
+            - status (str): New status for the request.
+            - request (str): ID of the Request Delivery to be updated.
 
-				if frappe.db.exists("Delivery",{"user":frappe.session.user}):
-					if request_obj.store:
-						user = frappe.get_value("Store", request_obj.store , 'user')
-						notification_key = frappe.get_value("User",user,'notification_key')
-				else:
-					if request_obj.delivery:
-						user = frappe.get_value("Delivery", request_obj.delivery , 'user')
-						notification_key = frappe.get_value("User",user,'notification_key')
+    Response:
+        - HTTP status 200 on success with a message.
+        - HTTP status 400 on failure with an error log.
+    """
+	
+    status = kwargs.get("status")
+    request_id = kwargs.get("request")
 
+    # Ensure response defaults
+    frappe.local.response['http_status_code'] = 400
 
-				res = send_notification(notification_key, "modification")
-				if res.status_code != 200:
-					error = frappe.new_doc("Error Log")
-					error.method = "send_notification"
-					error.error = res.text
-					error.insert(ignore_permissions=True)
-				frappe.local.response['http_status_code'] = 200
-				frappe.local.response['message'] = f""" Request id: {request} status has been changed"""
-	except Exception as e:
-		frappe.log_error(message=str(e), title=_('Error in change_request_status'))
-		frappe.local.response['http_status_code'] = 400
-		
+    if not (status and request_id):
+        frappe.local.response['message'] = "Status and Request ID are required."
+        return
+
+    try:
+        # Check if "Request Delivery" exists
+        if not frappe.db.exists("Request Delivery", request_id):
+            frappe.local.response['message'] = f"Request Delivery with ID {request_id} does not exist."
+            return
+
+        # Update the status
+        request_obj = frappe.get_doc("Request Delivery", request_id)
+        request_obj.status = status
+        request_obj.save(ignore_permissions=True)
+        frappe.db.commit()
+
+        # Determine notification key
+        notification_key = None
+        user = None
+        if frappe.db.exists("Delivery", {"user": frappe.session.user}):
+            if request_obj.store:
+                user = frappe.get_value("Store", request_obj.store, "user")
+        else:
+            if request_obj.delivery:
+                user = frappe.get_value("Delivery", request_obj.delivery, "user")
+
+        if user:
+            notification_key = frappe.get_value("User", user, "notification_key")
+
+        # Send notification if notification key exists
+        if notification_key:
+            res = send_notification(notification_key, "modification")
+            if res.status_code != 200:
+                frappe.log_error(
+                    message=f"Notification failed: {res.text}",
+                    title="Error in send_notification"
+                )
+
+        # Success response
+        frappe.local.response['http_status_code'] = 200
+        frappe.local.response['message'] = f"Request ID {request_id} status has been changed to {status}."
+    except Exception as e:
+        # Log any unhandled exceptions
+        frappe.log_error(message=str(e), title="Error in change_request_status")
+        frappe.local.response['message'] = f"An error occurred: {str(e)}"
+
 
 
 @frappe.whitelist(allow_guest=False)
