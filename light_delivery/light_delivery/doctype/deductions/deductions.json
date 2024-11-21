@@ -5,12 +5,6 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "cancelling_deduction_section",
-  "from",
-  "column_break_rwoc",
-  "to",
-  "column_break_gcur",
-  "rate",
   "section_break_grsh",
   "if_order_cancelled_from_store_after_delivery_arrived",
   "if_order_cancelled_from_store_after_picked_up",
@@ -18,9 +12,8 @@
   "pick_up_deduction",
   "delivery_deduction_section",
   "late_after_accept",
-  "late_in_delivery",
   "column_break_uswt",
-  "rate_late_after_accept",
+  "late_in_delivery",
   "rate_for_every_minute",
   "compensation_section",
   "time_of_waiting_customer_to_answer",
@@ -45,34 +38,6 @@
  ],
  "fields": [
   {
-   "fieldname": "cancelling_deduction_section",
-   "fieldtype": "Section Break",
-   "label": "Cancelling Deduction"
-  },
-  {
-   "fieldname": "from",
-   "fieldtype": "Float",
-   "label": "From "
-  },
-  {
-   "fieldname": "column_break_rwoc",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "to",
-   "fieldtype": "Float",
-   "label": "To"
-  },
-  {
-   "fieldname": "column_break_gcur",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "rate",
-   "fieldtype": "Float",
-   "label": "Rate"
-  },
-  {
    "fieldname": "delivery_deduction_section",
    "fieldtype": "Section Break",
    "label": "Delivery Deduction"
@@ -92,11 +57,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "rate_late_after_accept",
-   "fieldtype": "Float",
-   "label": "Rate"
-  },
-  {
    "fieldname": "pick_up_deduction",
    "fieldtype": "Table",
    "label": "Pick Up Deduction",
@@ -104,7 +64,8 @@
   },
   {
    "fieldname": "section_break_grsh",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Cancelling Deduction"
   },
   {
    "default": "0",
@@ -235,7 +196,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-11-12 16:35:33.945455",
+ "modified": "2024-11-21 14:38:04.048636",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Deductions",
