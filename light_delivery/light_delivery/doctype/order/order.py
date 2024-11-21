@@ -22,10 +22,10 @@ class Order(Document):
 		self.rate_delivery()
 		self.change_request_status()
 		self.calculate_distance_duration()	
-		self.canclation_from_delivery()
+		self.cancellation_from_delivery()
 
 
-	def canclation_from_delivery(self):
+	def cancellation_from_delivery(self):
 		if self.status == "Cancel" and self.cancel_from == "Delivery":
 			doc = frappe.new_doc("Order")
 			doc.order_type = self.order_type
@@ -318,7 +318,10 @@ class Order(Document):
 
 		if self.delivery:
 			if frappe.db.exists("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category')):
-				delivery_category = frappe.get_doc("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category'))
+				delivery_category = frappe.get_doc(
+					"Delivery Category" , 
+					frappe.get_value("Delivery" , self.delivery , 'delivery_category')
+				)
 				amount = (float(self.total_distance) / 1000) * float(delivery_category.rate_of_km or 0) 
 				if delivery_category.minimum_rate > amount:
 					total = float(delivery_category.minimum_rate or 0) if self.status == "Delivered" else float(delivery_category.minimum_rate or 0) * float(Deductions.rate2 or 1)
@@ -436,7 +439,10 @@ class Order(Document):
 
 		if self.delivery:
 			if frappe.db.exists("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category')):
-				delivery_category = frappe.get_doc("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category'))
+				delivery_category = frappe.get_doc(
+					"Delivery Category" , 
+					frappe.get_value("Delivery" , self.delivery , 'delivery_category')
+				)
 
 				total = float(delivery_category.minimum_rate or 0) * rate
 
