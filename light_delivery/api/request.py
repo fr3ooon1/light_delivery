@@ -122,71 +122,71 @@ def delivery_request_status(*args , **kwargs):
 
 @frappe.whitelist(allow_guest=False)
 def change_request_status(*args, **kwargs):
-    """
-    Change the status of a Request Delivery and send a notification to the appropriate user.
-    
-    Args:
-        *args: Additional positional arguments (not used).
-        **kwargs: Dictionary containing:
-            - status (str): New status for the request.
-            - request (str): ID of the Request Delivery to be updated.
+	"""
+	Change the status of a Request Delivery and send a notification to the appropriate user.
+	
+	Args:
+		*args: Additional positional arguments (not used).
+		**kwargs: Dictionary containing:
+			- status (str): New status for the request.
+			- request (str): ID of the Request Delivery to be updated.
 
-    Response:
-        - HTTP status 200 on success with a message.
-        - HTTP status 400 on failure with an error log.
-    """
+	Response:
+		- HTTP status 200 on success with a message.
+		- HTTP status 400 on failure with an error log.
+	"""
 
-    status = kwargs.get("status")
-    request_id = kwargs.get("request")
+	status = kwargs.get("status")
+	request_id = kwargs.get("request")
 
-    # Ensure response defaults
-    frappe.local.response['http_status_code'] = 400
+	# Ensure response defaults
+	frappe.local.response['http_status_code'] = 400
 
-    if not (status and request_id):
-        frappe.local.response['message'] = "Status and Request ID are required."
-        return
+	if not (status and request_id):
+		frappe.local.response['message'] = "Status and Request ID are required."
+		return
 
-    try:
-        # Check if "Request Delivery" exists
-        if not frappe.db.exists("Request Delivery", request_id):
-            frappe.local.response['message'] = f"Request Delivery with ID {request_id} does not exist."
-            return
+	try:
+		# Check if "Request Delivery" exists
+		if not frappe.db.exists("Request Delivery", request_id):
+			frappe.local.response['message'] = f"Request Delivery with ID {request_id} does not exist."
+			return
 
-        # Update the status
-        request_obj = frappe.get_doc("Request Delivery", request_id)
-        request_obj.status = status
-        request_obj.save(ignore_permissions=True)
-        frappe.db.commit()
+		# Update the status
+		request_obj = frappe.get_doc("Request Delivery", request_id)
+		request_obj.status = status
+		request_obj.save(ignore_permissions=True)
+		frappe.db.commit()
 
-        # Determine notification key
-        notification_key = None
-        user = None
-        if frappe.db.exists("Delivery", {"user": frappe.session.user}):
-            if request_obj.store:
-                user = frappe.get_value("Store", request_obj.store, "user")
-        else:
-            if request_obj.delivery:
-                user = frappe.get_value("Delivery", request_obj.delivery, "user")
+		# Determine notification key
+		notification_key = None
+		user = None
+		if frappe.db.exists("Delivery", {"user": frappe.session.user}):
+			if request_obj.store:
+				user = frappe.get_value("Store", request_obj.store, "user")
+		else:
+			if request_obj.delivery:
+				user = frappe.get_value("Delivery", request_obj.delivery, "user")
 
-        if user:
-            notification_key = frappe.get_value("User", user, "notification_key")
+		if user:
+			notification_key = frappe.get_value("User", user, "notification_key")
 
-        # Send notification if notification key exists
-        if notification_key:
-            res = send_notification(notification_key, "modification")
-            if res.status_code != 200:
-                frappe.log_error(
-                    message=f"Notification failed: {res.text}",
-                    title="Error in send_notification"
-                )
+		# Send notification if notification key exists
+		if notification_key:
+			res = send_notification(notification_key, "modification")
+			if res.status_code != 200:
+				frappe.log_error(
+					message=f"Notification failed: {res.text}",
+					title="Error in send_notification"
+				)
 
-        # Success response
-        frappe.local.response['http_status_code'] = 200
-        frappe.local.response['message'] = f"Request ID {request_id} status has been changed to {status}."
-    except Exception as e:
-        # Log any unhandled exceptions
-        frappe.log_error(message=str(e), title="Error in change_request_status")
-        frappe.local.response['message'] = f"An error occurred: {str(e)}"
+		# Success response
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = f"Request ID {request_id} status has been changed to {status}."
+	except Exception as e:
+		# Log any unhandled exceptions
+		frappe.log_error(message=str(e), title="Error in change_request_status")
+		frappe.local.response['message'] = f"An error occurred: {str(e)}"
 
 
 
@@ -227,83 +227,85 @@ def get_requests(*args, **kwargs):
 
 @frappe.whitelist(allow_guest=False)
 def cancel_request(*args, **kwargs):
-    request_id = kwargs.get("request")
-    cancel_type = kwargs.get("type")
-    notification_key = None
+	request_id = kwargs.get("request")
+	cancel_type = kwargs.get("type")
+	notification_key = None
 
-    # Validate input
-    if not request_id or not cancel_type:
-        frappe.local.response['http_status_code'] = 400
-        frappe.local.response['message'] = _("Request ID and type are required.")
-        return
+	# Validate input
+	if not request_id or not cancel_type:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = _("Request ID and type are required.")
+		return
 
-    if not frappe.db.exists("Request Delivery", request_id):
-        frappe.local.response['http_status_code'] = 400
-        frappe.local.response['message'] = _(f"No request found with ID: {request_id}")
-        return
+	if not frappe.db.exists("Request Delivery", request_id):
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = _(f"No request found with ID: {request_id}")
+		return
 
-    try:
-        request_obj = frappe.get_doc("Request Delivery", request_id)
-        request_search_obj = frappe.get_doc("Request", request_id)
+	try:
+		request_obj = frappe.get_doc("Request Delivery", request_id)
+		request_search_obj = frappe.get_doc("Request", request_id)
+		if request_search_obj.status == "Waiting for Delivery":
+			request_search_obj.status = "Cancel"
 
-        # Determine the type of cancellation
-        if cancel_type == "store":
-            request_obj.status = "Store Cancel"
-            request_search_obj.status = "Cancel"
-            cancel_orders(request_obj, "Store")
-            msg = _("Request has been canceled by Store.")
-            delivery_user = frappe.get_value("Delivery", request_obj.delivery, "user")
-            notification_key = frappe.get_value("User", delivery_user, "notification_key")
+		# Determine the type of cancellation
+		if cancel_type == "store":
+			request_obj.status = "Store Cancel"
+			# request_search_obj.status = "Cancel"
+			cancel_orders(request_obj, "Store")
+			msg = _("Request has been canceled by Store.")
+			delivery_user = frappe.get_value("Delivery", request_obj.delivery, "user")
+			notification_key = frappe.get_value("User", delivery_user, "notification_key")
 
-        elif cancel_type == "delivery":
-            request_obj.status = "Delivery Cancel"
-            request_search_obj.status = "Cancel"
-            cancel_orders(request_obj, "Delivery")
-            msg = _("Request has been canceled by Delivery.")
-            store_user = frappe.get_value("Store", request_obj.store, "user")
-            notification_key = frappe.get_value("User", store_user, "notification_key")
-        else:
-            frappe.local.response['http_status_code'] = 400
-            frappe.local.response['message'] = _("Invalid cancellation type.")
-            return
+		elif cancel_type == "delivery":
+			request_obj.status = "Delivery Cancel"
+			# request_search_obj.status = "Cancel"
+			cancel_orders(request_obj, "Delivery")
+			msg = _("Request has been canceled by Delivery.")
+			store_user = frappe.get_value("Store", request_obj.store, "user")
+			notification_key = frappe.get_value("User", store_user, "notification_key")
+		else:
+			frappe.local.response['http_status_code'] = 400
+			frappe.local.response['message'] = _("Invalid cancellation type.")
+			return
 
-        # Send notification
-        if notification_key:
-            res = send_notification(notification_key, "modification")
-            if res.status_code != 200:
-                frappe.log_error(
-                    message=res.text, 
-                    title=_("Error sending notification")
-                )
-                error = frappe.new_doc("Error Log")
-                error.method = "send_notification"
-                error.error = res.text
-                error.insert(ignore_permissions=True)
+		# Send notification
+		if notification_key:
+			res = send_notification(notification_key, "modification")
+			if res.status_code != 200:
+				frappe.log_error(
+					message=res.text, 
+					title=_("Error sending notification")
+				)
+				error = frappe.new_doc("Error Log")
+				error.method = "send_notification"
+				error.error = res.text
+				error.insert(ignore_permissions=True)
 
-        # Save changes and commit
-        request_obj.save(ignore_permissions=True)
-        request_search_obj.save(ignore_permissions=True)
-        frappe.db.commit()
+		# Save changes and commit
+		request_obj.save(ignore_permissions=True)
+		request_search_obj.save(ignore_permissions=True)
+		frappe.db.commit()
 
-        frappe.local.response['http_status_code'] = 200
-        frappe.local.response['message'] = msg
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = msg
 
-    except Exception as e:
-        # Log unexpected errors and respond with error message
-        frappe.log_error(message=str(e), title=_("Error in cancel_request"))
-        frappe.local.response['http_status_code'] = 500
-        frappe.local.response['message'] = _("An error occurred while canceling the request.")
+	except Exception as e:
+		# Log unexpected errors and respond with error message
+		frappe.log_error(message=str(e), title=_("Error in cancel_request"))
+		frappe.local.response['http_status_code'] = 500
+		frappe.local.response['message'] = _("An error occurred while canceling the request.")
 
 def cancel_orders(request_obj, cancel_from):
-    """
-    Helper function to cancel all orders in a request.
-    """
-    orders = request_obj.get("order_request")
-    for order in orders:
-        order_doc = frappe.get_doc("Order", order.order)
-        order_doc.status = "Cancel"
-        order_doc.cancel_from = cancel_from
-        order_doc.save(ignore_permissions=True)
+	"""
+	Helper function to cancel all orders in a request.
+	"""
+	orders = request_obj.get("order_request")
+	for order in orders:
+		order_doc = frappe.get_doc("Order", order.order)
+		order_doc.status = "Cancel"
+		order_doc.cancel_from = cancel_from
+		order_doc.save(ignore_permissions=True)
 
 
 @frappe.whitelist(allow_guest=False)
