@@ -188,6 +188,7 @@ class Order(Document):
 
 
 	def pick_up_deduction(self):
+		return True
 
 		pick_up_deduction = Deductions.get("pick_up_deduction")
 		order_logs = self.get("order_log")
@@ -201,9 +202,9 @@ class Order(Document):
 		)
 		if row:
 			rate = row.get("rate", 0)
-		else:
-			row = pick_up_deduction[-1]
-			rate = row.get("rate", 0)
+		# else:
+		# 	row = pick_up_deduction[-1]
+		# 	rate = row.get("rate", 0)
 
 			try:
 				request = frappe.get_doc("Request Delivery", self.request)
