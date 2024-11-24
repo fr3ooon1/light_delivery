@@ -245,7 +245,7 @@ class Order(Document):
 		accepted_row = next((row for row in order_logs if row.get('status') == "Accepted"), None)
 		if accepted_row:
 			time_difference = time_diff_in_seconds(now_datetime(), get_datetime(accepted_row.get("time")))
-			if time_difference > (float(Deductions.late_after_accept or 0) / 60):
+			if float(time_difference or 0) / 60 > float(Deductions.late_after_accept or 0):
 				self.status == "Cancel"
 				self.cancel_from = "Delivery"
 				self.finish_order_with_rate(rate=0.5)
