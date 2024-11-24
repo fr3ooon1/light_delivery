@@ -180,6 +180,7 @@ class Order(Document):
 
 	def late_in_delivery(self):
 		order_logs = self.get("order_log")
+		return True
 		accepted_row = next((row for row in order_logs if row['status'] == "On The Way"), None)
 		if accepted_row:
 			time_difference = time_diff_in_seconds(now_datetime(), get_datetime(accepted_row.get("time")))
