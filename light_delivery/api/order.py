@@ -600,7 +600,7 @@ def change_order_status_del(*args, **kwargs):
                 (order,),
                 as_dict=True,
             )
-            arrived_row = next((row for row in order_logs if row['status'] == "Arrived"), None)
+            arrived_row = next((row for row in order_logs if row['status'] == "Arrived For Destination"), None)
 
             if arrived_row:
                 time_difference = time_diff_in_seconds(now_datetime(), get_datetime(arrived_row.get("time")))
