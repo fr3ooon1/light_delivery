@@ -106,6 +106,20 @@ def search_by_phone(phone_number , order_type = False):
 	except Exception as e:
 		frappe.log_error(frappe.get_traceback(), "search_by_phone API error")
 		return {"status": "error", "message": str(e)}
+@frappe.whitelist(allow_guest=False)
+def search_by_phone_with_total(phone_number , order_type = False):
+	try:
+		res = {}
+		address = frappe.get_list("Order" , {"phone_number":phone_number},['address'] , pluck='address')
+		res['address'] = address
+		if order_type in ['Replacing','Refund']:
+			orders = frappe.get_list("Order" , {"phone_number":phone_number},['name','total_order'] , as_dict=True)
+			res['order'] = orders 
+		return _(res)
+	except Exception as e:
+		frappe.log_error(frappe.get_traceback(), "search_by_phone API error")
+		return {"status": "error", "message": str(e)}
+
 
 
 @frappe.whitelist(allow_guest=False)

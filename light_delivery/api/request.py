@@ -50,15 +50,22 @@ def request_history(*args, **kwargs):
 		order_details = []
 
 		for order in order_list:
-			res = frappe.get_value("Order", order.get("order") , ['name','total_order','order_date','full_name','address','status','order_date','duration','total_distance'],as_dict=1)
-			# res = {
-			# 	"id": doc.name,
-			# 	"total": doc.total_order,
-			# 	"date": doc.order_date,
-			# 	"customer": doc.full_name,
-			# 	"address": doc.address,
-			# 	"status": doc.status,	
-			# }
+			res = frappe.get_value(
+				"Order", 
+				order.get("order") , 
+				[
+					'name',
+					'total_order',
+					'order_date',
+					'full_name',
+					'address',
+					'status',
+					'order_date',
+					'duration',
+					'total_distance'
+				],
+				as_dict=1)
+
 			order_details.append(res)
 
 		req['orders'] = order_details  # Append order details to the current request
