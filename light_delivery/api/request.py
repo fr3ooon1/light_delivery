@@ -50,7 +50,7 @@ def request_history(*args, **kwargs):
 		order_details = []
 
 		for order in order_list:
-			res = frappe.get_value("Order", order.get("order") , ['name','total_order','order_date','full_name','address','status','order_date'],as_dict=1)
+			res = frappe.get_value("Order", order.get("order") , ['name','total_order','order_date','full_name','address','status','order_date','duration','total_distance'],as_dict=1)
 			# res = {
 			# 	"id": doc.name,
 			# 	"total": doc.total_order,
