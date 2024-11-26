@@ -621,7 +621,7 @@ def change_order_status_del(*args, **kwargs):
 
 			if arrived_row:
 				time_difference = time_diff_in_seconds(now_datetime(), get_datetime(arrived_row.get("time")))
-				if time_difference / 60 < (float(Deductions.time_of_waiting_customer_to_answer or 0)):
+				if float(time_difference / 60) < (float(Deductions.time_of_waiting_customer_to_answer or 0)):
 					frappe.local.response['http_status_code'] = 400
 					frappe.local.response['message'] = _(f"Cannot change status to {status} due to time restrictions.")
 					return
