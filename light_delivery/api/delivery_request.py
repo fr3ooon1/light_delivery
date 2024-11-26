@@ -13,16 +13,6 @@ def update_location(*args,**kwargs):
 			doc.pointer_y = kwargs.get("pointer_y")
 			doc.save(ignore_permissions=True)
 
-			# if doc.status == "Inorder":
-			# 	if frappe.db.exists("Order",{"status":["IN",["On The Way","Arrived For Destination"]],"delivery":doc.name}): 
-			# 		order = frappe.get_doc("Order",{"status":["IN",["On The Way","Arrived For Destination"]],"delivery":doc.name})
-			# 		order.append("road",{
-			# 			"pointer_x":kwargs.get("pointer_x"),
-			# 			"pointer_y":kwargs.get("pointer_y"),
-			# 			"delivery":doc.name,
-			# 			"time":frappe.utils.now()
-			# 		})
-			# 		order.save(ignore_permissions=True)
 			frappe.db.commit()
 			frappe.local.response['http_status_code'] = 200
 			frappe.local.response['message'] = _(f"""Update location""")
@@ -50,14 +40,15 @@ def sending_request():
 					doc.append("deliveries", {
 						"user": delivery.get("user"),
 						"delivery": delivery.get("name"),
-						"notification_key": delivery.get("notification_key")
+						"notification_key": delivery.get("notification_key"),
+						"distance":delivery.get("distance")
 					})
 				
 				doc.save(ignore_permissions=True)
 				frappe.db.commit()
 
 			if doc.deliveries:
-				delivery = doc.deliveries[0]
+				delivery = doc.deliveries[-1]
 				delivery_obj = frappe.get_doc("Delivery",delivery.get("delivery"))
 				if delivery_obj.status == "Hold":
 					return "The Delivery has a request"
@@ -75,7 +66,7 @@ def sending_request():
 						create_error_log("sending_request", res.text)
 				else:
 					create_error_log("sending_request", "User not had a notification key")
-				doc.deliveries = doc.deliveries[1:]
+				doc.deliveries = doc.deliveries[0:-1]
 				doc.save(ignore_permissions=True)
 				frappe.db.commit()
 			
@@ -127,10 +118,6 @@ def get_delivery_request(*args, **kwargs):
 			return {"status": "error", "message": "No store found for the current user."}
 		
 		orders = kwargs.get("orders")
-		if not orders or not isinstance(orders, list):
-			return {"status": "error", "message": "No orders provided or invalid format."}
-
-
 		if not orders or not isinstance(orders, list):
 			frappe.local.response['http_status_code'] = 400
 			frappe.local.response['message'] = _( "No orders provided or invalid format." )

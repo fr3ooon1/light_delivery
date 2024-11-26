@@ -115,22 +115,6 @@ def delivery_tracing(*args,**kwargs):
 						"latitude": float(frappe.get_value("Delivery",delivery,"pointer_y")),
 						"longitude": float(frappe.get_value("Delivery",delivery,"pointer_x")),
 				}}
-			# orders = doc.get("order_request")
-			# orders = frappe.get_list("Order Request",{"parent":request},pluck='order',ignore_permissions=True)
-			# if orders:
-			# 	for order in orders:
-			# 		order_obj = frappe.get_doc("Order",order.order)
-			# 		road = order_obj.get("road")
-			# 		if road:
-			# 			for i in road:
-			# 				point_list.append({"GeoPoint":{
-			# 									"latitude": i.pointer_y,
-			# 									"longitude": i.pointer_x,
-			# 							}})
-			# if not point_list:
-			# 	frappe.local.response['http_status_code'] = 400
-			# 	frappe.local.response['message'] = _(f"""no point found""")
-			# 	return
 			res = {
 				"start":start,
 				"end":end,
@@ -140,21 +124,6 @@ def delivery_tracing(*args,**kwargs):
 		else:
 			frappe.local.response['http_status_code'] = 400
 			frappe.local.response['message'] = _(f"""no request found""")
-	# try:
-
-	# 	request = kwargs.get("request")
-	# 	if frappe.db.exists("Request Delivery",request):
-	# 		delivery = frappe.get_value("Request Delivery" , request , "delivery")
-	# 		doc = frappe.get_doc("Delivery",delivery)
-	# 		coordi = {
-	# 			"latitude":doc.pointer_y,
-	# 			"longitude":doc.pointer_x
-	# 		}
-	# 		last_modification = str(doc.modified)
-
-	# 		frappe.local.response['http_status_code'] = 200
-	# 		frappe.local.response['GeoPoint'] = coordi
-	# 		frappe.local.response['last_modification'] = last_modification
 
 	except Exception as e:
 		frappe.local.response['http_status_code'] = 400

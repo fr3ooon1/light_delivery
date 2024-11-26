@@ -14,6 +14,10 @@ class Request(Document):
 		if self.status == "Accepted":
 			doc = frappe.get_doc("Request Delivery" , self.request_delivery)
 			doc.delivery = self.delivery
+			
+			doc.lat = frappe.get_value("Delivery",self.delivery,'pointer_x')
+			doc.lon = frappe.get_value("Delivery",self.delivery,'pointer_y')
+			
 			doc.status = "Accepted"
 
 			for order in doc.order_request:

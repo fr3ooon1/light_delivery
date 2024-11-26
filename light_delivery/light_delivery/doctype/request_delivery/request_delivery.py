@@ -19,10 +19,8 @@ class RequestDelivery(Document):
 			
 		if self.status == "Accepted":
 			self.request_accepted()
-
 			
-		if self.status in ['Arrived' , 'Picked' , 'Cancel' , 'Delivery Cancel','Store Cancel','Waiting for delivery']:
-			
+		if self.status in ['Arrived' , 'Picked' , 'Cancel' , 'Delivery Cancel','Store Cancel','Waiting for delivery','On The Way']:
 			self.change_status_for_orders()
 
 		if self.status == "Waiting for delivery":
@@ -36,13 +34,13 @@ class RequestDelivery(Document):
 			self.pay_to_store()
 
 
-		if self.status == "Picked":
-			self.start_point()
+	# 	if self.status == "Picked":
+	# 		self.start_point()
 
 
-	def start_point(self):
-		self.lat = frappe.get_value("Delivery",self.delivery,"pointer_x")
-		self.lon = frappe.get_value("Delivery",self.delivery,"pointer_y")
+	# def start_point(self):
+	# 	self.lat = frappe.get_value("Delivery",self.delivery,"pointer_x")
+	# 	self.lon = frappe.get_value("Delivery",self.delivery,"pointer_y")
 
 
 
@@ -139,7 +137,8 @@ class RequestDelivery(Document):
 				doc.append("deliveries",{
 					"user" :i.get('user'), 
 					"delivery":i.get('name'),
-					"notification_key":frappe.get_value("User",i.get('user'),"notification_key")
+					"notification_key":frappe.get_value("User",i.get('user'),"notification_key"),
+					"distance":i.get("distance")
 				})
 
 		doc.save(ignore_permissions=True)

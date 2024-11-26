@@ -167,25 +167,12 @@ class Order(Document):
 		if self.status == "Arrived":
 			self.late_after_accept()
 
-		if self.status == "Arrived For Destination":
-			self.late_in_delivery()
-
 		if self.status == "Cancel":
 			self.if_order_cancelled_from_store_after_picked_up()
 			self.if_order_cancelled_from_store_after_delivery_arrived()
 		
 		if self.status == "Picked":
 			self.pick_up_deduction()
-
-
-	def late_in_delivery(self):
-		order_logs = self.get("order_log")
-		return True
-		accepted_row = next((row for row in order_logs if row['status'] == "On The Way"), None)
-		if accepted_row:
-			time_difference = time_diff_in_seconds(now_datetime(), get_datetime(accepted_row.get("time")))
-			if time_difference > (float(Deductions.late_after_accept or 0) / 60):
-				pass
 
 
 	def pick_up_deduction(self):
@@ -239,7 +226,7 @@ class Order(Document):
 			if order_logs:
 				last_order_log = order_logs[-1]
 				if last_order_log.get("status") == "Arrived":
-					self.finish_order()
+					self.finish_order_with_rate(rate=1)
 
 
 	def late_after_accept(self):

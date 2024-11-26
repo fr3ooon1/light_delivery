@@ -582,73 +582,74 @@ def cancel_order(*args,**kwargs):
 
 @frappe.whitelist(allow_guest=False)
 def change_order_status_del(*args, **kwargs):
-    order = kwargs.get("order")
-    status = kwargs.get("status")
-    notification_key = None
+	order = kwargs.get("order")
+	status = kwargs.get("status")
+	notification_key = None
 
-    if not order or not status:
-        frappe.local.response['http_status_code'] = 400
-        frappe.local.response['message'] = _("Order and status are required.")
-        return
+	if not order or not status:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = _("Order and status are required.")
+		return
 
-    if not frappe.db.exists("Order", order):
-        frappe.local.response['http_status_code'] = 400
-        frappe.local.response['message'] = _(f"No order found with ID: {order}")
-        return
+	if not frappe.db.exists("Order", order):
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = _(f"No order found with ID: {order}")
+		return
 
-    try:
-        doc = frappe.get_doc("Order", order)
+	try:
+		doc = frappe.get_doc("Order", order)
 
-        # Determine notification key
-        if frappe.db.exists("Delivery", {"user": frappe.session.user}):
-            if doc.store:
-                user = frappe.get_value("Store", doc.store, "user")
-                notification_key = frappe.get_value("User", user, "notification_key")
-        else:
-            if doc.delivery:
-                user = frappe.get_value("Delivery", doc.delivery, "user")
-                notification_key = frappe.get_value("User", user, "notification_key")
+		# Determine notification key
+		if frappe.db.exists("Delivery", {"user": frappe.session.user}):
+			if doc.store:
+				user = frappe.get_value("Store", doc.store, "user")
+				notification_key = frappe.get_value("User", user, "notification_key")
+		else:
+			if doc.delivery:
+				user = frappe.get_value("Delivery", doc.delivery, "user")
+				notification_key = frappe.get_value("User", user, "notification_key")
 
-        # Handle refused status with time constraints
-        if status == "Refused":
-            order_logs = frappe.db.sql(
-                """SELECT status, time FROM `tabOrder Log` WHERE parent = %s""",
-                (order,),
-                as_dict=True,
-            )
-            arrived_row = next((row for row in order_logs if row['status'] == "Arrived For Destination"), None)
+		# Handle refused status with time constraints
+		if status == "Refused":
+			order_logs = frappe.db.sql(
+				"""SELECT status, time FROM `tabOrder Log` WHERE parent = %s""",
+				(order,),
+				as_dict=True,
+			)
+			
+			arrived_row = next((row for row in order_logs if row['status'] == "Arrived For Destination"), None)
 
-            if arrived_row:
-                time_difference = time_diff_in_seconds(now_datetime(), get_datetime(arrived_row.get("time")))
-                if time_difference < (float(Deductions.time_of_waiting_customer_to_answer or 0) / 60):
-                    frappe.local.response['http_status_code'] = 400
-                    frappe.local.response['message'] = _(f"Cannot change status to {status} due to time restrictions.")
-                    return
+			if arrived_row:
+				time_difference = time_diff_in_seconds(now_datetime(), get_datetime(arrived_row.get("time")))
+				if time_difference / 60 < (float(Deductions.time_of_waiting_customer_to_answer or 0)):
+					frappe.local.response['http_status_code'] = 400
+					frappe.local.response['message'] = _(f"Cannot change status to {status} due to time restrictions.")
+					return
 
-        # Update order status and save
-        doc.status = status
-        doc.save(ignore_permissions=True)
-        frappe.db.commit()
+		# Update order status and save
+		doc.status = status
+		doc.save(ignore_permissions=True)
+		frappe.db.commit()
 
-        # Send notification
-        if notification_key:
-            res = send_notification(notification_key, "modification")
-            if res.status_code != 200:
-                frappe.log_error(
-                    message=res.text, 
-                    title=_("Error sending notification")
-                )
-                error = frappe.new_doc("Error Log")
-                error.method = "send_notification"
-                error.error = res.text
-                error.insert(ignore_permissions=True)
+		# Send notification
+		if notification_key:
+			res = send_notification(notification_key, "modification")
+			if res.status_code != 200:
+				frappe.log_error(
+					message=res.text, 
+					title=_("Error sending notification")
+				)
+				error = frappe.new_doc("Error Log")
+				error.method = "send_notification"
+				error.error = res.text
+				error.insert(ignore_permissions=True)
 
-        # Response on success
-        frappe.local.response['http_status_code'] = 200
-        frappe.local.response['message'] = _(f"The order {order} has been updated successfully.")
+		# Response on success
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = _(f"The order {order} has been updated successfully.")
 
-    except Exception as e:
-        # Log unexpected errors and respond with error message
-        frappe.log_error(message=str(e), title=_("Error in change_order_status_del"))
-        frappe.local.response['http_status_code'] = 500
-        frappe.local.response['message'] = _("An error occurred while updating the order.")
+	except Exception as e:
+		# Log unexpected errors and respond with error message
+		frappe.log_error(message=str(e), title=_("Error in change_order_status_del"))
+		frappe.local.response['http_status_code'] = 500
+		frappe.local.response['message'] = _("An error occurred while updating the order.")

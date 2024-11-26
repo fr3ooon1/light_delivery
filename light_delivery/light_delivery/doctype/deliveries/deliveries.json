@@ -8,7 +8,8 @@
  "field_order": [
   "user",
   "delivery",
-  "notification_key"
+  "notification_key",
+  "distance"
  ],
  "fields": [
   {
@@ -33,12 +34,18 @@
    "in_list_view": 1,
    "label": "Notification Key",
    "read_only": 1
+  },
+  {
+   "fieldname": "distance",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Distance"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-06 18:15:23.923643",
+ "modified": "2024-11-26 13:03:17.094205",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Deliveries",

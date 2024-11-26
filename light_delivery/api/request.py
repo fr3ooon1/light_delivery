@@ -221,6 +221,7 @@ def get_requests(*args, **kwargs):
 					"customer": doc.full_name,
 					"address": doc.address,
 					"status": doc.status,
+					"invoice":doc.invoice
 					
 				}
 				order_details.append(res)

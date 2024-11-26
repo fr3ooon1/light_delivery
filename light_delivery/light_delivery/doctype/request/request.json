@@ -18,7 +18,7 @@
   "section_break_eivb",
   "deliveries",
   "delivery",
-  "column_break_yetf",
+  "section_break_pkmc",
   "log"
  ],
  "fields": [
@@ -44,6 +44,7 @@
   {
    "fieldname": "log",
    "fieldtype": "Table",
+   "hidden": 1,
    "label": "Log",
    "options": "Log"
   },
@@ -64,10 +65,6 @@
   {
    "fieldname": "section_break_eivb",
    "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "column_break_yetf",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "column_break_hwrm",
@@ -92,11 +89,15 @@
    "fieldname": "number_of_order",
    "fieldtype": "Float",
    "label": "Number of Order"
+  },
+  {
+   "fieldname": "section_break_pkmc",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-20 14:28:01.583185",
+ "modified": "2024-11-26 13:04:14.873419",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Request",
