@@ -1,6 +1,10 @@
 import frappe 
 from frappe import _
 from frappe.utils import add_to_date, today, nowdate
+from frappe.utils import nowdate , get_first_day_of_week , get_first_day ,  get_datetime, now_datetime, time_diff_in_seconds
+from datetime import datetime
+
+
 
 @frappe.whitelist(allow_guest=True)
 def get_slider():
@@ -249,3 +253,46 @@ def is_favorite(customer , store):
 		return False
 
 
+# @frappe.whitelist(allow_guest=False)
+# def get_order_history(status = None):
+# 	try:
+# 		consumer = frappe.get_value("Store",{"user":frappe.session.user},'name')
+# 		orders = []
+
+# 		if status == None or status == "All" or status == "ALL" or status == "all":
+# 			orders = frappe.get_list("Order" , {"store":store} ,['name', 'creation', 'status', 'total_order'])
+# 		else:
+# 			status = status.strip("[]").split(",")
+# 			orders = frappe.get_list("Order" , filters = {'status':['in', status],"store":store} ,  fields=['name', 'creation', 'status' , 'total_order'])
+		
+		
+# 		for order in orders:
+# 			if isinstance(order.get('creation'), datetime):
+# 				order['creation'] = order.get('creation').strftime('%Y-%m-%d %H:%M:%S')
+# 			else:
+# 				order['creation'] = datetime.strptime(order.get('creation'), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
+			
+# 		today = nowdate()
+# 		count_today = frappe.db.count('Order', filters={'creation': ['>=', today]})
+
+# 		start_of_week = get_first_day_of_week(today)
+# 		count_this_week = frappe.db.count('Order', filters={'creation': ['>=', start_of_week]})
+
+# 		start_of_month = get_first_day(today)
+# 		count_this_month = frappe.db.count('Order', filters={'creation': ['>=', start_of_month]})
+
+# 		frappe.local.response['http_status_code'] = 200
+# 		return {
+# 			'status_code': 200,
+# 			'message': _('Order History'),
+# 			'data': {
+# 				'orders': orders,
+# 				'count_today':count_today ,
+# 				'count_this_week' :count_this_week,
+# 				'count_this_month': count_this_month
+# 			}
+# 		}
+# 	except Exception as e:
+# 		frappe.local.response['http_status_code'] = 500
+# 		frappe.log_error(message=str(e), title=_('Error in get_order_history'))
+# 		return str(e)
