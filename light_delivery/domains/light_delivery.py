@@ -19,14 +19,14 @@ data = {
 				"fieldname": "latitude",
 				"fieldtype": "Data",
 				"insert_after": "address_line2" ,
-                "read_only":1
+                "read_only":0
 				},
                 {
 				"label": "longitude",
 				"fieldname": "longitude",
 				"fieldtype": "Data",
 				"insert_after": "latitude" ,
-                "read_only":1
+                "read_only":0
 				},
 			]
 	},
