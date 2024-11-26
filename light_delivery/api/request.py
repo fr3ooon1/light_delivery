@@ -384,8 +384,8 @@ def get_request_details_for_del(*args, **kwargs):
 
 			store = frappe.get_doc("Store" , request[0].get("store"))
 
-			# request[0]['coordi'] = [float(store.pointer_y) , float(store.pointer_x)]
-			request[0]['coordi'] = json.loads(store.store_location).get("features")[0].get("geometry").get("coordinates" , None) 
+			request[0]['coordi'] = [float(store.pointer_y) , float(store.pointer_x)]
+			# request[0]['coordi'] = json.loads(store.store_location).get("features")[0].get("geometry").get("coordinates" , None) 
 			request[0]['phone_number'] = frappe.get_value("User" , store.user , 'mobile_no')
 			request[0]['address'] = store.address
 
