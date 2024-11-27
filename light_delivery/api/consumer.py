@@ -256,63 +256,65 @@ from datetime import datetime
 
 @frappe.whitelist(allow_guest=False)
 def get_order_history(**kwargs):
-    status = kwargs.get("status")
-    try:
-        # Get the phone number of the logged-in user
-        phone_number = frappe.get_value("User", frappe.session.user, 'mobile_no')
+	status = kwargs.get("status")
+	try:
+		# Get the phone number of the logged-in user
+		phone_number = frappe.get_value("User", frappe.session.user, 'mobile_no')
 
-        if not phone_number:
-            frappe.local.response['http_status_code'] = 404
-            frappe.local.response['message'] = "User phone number not found."
-            return
+		if not phone_number:
+			frappe.local.response['http_status_code'] = 404
+			frappe.local.response['message'] = "User phone number not found."
+			return
 
-        # Define base query and parameters
-        base_query = """
-            SELECT 
-                name, 
-                creation, 
-                status,
-                order_type, 
-                total_order,
-                store,
-                delivery,
-                invoice 
-            FROM 
-                `tabOrder` 
-            WHERE 
-                phone_number = %s
-        """
-        params = [phone_number]
+		# Define base query and parameters
+		base_query = """
+			SELECT 
+				name, 
+				creation, 
+				status,
+				order_type, 
+				total_order,
+				store,
+				delivery,
+				invoice 
+			FROM 
+				`tabOrder` 
+			WHERE 
+				phone_number = %s
+		"""
+		params = [phone_number]
 
-        # Add condition for status if provided
-        if status and status.lower() not in ["all", ""]:
-            base_query += " AND status = %s"
-            params.append(status)
+		# Add condition for status if provided
+		if status and status.lower() not in ["all", ""]:
+			base_query += " AND status = %s"
+			params.append(status)
 
-        # Execute query safely
-        orders = frappe.db.sql(base_query, params, as_dict=1)
+		frappe.log_error(message=f"SQL Query: {base_query}, Params: {params}", title="Debug: SQL Query")
 
-        # Format creation date for each order
-        for order in orders:
-            creation_date = order.get('creation')
-            if creation_date:
-                if isinstance(creation_date, datetime):
-                    order['creation'] = creation_date.strftime('%Y-%m-%d %H:%M:%S')
-                else:
-                    try:
-                        order['creation'] = datetime.strptime(creation_date, '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
-                    except ValueError:
-                        order['creation'] = str(creation_date)
+		# Execute query safely
+		orders = frappe.db.sql(base_query, params, as_dict=1)
 
-        # Set successful response
-        frappe.local.response['http_status_code'] = 200
-        frappe.local.response['orders'] = orders
+		# Format creation date for each order
+		for order in orders:
+			creation_date = order.get('creation')
+			if creation_date:
+				if isinstance(creation_date, datetime):
+					order['creation'] = creation_date.strftime('%Y-%m-%d %H:%M:%S')
+				else:
+					try:
+						order['creation'] = datetime.strptime(creation_date, '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
+					except ValueError:
+						order['creation'] = str(creation_date)
 
-    except Exception as e:
-        # Log the error and set error response
-        frappe.log_error(message=str(e), title=_('Error in get_order_history'))
-        frappe.local.response['http_status_code'] = 500
-        frappe.local.response['message'] = "An error occurred while fetching order history."
+		# Set successful response
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['orders'] = orders
+
+	except Exception as e:
+		# Log the error and set error response
+		frappe.log_error(message=str(e), title=_('Error in get_order_history'))
+		frappe.local.response['http_status_code'] = 500
+		frappe.local.response['message'] = "An error occurred while fetching order history."
 
 
 
