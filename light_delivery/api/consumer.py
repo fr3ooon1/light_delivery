@@ -285,8 +285,8 @@ def get_order_history(status = None):
 		# count_this_month = frappe.db.count('Order', filters={'creation': ['>=', start_of_month]})
 
 		frappe.local.response['http_status_code'] = 200
-		frappe.local.response['order'] = order
-		
+		frappe.local.response['orders'] = orders
+
 	except Exception as e:
 		frappe.local.response['http_status_code'] = 500
 		frappe.log_error(message=str(e), title=_('Error in get_order_history'))
