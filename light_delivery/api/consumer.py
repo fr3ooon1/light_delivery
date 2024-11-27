@@ -303,7 +303,8 @@ def get_order_history(status = None):
 			
 
 		frappe.local.response['http_status_code'] = 200
-		frappe.local.response['orders'] = orders
+		# frappe.local.response['orders'] = orders
+		return orders
 
 	except Exception as e:
 		frappe.local.response['http_status_code'] = 500
