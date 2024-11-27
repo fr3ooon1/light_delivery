@@ -263,10 +263,10 @@ def get_order_history(status = None):
 		orders = []
 
 		if status == None or status == "All" or status == "ALL" or status == "all":
-			orders = frappe.get_list("Order" , {"phone_number":phone_number} ,['name', 'creation', 'status', 'total_order'])
+			orders = frappe.get_list("Order" , {"phone_number":phone_number} ,['name', 'creation', 'status','order_type', 'total_order','store','delivery','invoice'])
 		else:
 			status = status.strip("[]").split(",")
-			orders = frappe.get_list("Order" , filters = {'status':['in', status],"phone_number":phone_number} ,  fields=['name', 'creation', 'status' , 'total_order'])
+			orders = frappe.get_list("Order" , filters = {'status':['in', status],"phone_number":phone_number} ,  fields=['name', 'creation', 'status' , 'order_type','total_order','store','delivery','invoice'])
 		
 		
 		for order in orders:
@@ -275,17 +275,30 @@ def get_order_history(status = None):
 			else:
 				order['creation'] = datetime.strptime(order.get('creation'), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
 			
-		# today = nowdate()
-		# count_today = frappe.db.count('Order', filters={'creation': ['>=', today]})
-
-		# start_of_week = get_first_day_of_week(today)
-		# count_this_week = frappe.db.count('Order', filters={'creation': ['>=', start_of_week]})
-
-		# start_of_month = get_first_day(today)
-		# count_this_month = frappe.db.count('Order', filters={'creation': ['>=', start_of_month]})
 
 		frappe.local.response['http_status_code'] = 200
 		frappe.local.response['orders'] = orders
+
+	except Exception as e:
+		frappe.local.response['http_status_code'] = 500
+		frappe.log_error(message=str(e), title=_('Error in get_order_history'))
+		return str(e)
+
+
+@frappe.whitelist(allow_guest=False)
+def get_current_location_delivery(**kwargs):
+	order = kwargs.get("order")
+	if not order:
+		frappe.local.response['http_status_code'] = 500
+		frappe.local.response['message'] = _("Please set order")
+		return
+	
+	try:
+		delivery = frappe.get_value("Order",order,'delivery')
+		coordi = [frappe.get_value("Delivery",delivery,"pointer_y"),frappe.get_value("Delivery",delivery,"pointer_x")]
+
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['coordi'] = coordi
 
 	except Exception as e:
 		frappe.local.response['http_status_code'] = 500
