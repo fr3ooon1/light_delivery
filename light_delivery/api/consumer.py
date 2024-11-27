@@ -262,11 +262,10 @@ def get_order_history(status = None):
 
 		orders = []
 
-		if status == None or status == "All" or status == "ALL" or status == "all":
-			orders = frappe.get_list("Order" , {"phone_number":phone_number} ,['name', 'creation', 'status','order_type', 'total_order','store','delivery','invoice'])
+		if status == None or status in ["all","ALL","All"]:
+			orders = frappe.get_list("Order" , {"phone_number":["LIKE",phone_number]} ,['name', 'creation', 'status','order_type', 'total_order','store','delivery','invoice'])
 		else:
-			status = status.strip("[]").split(",")
-			orders = frappe.get_list("Order" , filters = {'status':['in', status],"phone_number":phone_number} ,  fields=['name', 'creation', 'status' , 'order_type','total_order','store','delivery','invoice'])
+			orders = frappe.get_list("Order" , filters = {'status':status,"phone_number":["LIKE",phone_number]} ,  fields=['name', 'creation', 'status' , 'order_type','total_order','store','delivery','invoice'])
 		
 		
 		for order in orders:
