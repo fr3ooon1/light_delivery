@@ -252,48 +252,68 @@ def is_favorite(customer , store):
 	else:
 		return False
 
+from datetime import datetime
 
 @frappe.whitelist(allow_guest=False)
 def get_order_history(**kwargs):
-	status = kwargs.get("status")
-	try:
-		phone_number = frappe.get_value("User",frappe.session.user,'mobile_no')
+    status = kwargs.get("status")
+    try:
+        # Get the phone number of the logged-in user
+        phone_number = frappe.get_value("User", frappe.session.user, 'mobile_no')
 
-		orders = []
+        if not phone_number:
+            frappe.local.response['http_status_code'] = 404
+            frappe.local.response['message'] = "User phone number not found."
+            return
 
-		if status == None or status in ["all","ALL","All"]:
-			orders = frappe.db.sql(f"""select name, creation, status,order_type, total_order,store,delivery,invoice from `tabOrder` where phone_number = '{phone_number}';""",as_dict=1)
-		else:
-			orders = frappe.get_list("Order" ,
-							{
-								'status':status,
-								"phone_number":["LIKE",phone_number]
-							} , 
-							[
-								'name', 
-								'creation', 
-								'status' , 
-								'order_type',
-								'total_order',
-								'store',
-								'delivery',
-								'invoice'
-							])
-		
-		for order in orders:
-			if isinstance(order.get('creation'), datetime):
-				order['creation'] = order.get('creation').strftime('%Y-%m-%d %H:%M:%S')
-			else:
-				order['creation'] = datetime.strptime(order.get('creation'), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
-			
+        # Define base query and parameters
+        base_query = """
+            SELECT 
+                name, 
+                creation, 
+                status,
+                order_type, 
+                total_order,
+                store,
+                delivery,
+                invoice 
+            FROM 
+                `tabOrder` 
+            WHERE 
+                phone_number = %s
+        """
+        params = [phone_number]
 
-		frappe.local.response['http_status_code'] = 200
-		frappe.local.response['orders'] = orders
+        # Add condition for status if provided
+        if status and status.lower() not in ["all", ""]:
+            base_query += " AND status = %s"
+            params.append(status)
 
-	except Exception as e:
-		frappe.local.response['http_status_code'] = 500
-		frappe.log_error(message=str(e), title=_('Error in get_order_history'))
-		return str(e)
+        # Execute query safely
+        orders = frappe.db.sql(base_query, params, as_dict=1)
+
+        # Format creation date for each order
+        for order in orders:
+            creation_date = order.get('creation')
+            if creation_date:
+                if isinstance(creation_date, datetime):
+                    order['creation'] = creation_date.strftime('%Y-%m-%d %H:%M:%S')
+                else:
+                    try:
+                        order['creation'] = datetime.strptime(creation_date, '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
+                    except ValueError:
+                        order['creation'] = str(creation_date)
+
+        # Set successful response
+        frappe.local.response['http_status_code'] = 200
+        frappe.local.response['orders'] = orders
+
+    except Exception as e:
+        # Log the error and set error response
+        frappe.log_error(message=str(e), title=_('Error in get_order_history'))
+        frappe.local.response['http_status_code'] = 500
+        frappe.local.response['message'] = "An error occurred while fetching order history."
+
 
 
 @frappe.whitelist(allow_guest=False)
