@@ -254,29 +254,15 @@ def is_favorite(customer , store):
 
 
 @frappe.whitelist(allow_guest=False)
-def get_order_history(status = None):
+def get_order_history(**kwargs):
+	status = kwargs.get("status")
 	try:
 		phone_number = frappe.get_value("User",frappe.session.user,'mobile_no')
-
-
 
 		orders = []
 
 		if status == None or status in ["all","ALL","All"]:
-			orders = frappe.get_list("Order" , 
-							{
-								"phone_number":["LIKE",phone_number]
-							} ,
-							[
-								'name', 
-								'creation', 
-								'status',
-								'order_type', 
-								'total_order',
-								'store',
-								'delivery',
-								'invoice'
-							])
+			orders = frappe.db.sql(f"""select name, creation, status,order_type, total_order,store,delivery,invoice from `tabOrder` where phone_number = '{phone_number}';""",as_dict=1)
 		else:
 			orders = frappe.get_list("Order" ,
 							{
@@ -294,7 +280,6 @@ def get_order_history(status = None):
 								'invoice'
 							])
 		
-		
 		for order in orders:
 			if isinstance(order.get('creation'), datetime):
 				order['creation'] = order.get('creation').strftime('%Y-%m-%d %H:%M:%S')
@@ -303,8 +288,7 @@ def get_order_history(status = None):
 			
 
 		frappe.local.response['http_status_code'] = 200
-		# frappe.local.response['orders'] = orders
-		return orders
+		frappe.local.response['orders'] = orders
 
 	except Exception as e:
 		frappe.local.response['http_status_code'] = 500
