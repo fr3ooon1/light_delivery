@@ -53,7 +53,7 @@ def get_profile():
 		elif frappe.db.exists("Store",{"user":frappe.session.user}):
 			pass
 		
-		address = frappe.db.sql(f"""select a.address_line1 from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{user.get("username")}'""")
+		address = frappe.db.sql(f"""select a.address_line1 from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{user.get("username")}'""",as_dict=True)
 
 		res["full_name"]=user.get("full_name")
 		res["phone_number"]=user.get("mobile_no")
