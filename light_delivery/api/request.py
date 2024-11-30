@@ -62,8 +62,8 @@ def request_history(*args, **kwargs):
 					'status',
 					'order_date',
 					'duration',
-					'total_distance'
-					'net_delivery_fees'
+					'total_distance',
+					'net_delivery_fees',
 				],
 				as_dict=1)
 
