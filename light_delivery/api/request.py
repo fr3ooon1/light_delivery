@@ -228,6 +228,11 @@ def get_requests(*args, **kwargs):
 				order_details.append(res)
 
 		req['orders'] = order_details  # Append order details to the current request
+		req['cash'] = 0
+		req['balance'] = 0
+		if request_del.delivery:
+			req['cash'] = frappe.get_value("Delivery",request_del.delivery,'cash')
+			req['balance'] = get_balance(frappe.get_value("Delivery",request_del.delivery,'delivery_name')) 
 	if not requests:
 		frappe.local.response['http_status_code'] = 400
 		# frappe.local.response['message'] = _("No requests for this store.")	
