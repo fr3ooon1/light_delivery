@@ -328,7 +328,13 @@ def get_current_location_delivery(**kwargs):
 	
 	try:
 		delivery = frappe.get_value("Order",order,'delivery')
-		coordi = [frappe.get_value("Delivery",delivery,"pointer_y"),frappe.get_value("Delivery",delivery,"pointer_x")]
+
+		if not delivery:
+			frappe.local.response['http_status_code'] = 500
+			frappe.local.response['message'] = f"""No Delivery assign yet"""
+			return
+
+		coordi = [float(frappe.get_value("Delivery",delivery,"pointer_y") or None),float(frappe.get_value("Delivery",delivery,"pointer_x") or None)]
 
 		frappe.local.response['http_status_code'] = 200
 		frappe.local.response['coordi'] = coordi
