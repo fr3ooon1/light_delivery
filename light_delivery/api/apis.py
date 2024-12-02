@@ -5,14 +5,13 @@ import base64
 import math
 import requests
 import json
+from frappe.utils import now_datetime
+# from light_delivery.api.delivery_request import get_balance
 
-#from light_delivery.api.apis import
 COMPANY = frappe.defaults.get_defaults().get("company")
 Deductions = frappe.get_doc("Deductions")
 
-import frappe
-from frappe import _
-from frappe.utils import now_datetime
+
 
 @frappe.whitelist()
 def make_journal_entry(kwargs):
@@ -56,6 +55,23 @@ def make_journal_entry(kwargs):
 		frappe.log_error(message=str(e), title=_('Error in make_journal_entry'))
 		frappe.throw(_("An error occurred while creating the Journal Entry: {0}").format(str(e)))
 	
+@frappe.whitelist()
+def get_balance(party):
+	balance = 0
+	sql = f"""
+			SELECT 
+				SUM(jea.credit_in_account_currency) - SUM(jea.debit_in_account_currency) AS total
+			FROM
+				`tabJournal Entry Account` as jea
+			WHERE
+				jea.party = '{party}';
+
+	"""
+	sql = frappe.db.sql(sql,as_dict=1)
+	if sql:
+		balance = float(sql[0].get("total") or 0)
+	return balance
+
 
 @frappe.whitelist(allow_guest = False)
 def search_delivary(cash , store = None ):
@@ -69,7 +85,20 @@ def search_delivary(cash , store = None ):
 
 			deliveries = frappe.db.sql(f"""
 									select 
-										d.name as name , d.user as user , d.pointer_x as pointer_x , d.pointer_y as pointer_y , u.notification_key as notification_key
+										d.name AS name , 
+										d.user AS user , 
+										d.pointer_x AS pointer_x , 
+										d.pointer_y AS pointer_y , 
+										u.notification_key AS notification_key , 
+										d.cash AS cash ,
+							  			(
+										SELECT 
+											SUM(jea.credit_in_account_currency) - SUM(jea.debit_in_account_currency) 
+										FROM
+											`tabJournal Entry Account` AS jea
+										WHERE
+											jea.party = d.delivery_name
+										) + d.cash AS wallet
 									from 
 										`tabDelivery` d
 							  		join 
@@ -77,7 +106,15 @@ def search_delivary(cash , store = None ):
 							  		on 
 							  			d.user = u.name
 									where 
-										status = 'Avaliable' and cash >= {cash} """, as_dict=1)
+										status = 'Avaliable' and d.cash + (
+										SELECT 
+											SUM(jea.credit_in_account_currency) - SUM(jea.debit_in_account_currency) 
+										FROM
+											`tabJournal Entry Account` AS jea
+										WHERE
+											jea.party = d.delivery_name
+										) >= '{cash}' ; """, as_dict=1)
+			print(deliveries)
 			distance = []
 			for delivery in deliveries:
 				if delivery['pointer_x'] is not None and delivery['pointer_y'] is not None:

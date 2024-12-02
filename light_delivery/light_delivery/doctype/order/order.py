@@ -176,7 +176,7 @@ class Order(Document):
 
 
 	def pick_up_deduction(self):
-		return True
+		# return True
 
 		pick_up_deduction = Deductions.get("pick_up_deduction")
 		order_logs = self.get("order_log")
@@ -188,23 +188,19 @@ class Order(Document):
 			(i for i in pick_up_deduction if i.get("from") < time_difference <= i.get("to")),
 			None
 		)
-		if row:
-			rate = row.get("rate", 0)
-		# else:
-		# 	row = pick_up_deduction[-1]
-		# 	rate = row.get("rate", 0)
 
-			try:
+		try:
+			rate = row.get("rate")
+			if rate >= 100:
 				request = frappe.get_doc("Request Delivery", self.request)
 				request.status = "Store Cancel"
 				request.save(ignore_permissions=True)
 				frappe.db.commit()
-				print(f"Request {self.request} status updated to 'Store Cancel'.")
-			except Exception as e:
-				frappe.log_error(f"Error while canceling request {self.request}: {str(e)}", "Pick Up Deduction Error")
+		except Exception as e:
+			frappe.log_error(f"Error while canceling request {self.request}: {str(e)}", "Pick Up Deduction Error")
 
-		self.status = "Cancel"
-		self.cancel_from = "Store"
+		# self.status = "Cancel"
+		# self.cancel_from = "Store"
 
 		self.finish_order_with_rate(rate=rate / 100)
 
@@ -230,6 +226,7 @@ class Order(Document):
 
 
 	def late_after_accept(self):
+		return True
 		order_logs = self.get("order_log")
 		accepted_row = next((row for row in order_logs if row.get('status') == "Accepted"), None)
 		if accepted_row:
