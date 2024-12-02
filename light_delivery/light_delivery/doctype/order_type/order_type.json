@@ -6,6 +6,8 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "enable",
+  "section_break_pimp",
   "type",
   "name_in_arabic",
   "column_break_epof",
@@ -41,11 +43,21 @@
    "fieldtype": "Table",
    "label": "Status",
    "options": "Order Type Status"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable",
+   "fieldtype": "Check",
+   "label": "Enable"
+  },
+  {
+   "fieldname": "section_break_pimp",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-13 18:53:05.925759",
+ "modified": "2024-12-02 15:56:14.605455",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order Type",

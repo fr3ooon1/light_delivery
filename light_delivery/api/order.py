@@ -251,6 +251,7 @@ def get_order_type():
 				name_in_arabic as ar
 			FROM
 				`tabOrder Type`
+			WHERE enable = 1 ;
 			"""
 		order_type = frappe.db.sql(sql,as_dict =1)
 		res = {}
