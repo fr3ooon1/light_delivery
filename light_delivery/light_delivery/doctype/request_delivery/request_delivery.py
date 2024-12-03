@@ -59,7 +59,7 @@ class RequestDelivery(Document):
 		if self.delivery:
 			if self.valuation and frappe.db.exists("Store",self.store):
 				del_obj = frappe.get_doc("Store" , self.store)
-				del_obj.num_rates = float(del_obj.num_rates or 0) + 1
+				del_obj.num_of_rates = float(del_obj.num_of_rates or 0) + 1
 				del_obj.total_rates = float(del_obj.total_rates or 0) + float(self.valuation or 0)
 				del_obj.save(ignore_permissions=True)
 				frappe.db.commit()
