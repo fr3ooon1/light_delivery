@@ -16,7 +16,9 @@ Deductions = frappe.get_doc("Deductions")
 @frappe.whitelist()
 def make_journal_entry(kwargs):
 	try:
-
+		finished_order = 0
+		if kwargs.get("finished_order"):
+			finished_order = kwargs.get("finished_order")
 		# Create the Journal Entry document
 		doc = frappe.get_doc({
 			"doctype": "Journal Entry",
@@ -25,7 +27,8 @@ def make_journal_entry(kwargs):
 			"company": COMPANY,
 			"cheque_no": kwargs.get("order"),
 			"cheque_date": now_datetime(),
-			"posting_date": now_datetime()
+			"posting_date": now_datetime(),
+			"finished_order":finished_order
 		})
 
 		# Append the debit entry

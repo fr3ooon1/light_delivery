@@ -11,14 +11,14 @@ class Request(Document):
 		self.accepted_delivery()
 	
 	def accepted_delivery(self):
-		if self.status == "Accepted":
+		if self.status in ["Accepted","Cancel","Store Cancel" , "Delivery Cancel"]:
 			doc = frappe.get_doc("Request Delivery" , self.request_delivery)
 			doc.delivery = self.delivery
 			
 			doc.lat = frappe.get_value("Delivery",self.delivery,'pointer_x')
 			doc.lon = frappe.get_value("Delivery",self.delivery,'pointer_y')
 			
-			doc.status = "Accepted"
+			doc.status = self.status
 
 			for order in doc.order_request:
 				order_obj = frappe.get_doc("Order",order.get("order"))

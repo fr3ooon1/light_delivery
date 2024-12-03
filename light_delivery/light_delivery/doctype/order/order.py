@@ -118,7 +118,7 @@ class Order(Document):
 
 			
 			
-		if self.status in ['Delivered','Return to store']:
+		if self.status in ['Delivered','Return to store'] and self.order_finish == 0:
 			self.finish_order()
 	
 
@@ -356,6 +356,7 @@ class Order(Document):
 			doc.order = self.name
 			doc.save(ignore_permissions=True)
 			doc.submit()
+		self.order_finish = 1
 		frappe.db.commit()
 
 

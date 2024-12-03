@@ -46,7 +46,11 @@
   "column_break_tpje",
   "delivery",
   "store",
-  "valuation"
+  "valuation",
+  "section_break_xvve",
+  "order_finish",
+  "comment",
+  "suggest"
  ],
  "fields": [
   {
@@ -256,11 +260,31 @@
    "columns": 10,
    "fieldname": "column_break_yvim",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_xvve",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "order_finish",
+   "fieldtype": "Check",
+   "label": "Order Finish"
+  },
+  {
+   "fieldname": "comment",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "suggest",
+   "fieldtype": "Small Text",
+   "label": "Suggest"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-20 13:59:06.404391",
+ "modified": "2024-12-03 13:08:47.551761",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",

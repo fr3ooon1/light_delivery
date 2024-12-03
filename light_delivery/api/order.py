@@ -654,3 +654,29 @@ def change_order_status_del(*args, **kwargs):
 		frappe.log_error(message=str(e), title=_("Error in change_order_status_del"))
 		frappe.local.response['http_status_code'] = 500
 		frappe.local.response['message'] = _("An error occurred while updating the order.")
+
+
+@frappe.whitelist(allow_guest=True)
+def rate_order_del(*args,**kwargs):
+	try:
+		order = kwargs.get("orderId")
+		if not order :
+			frappe.local.response['http_status_code'] = 500
+			frappe.local.response['message'] = _("""Please set the order ID""")
+			return
+		
+		eval = float(kwargs.get("deliveryEval") or 0) / 5
+		if eval:
+			doc = frappe.get_doc("Order",order)
+			doc.valuation = eval
+			doc.suggest = kwargs.get("deliverySugg")
+			doc.comment = kwargs.get("deliveryComment")
+			doc.save(ignore_permissions=True)
+			frappe.db.commit()
+			frappe.local.response['http_status_code'] = 200
+			frappe.local.response['message'] = _("""The Delivery Rated""")
+
+	except Exception as e:
+		frappe.log_error(message=str(e), title=_("Error in rate_order_del"))
+		frappe.local.response['http_status_code'] = 500
+		frappe.local.response['message'] = _(e)

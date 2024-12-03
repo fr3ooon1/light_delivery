@@ -13,6 +13,15 @@ data = {
                 "read_only":1
 				},
 			],
+			'Journal Entry':[	
+                {
+				"label": "Finished Order",
+				"fieldname": "finished_order",
+				"fieldtype": "Check",
+				"insert_after": "multi_currency" ,
+                "read_only":1
+				},
+			],
             'Address':[
                 {
 				"label": "latitude",

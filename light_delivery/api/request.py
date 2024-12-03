@@ -259,19 +259,19 @@ def cancel_request(*args, **kwargs):
 	try:
 		request_obj = frappe.get_doc("Request Delivery", request_id)
 		request_search_obj = frappe.get_doc("Request", request_id)
-		if request_search_obj.status == "Waiting for Delivery":
-			request_search_obj.delete()
+		# if request_search_obj.status == "Waiting for Delivery":
+		# 	request_search_obj.delete()
 
 		# Determine the type of cancellation
 		if cancel_type == "store":
-			request_obj.status = "Store Cancel"
+			# request_obj.status = "Store Cancel"
 			cancel_orders(request_obj, "Store")
 			msg = _("Request has been canceled by Store.")
 			delivery_user = frappe.get_value("Delivery", request_obj.delivery, "user")
 			notification_key = frappe.get_value("User", delivery_user, "notification_key")
 
 		elif cancel_type == "delivery":
-			request_obj.status = "Delivery Cancel"
+			# request_obj.status = "Delivery Cancel"
 			cancel_orders(request_obj, "Delivery")
 			msg = _("Request has been canceled by Delivery.")
 			store_user = frappe.get_value("Store", request_obj.store, "user")
