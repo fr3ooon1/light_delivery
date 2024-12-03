@@ -14,6 +14,7 @@ class RequestDelivery(Document):
 		self.calculate_orders()
 		self.follow_request_status()
 	def validate(self):
+		self.rate_store()
 		if self.status not in ['Pending' ,'Accepted','Collect Money']:
 			self.follow_request_status()
 			
@@ -53,6 +54,15 @@ class RequestDelivery(Document):
 			total_request_amount += frappe.get_value("Order" , self.get('order_request')[i].get("order") , "total_order")
 		self.total = total_request_amount
 
+
+	def rate_store(self):
+		if self.delivery:
+			if self.valuation and frappe.db.exists("Store",self.store):
+				del_obj = frappe.get_doc("Store" , self.store)
+				del_obj.num_rates = float(del_obj.num_rates or 0) + 1
+				del_obj.total_rates = float(del_obj.total_rates or 0) + float(self.valuation or 0)
+				del_obj.save(ignore_permissions=True)
+				frappe.db.commit()
 
 
 	def pay_to_store(self):
@@ -105,6 +115,7 @@ class RequestDelivery(Document):
 			frappe.db.commit()
 
 	def close_request(self):
+		self.finish_request = 1
 		if self.delivery:
 			doc = frappe.get_doc("Delivery",self.delivery)
 			doc.status = "Offline"

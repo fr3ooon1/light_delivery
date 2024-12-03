@@ -42,12 +42,13 @@ def request_history(*args, **kwargs):
 	requests = frappe.get_list(
 		"Request Delivery",
 		filters={"delivery": delivery},
-		fields=['name as id', 'status', 'store', 'number_of_order', 'request_date','total']
+		fields=['name as id', 'status', 'store', 'number_of_order', 'request_date','total','valuation']
 	)
 	for req in requests:
 		request_del = frappe.get_doc("Request Delivery", req.get('id'))
 		order_list = request_del.get("order_request")
 		order_details = []
+		req['valuation'] = int(float(request_del.valuation or 0) * 5 )
 
 		for order in order_list:
 			res = frappe.get_value(
@@ -429,7 +430,30 @@ def get_request_details_for_del(*args, **kwargs):
 		frappe.local.response['message'] = _("No request for this delivery.")	
 
 
+@frappe.whitelist(allow_guest=True)
+def rate_suggest_store(*args,**kwargs):
+	try:
+		request = kwargs.get("reqId")
+		if not request :
+			frappe.local.response['http_status_code'] = 500
+			frappe.local.response['message'] = _("""Please set the request ID""")
+			return
 		
+		eval = float(kwargs.get("storeEval") or 0) / 5
+		if eval:
+			doc = frappe.get_doc("Request Delivery",request)
+			doc.valuation = eval
+			doc.suggest = kwargs.get("storeSugg")
+			doc.comment = kwargs.get("storeComment")
+			doc.save(ignore_permissions=True)
+			frappe.db.commit()
+			frappe.local.response['http_status_code'] = 200
+			frappe.local.response['message'] = _("""The Store Rated""")
+
+	except Exception as e:
+		frappe.log_error(message=str(e), title=_("Error in rate_suggest_store"))
+		frappe.local.response['http_status_code'] = 500
+		frappe.local.response['message'] = _(e)
 		
 
 

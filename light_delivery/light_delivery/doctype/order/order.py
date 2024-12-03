@@ -265,6 +265,7 @@ class Order(Document):
 				del_obj.num_rates = float(del_obj.num_rates or 0) + 1
 				del_obj.total_rates = float(del_obj.total_rates or 0) + float(self.valuation or 0)
 				del_obj.save(ignore_permissions=True)
+				frappe.db.commit()
 
 
 	def order_status(self):

@@ -20,7 +20,12 @@
   "lon",
   "section_break_oyzm",
   "order_request",
-  "request_log"
+  "request_log",
+  "section_break_ucdf",
+  "finish_request",
+  "valuation",
+  "suggest",
+  "comment"
  ],
  "fields": [
   {
@@ -98,11 +103,36 @@
    "fieldname": "lon",
    "fieldtype": "Data",
    "label": "lon"
+  },
+  {
+   "fieldname": "section_break_ucdf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "finish_request",
+   "fieldtype": "Check",
+   "label": "Finish Request"
+  },
+  {
+   "fieldname": "valuation",
+   "fieldtype": "Rating",
+   "label": "Valuation"
+  },
+  {
+   "fieldname": "suggest",
+   "fieldtype": "Small Text",
+   "label": "Suggest"
+  },
+  {
+   "fieldname": "comment",
+   "fieldtype": "Small Text",
+   "label": "Comment"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-06 16:11:38.102469",
+ "modified": "2024-12-03 14:45:21.163230",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Request Delivery",

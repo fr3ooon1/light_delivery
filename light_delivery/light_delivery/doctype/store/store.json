@@ -24,7 +24,11 @@
   "minimum_price",
   "rate_of_km",
   "column_break_rigx",
-  "store_discount"
+  "store_discount",
+  "section_break_zreq",
+  "num_of_rates",
+  "total_rates",
+  "valuation"
  ],
  "fields": [
   {
@@ -134,11 +138,32 @@
    "fieldname": "show_in_home",
    "fieldtype": "Check",
    "label": "Show in Home"
+  },
+  {
+   "fieldname": "section_break_zreq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "num_of_rates",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Num of Rates"
+  },
+  {
+   "fieldname": "total_rates",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Total Rates"
+  },
+  {
+   "fieldname": "valuation",
+   "fieldtype": "Rating",
+   "label": "Valuation"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-04 14:50:07.662645",
+ "modified": "2024-12-03 14:49:13.128823",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Store",
