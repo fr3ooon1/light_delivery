@@ -48,7 +48,7 @@ def request_history(*args, **kwargs):
 		request_del = frappe.get_doc("Request Delivery", req.get('id'))
 		order_list = request_del.get("order_request")
 		order_details = []
-		req['valuation'] = int(float(request_del.valuation or 0) * 5 )
+		req['valuation'] = float(float(request_del.valuation or 0) * 5 )
 
 		for order in order_list:
 			res = frappe.get_value(
