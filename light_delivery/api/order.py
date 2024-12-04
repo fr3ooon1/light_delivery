@@ -361,10 +361,10 @@ def get_order_history(status = None):
 		orders = []
 
 		if status == None or status == "All" or status == "ALL" or status == "all":
-			orders = frappe.get_list("Order" , {"store":store} ,['name', 'creation', 'status', 'total_order'])
+			orders = frappe.get_list("Order" , {"store":store} ,['name', 'creation', 'status', 'total_order','valuation'])
 		else:
 			status = status.strip("[]").split(",")
-			orders = frappe.get_list("Order" , filters = {'status':['in', status],"store":store} ,  fields=['name', 'creation', 'status' , 'total_order'])
+			orders = frappe.get_list("Order" , filters = {'status':['in', status],"store":store} ,  fields=['name', 'creation', 'status' , 'total_order','valuation'])
 		
 		
 		for order in orders:
@@ -372,6 +372,8 @@ def get_order_history(status = None):
 				order['creation'] = order.get('creation').strftime('%Y-%m-%d %H:%M:%S')
 			else:
 				order['creation'] = datetime.strptime(order.get('creation'), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
+			
+			order['valuation'] = float(order['valuation'] or 0) * 5
 			
 		today = nowdate()
 		count_today = frappe.db.count('Order', filters={'creation': ['>=', today]})
