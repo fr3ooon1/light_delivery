@@ -265,14 +265,14 @@ def cancel_request(*args, **kwargs):
 
 		# Determine the type of cancellation
 		if cancel_type == "store":
-			# request_obj.status = "Store Cancel"
+			request_search_obj.status = "Store Cancel"
 			cancel_orders(request_obj, "Store")
 			msg = _("Request has been canceled by Store.")
 			delivery_user = frappe.get_value("Delivery", request_obj.delivery, "user")
 			notification_key = frappe.get_value("User", delivery_user, "notification_key")
 
 		elif cancel_type == "delivery":
-			# request_obj.status = "Delivery Cancel"
+			request_search_obj.status = "Delivery Cancel"
 			cancel_orders(request_obj, "Delivery")
 			msg = _("Request has been canceled by Delivery.")
 			store_user = frappe.get_value("Store", request_obj.store, "user")
@@ -297,7 +297,7 @@ def cancel_request(*args, **kwargs):
 
 		# Save changes and commit
 		request_obj.save(ignore_permissions=True)
-		request_search_obj.save(ignore_permissions=True)
+		request_search_obj.db_update()
 		frappe.db.commit()
 
 		frappe.local.response['http_status_code'] = 200
