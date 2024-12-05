@@ -35,7 +35,6 @@
   "store_fees",
   "discount",
   "net_store_fees",
-  "column_break_wbkz",
   "column_break_mhwx",
   "delivery_fees",
   "tax",
@@ -72,7 +71,8 @@
    "fieldname": "order_type",
    "fieldtype": "Link",
    "label": "Order Type",
-   "options": "Order Type"
+   "options": "Order Type",
+   "read_only": 1
   },
   {
    "fieldname": "zone_address",
@@ -89,7 +89,8 @@
    "fieldname": "status",
    "fieldtype": "Link",
    "label": "Status",
-   "options": "Status"
+   "options": "Status",
+   "read_only": 1
   },
   {
    "fieldname": "total_order",
@@ -221,10 +222,6 @@
    "label": "Net Delivery Fees"
   },
   {
-   "fieldname": "column_break_wbkz",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "request",
    "fieldtype": "Link",
    "label": "Request",
@@ -284,7 +281,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-03 13:08:47.551761",
+ "modified": "2024-12-05 14:50:05.238093",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",
