@@ -296,7 +296,7 @@ def cancel_request(*args, **kwargs):
 				error.insert(ignore_permissions=True)
 
 		# Save changes and commit
-		request_obj.save(ignore_permissions=True)
+		# request_obj.save(ignore_permissions=True)
 		request_search_obj.db_update()
 		frappe.db.commit()
 
