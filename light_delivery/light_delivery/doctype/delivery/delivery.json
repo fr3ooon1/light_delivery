@@ -35,7 +35,8 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Pending\nAvaliable\nInorder\nOffline\nHold"
+   "options": "Pending\nAvaliable\nInorder\nOffline\nHold",
+   "read_only": 1
   },
   {
    "fieldname": "user",
@@ -127,7 +128,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-12 16:00:30.291745",
+ "modified": "2024-12-05 14:56:25.842668",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Delivery",
