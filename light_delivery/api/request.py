@@ -42,7 +42,8 @@ def request_history(*args, **kwargs):
 	requests = frappe.get_list(
 		"Request Delivery",
 		filters={"delivery": delivery},
-		fields=['name as id', 'status', 'store', 'number_of_order', 'request_date','total','valuation']
+		fields=['name as id', 'status', 'store', 'number_of_order', 'request_date','total','valuation'],
+		ignore_permissions=True
 	)
 	for req in requests:
 		request_del = frappe.get_doc("Request Delivery", req.get('id'))
