@@ -1,0 +1,244 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap');
+
+body {
+    font-family: "Cairo", sans-serif !important;
+
+    --btn-primary: #f18b26;
+    --primary: #f18b26;
+}
+
+/* Components */
+input[type="checkbox"]:checked {
+    background-image: url("data:image/svg+xml, <svg viewBox='0 0 8 7' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M1 4.00001L2.66667 5.80001L7 1.20001' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>"), linear-gradient(var(--primary), var(--primary));
+}
+
+/* Main */
+
+body {
+    font-size: 15px;
+    background-color: #f3f6f9;
+    font-weight: 600
+}
+
+a {
+    color: #666;
+    font-weight: 600;
+}
+
+.control-label,
+.grid-heading-row {
+    font-size: 16px;
+    font-weight: 800;
+}
+
+span.sidebar-item-label {
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.small,
+small {
+    font-size: 95%;
+}
+
+.h6.uppercase,
+h6.uppercase {
+    font-weight: 600;
+    font-size: 11.5px;
+}
+
+.dropdown-help {
+    display: none !important
+}
+
+.dt-row--highlight {
+    background-color: red !important;
+}
+
+.dt-row--highlight .dt-cell {
+    background-color: #80ccff !important;
+}
+
+/* Navigation Bar */
+.navbar-expand .navbar-nav>li>a {
+    color: #fff !important;
+}
+
+.navbar-expand .navbar-nav>li>a:hover {
+    color: #ddd;
+}
+
+.navbar-expand {
+    /* background-color: #0e4194 !important; */
+    background: linear-gradient(#f18b26, #f18b26) !important;
+}
+
+/* Widgets */
+[data-theme=light] .widget {
+    background-color: white;
+    border: none;
+    box-shadow: 0px 3px 12px 0px #e8eafcad, 0 3px 3px -2px #461a7714;
+    padding: 5px;
+}
+
+[data-theme=dark] .widget {
+    background-color: #111;
+    border: none;
+    box-shadow: 0px 3px 12px 0px #1d1d1dad, 0 3px 3px -2px #461a7714;
+    padding: 5px;
+}
+
+.widget .widget-head .widget-title {
+    font-size: 14px;
+    color: #2050bb;
+}
+
+.widget.shortcut-widget-box .widget-head .widget-title i {
+    color: #a5488a;
+}
+
+/* Sidebar */
+.desk-container .desk-sidebar .sidebar-item {
+    font-size: 13px;
+    font-weight: 600;
+    color: #f18b26;
+}
+
+.desk-container .desk-sidebar .sidebar-item .selected,
+.desk-container .desk-sidebar .sidebar-item:hover {
+    /* color: white;
+    font-weight: 800;
+    background: linear-gradient(to right, #f18b26, #f18b26) !important; */
+}
+
+.disabled {
+    color: white;
+}
+
+.selected {
+    color: white !important;
+    font-weight: 800;
+    background: linear-gradient(to right, #f18b26, #df750b) !important;
+}
+
+.selected:hover {
+    color: white;
+    font-weight: 800;
+    background: linear-gradient(to right, #f18b26, #df750b) !important;
+}
+
+.layout-side-section {
+    font-size: 14px;
+}
+
+.uppercase {
+    color: #a5488a;
+}
+
+.navbar .navbar-home img {
+    filter: brightness(0) invert(1);
+    max-height: 35px;
+}
+
+/* Dropdowns */
+.dropdown-menu>li>a {
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Page Heading */
+.page-head {
+    border-bottom: none !important;
+    box-shadow: 0 1px 10px 1px rgba(115, 108, 203, 0.1);
+}
+
+.page-title .title-text {
+    color: #0b336c;
+    font-size: 22px;
+}
+
+#icon-notification {
+    color: #fff;
+    font-weight: 700;
+}
+
+.widget-shadow {
+    background-color: #ebeef0;
+
+}
+
+/*Main Section */
+.layout-main-section {
+    border: 1px solid #e4e4e4;
+    background-color: white;
+    /* padding: 20px; */
+}
+
+.widget-group {
+    border: 1px solid #e4e4e4;
+    background-color: white;
+    padding: 20px;
+}
+
+.list-row-head {
+    background-color: #f18b26 !important;
+    color: #ffff !important;
+    font-weight: 600;
+    border-bottom: 1px solid #f18b26 !important;
+}
+
+/* Buttons */
+.btn-primary {
+    /* background-color: #ffa00a; */
+    /* border-color: #f18b26; */
+}
+
+.control-label,
+.grid-heading-row {
+    font-size: 13px;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary.focus,
+.btn-primary:active,
+.btn-primary.active,
+.open>.dropdown-toggle.btn-primary {
+    /* background-color: #ffa00a; */
+    /* border-color:#f18b26; */
+}
+
+.indicator-right.blue:after,
+.indicator.blue:before {
+    background: #f18b26;
+}
+
+/*Other Components*/
+input[type=checkbox]:checked:before {
+    color: #f18b26;
+}
+
+
+
+
+/* #footer-htm{
+    background-color: red;
+    height: 50px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+}
+					 */
+
+
+.desk-sidebar .standard-sidebar-item.selected>a {
+    color: #fff
+}
+
+.navbar-nav .nav-item.dropdown.dropdown-notifications .notifications-seen svg {
+    stroke: #fff !important;
+}

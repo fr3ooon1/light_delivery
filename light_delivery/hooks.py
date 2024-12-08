@@ -9,6 +9,15 @@ app_logo_url = "/assets/light_delivery/image/logo.png"
 website_route_rules = [
     # {"from_route": "/custom_search", "to_route": "api/method/light_delivery.api.order.search_by_phone"},
 ]
+
+app_include_css = "/assets/light_delivery/css/light_delivery.css"
+# app_include_js = "/assets/dynamic_15/js/dynamic_15.js"
+
+# include js, css files in header of web template
+web_include_css = [
+    "/assets/light_delivery/css/light_delivery.css",
+    "/assets/light_delivery/css/light_delivery_login.css"
+                   ]
 # Includes in <head>
 # ------------------
 
