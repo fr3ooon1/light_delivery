@@ -96,40 +96,45 @@ def search_delivary(cash, store=None):
             
             # Fetch deliveries
             deliveries = frappe.db.sql("""
-                SELECT 
-                    d.name AS name, 
-                    d.user AS user, 
-                    d.pointer_x AS pointer_x, 
-                    d.pointer_y AS pointer_y, 
-                    u.notification_key AS notification_key, 
-                    d.cash AS cash,
-                    (
-                        SELECT 
-                            COALESCE(SUM(jea.credit_in_account_currency), 0) - 
-                            COALESCE(SUM(jea.debit_in_account_currency), 0)
-                        FROM 
-                            `tabJournal Entry Account` AS jea 
-                        WHERE 
-                            jea.party = d.delivery_name
-                    ) + d.cash AS wallet
-                FROM 
-                    `tabDelivery` d
-                JOIN 
-                    `tabUser` u ON d.user = u.name
-                WHERE 
-                    d.status = 'Available' 
-                    AND (
-                        d.cash + (
-                            SELECT 
-                                COALESCE(SUM(jea.credit_in_account_currency), 0) - 
-                                COALESCE(SUM(jea.debit_in_account_currency), 0)
-                            FROM 
-                                `tabJournal Entry Account` AS jea 
-                            WHERE 
-                                jea.party = d.delivery_name
-                        )
-                    ) >= %s
-            """, (cash,), as_dict=True)
+					SELECT 
+						d.name AS name, 
+						d.user AS user, 
+						d.pointer_x AS pointer_x, 
+						d.pointer_y AS pointer_y, 
+						u.notification_key AS notification_key, 
+						d.cash AS cash,
+						(
+							COALESCE(
+								(SELECT 
+									SUM(jea.credit_in_account_currency) - SUM(jea.debit_in_account_currency)
+								FROM 
+									`tabJournal Entry Account` AS jea
+								WHERE 
+									jea.party = d.delivery_name
+								), 
+								0
+							) + d.cash
+						) AS wallet
+					FROM 
+						`tabDelivery` d
+					JOIN 
+						`tabUser` u ON d.user = u.name
+					WHERE 
+						d.status = 'Available' 
+						AND (
+							d.cash + COALESCE(
+								(SELECT 
+									SUM(jea.credit_in_account_currency) - SUM(jea.debit_in_account_currency)
+								FROM 
+									`tabJournal Entry Account` AS jea
+								WHERE 
+									jea.party = d.delivery_name
+								), 
+								0
+							)
+						) >= %s
+				""", (cash,), as_dict=True)
+
 
             # Calculate distances and filter deliveries
             distance = []
