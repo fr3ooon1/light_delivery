@@ -95,7 +95,7 @@ def search_delivary(cash, store=None):
                 frappe.throw(_("Invalid store location format for Store: {0}").format(store))
             
             # Fetch deliveries
-            deliveries = frappe.db.sql("""
+            deliveries = frappe.db.sql(f"""
 					SELECT 
 						d.name AS name, 
 						d.user AS user, 
@@ -132,8 +132,8 @@ def search_delivary(cash, store=None):
 								), 
 								0
 							)
-						) >= %s
-				""", (cash,), as_dict=True)
+						) >= {cash}
+				""", as_dict=True)
 
 
             # Calculate distances and filter deliveries
