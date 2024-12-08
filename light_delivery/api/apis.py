@@ -78,24 +78,25 @@ def get_balance(party):
 
 @frappe.whitelist(allow_guest=False)
 def search_delivary(cash, store=None):
-    try:
-        # Get the store assigned to the current user if not provided
-        if not store:
-            store = frappe.get_value("Store", {"user": frappe.session.user}, "name")
-        
-        # Check if the store exists
-        if frappe.db.exists("Store", store):
-            store_doc = frappe.get_doc("Store", store)
-            
-            # Parse the store location
-            try:
-                store_location = json.loads(store_doc.store_location)
-                store_coord = store_location.get("features")[0].get("geometry").get("coordinates")
-            except (KeyError, ValueError, IndexError):
-                frappe.throw(_("Invalid store location format for Store: {0}").format(store))
-            
-            # Fetch deliveries
-            deliveries = frappe.db.sql(f"""
+	try:
+		cash = float(cash or 0)
+		# Get the store assigned to the current user if not provided
+		if not store:
+			store = frappe.get_value("Store", {"user": frappe.session.user}, "name")
+		
+		# Check if the store exists
+		if frappe.db.exists("Store", store):
+			store_doc = frappe.get_doc("Store", store)
+			
+			# Parse the store location
+			try:
+				store_location = json.loads(store_doc.store_location)
+				store_coord = store_location.get("features")[0].get("geometry").get("coordinates")
+			except (KeyError, ValueError, IndexError):
+				frappe.throw(_("Invalid store location format for Store: {0}").format(store))
+			
+			# Fetch deliveries
+			deliveries = frappe.db.sql(f"""
 					SELECT 
 						d.name AS name, 
 						d.user AS user, 
@@ -132,48 +133,48 @@ def search_delivary(cash, store=None):
 								), 
 								0
 							)
-						) >= {cash}
+						) >= {cash} ; 
 				""", as_dict=True)
 
 
-            # Calculate distances and filter deliveries
-            distance = []
-            for delivery in deliveries:
-                if delivery['pointer_x'] is not None and delivery['pointer_y'] is not None:
-                    del_coord = [float(delivery['pointer_x']), float(delivery['pointer_y'])]
-                    dist = float(haversine(coord1=del_coord, coord2=store_coord) or 0) * 1000  # Convert to meters
-                    
-                    delivery_data = {
-                        'distance': dist,
-                        'user': delivery.get('user'),
-                        'name': delivery.get('name'),
-                        'coordination': del_coord,
-                        'notification_key': delivery.get("notification_key"),
-                    }
-                    distance.append(delivery_data)
+			# Calculate distances and filter deliveries
+			distance = []
+			for delivery in deliveries:
+				if delivery['pointer_x'] is not None and delivery['pointer_y'] is not None:
+					del_coord = [float(delivery['pointer_x']), float(delivery['pointer_y'])]
+					dist = float(haversine(coord1=del_coord, coord2=store_coord) or 0) * 1000  # Convert to meters
+					
+					delivery_data = {
+						'distance': dist,
+						'user': delivery.get('user'),
+						'name': delivery.get('name'),
+						'coordination': del_coord,
+						'notification_key': delivery.get("notification_key"),
+					}
+					distance.append(delivery_data)
 
-            # Sort and filter by distance
-            sorted_deliveries = sorted(distance, key=lambda x: x['distance'])
-            result = [entry for entry in sorted_deliveries if entry["distance"] <= 8000]  # Filter within 8000 meters
+			# Sort and filter by distance
+			sorted_deliveries = sorted(distance, key=lambda x: x['distance'])
+			result = [entry for entry in sorted_deliveries if entry["distance"] <= 8000]  # Filter within 8000 meters
 
-            if not result:
-                frappe.local.response['http_status_code'] = 400
-                return {"message": _("No deliveries found within 8km.")}
+			if not result:
+				frappe.local.response['http_status_code'] = 400
+				return {"message": _("No deliveries found within 8km.")}
 
-            return result
-        else:
-            frappe.local.response['http_status_code'] = 400
-            return {
-                "message": _("There is no store assigned to this user: {0}").format(frappe.session.user)
-            }
+			return result
+		else:
+			frappe.local.response['http_status_code'] = 400
+			return {
+				"message": _("There is no store assigned to this user: {0}").format(frappe.session.user)
+			}
 
-    except Exception as e:
-        frappe.log_error(message=str(e), title=_('Error in search_delivary'))
-        frappe.local.response['http_status_code'] = 400
-        return {
-            "status_code": 500,
-            "message": str(e)
-        }
+	except Exception as e:
+		frappe.log_error(message=str(e), title=_('Error in search_delivary'))
+		frappe.local.response['http_status_code'] = 400
+		return {
+			"status_code": 500,
+			"message": str(e)
+		}
 
 
 
