@@ -35,6 +35,9 @@ def sending_request():
 			
 			if not doc.deliveries:
 				new_deliveries = search_delivary(cash=doc.cash, store=doc.store)
+
+				if not new_deliveries:
+					return True
 				
 				for delivery in new_deliveries:
 					doc.append("deliveries", {

@@ -151,7 +151,7 @@ def search_delivary(cash, store=None):
 
 			if not result:
 				frappe.local.response['http_status_code'] = 400
-				return {"message": _("No deliveries found within 8km.")}
+				return []
 
 			return result
 		else:
