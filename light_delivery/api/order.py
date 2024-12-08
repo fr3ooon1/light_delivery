@@ -112,7 +112,8 @@ def search_by_phone(phone_number , order_type = False):
 def search_by_phone_with_total(phone_number , order_type = False):
 	try:
 		res = {}
-		address = frappe.get_list("Order" , {"phone_number":phone_number},['address'] , pluck='address')
+		# address = frappe.get_list("Order" , {"phone_number":phone_number},['address'] , pluck='address')
+		address = []
 
 		contact = frappe.get_value("Contact",{"mobile_no":phone_number})
 		customer = frappe.get_value("Dynamic Link",{"parent":contact},["name","link_name"],as_dict=1)
