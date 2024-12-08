@@ -31,7 +31,7 @@ class RequestDelivery(Document):
 		if self.status in ["Delivered" , 'Delivery Cancel' , 'Store Cancel' , 'Cancel' ]:
 			self.close_request()
 			
-		if self.status == "Collect Money":
+		if self.status == "Collect Money" and self.payed_to_store == 0:
 			self.pay_to_store()
 
 
@@ -92,6 +92,7 @@ class RequestDelivery(Document):
 					"order":f"""{self.name}"""
 					}
 			make_journal_entry(transaction)
+			self.payed_to_store = 1
 			
 
 			doc = frappe.new_doc("Transactions")

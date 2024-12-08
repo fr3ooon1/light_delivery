@@ -25,7 +25,9 @@
   "finish_request",
   "valuation",
   "suggest",
-  "comment"
+  "comment",
+  "column_break_ldhm",
+  "payed_to_store"
  ],
  "fields": [
   {
@@ -129,11 +131,21 @@
    "fieldname": "comment",
    "fieldtype": "Small Text",
    "label": "Comment"
+  },
+  {
+   "fieldname": "column_break_ldhm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "payed_to_store",
+   "fieldtype": "Check",
+   "label": "Payed To Store"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-05 14:52:18.634223",
+ "modified": "2024-12-08 10:39:29.686127",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Request Delivery",
