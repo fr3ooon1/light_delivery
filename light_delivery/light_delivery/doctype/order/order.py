@@ -177,7 +177,7 @@ class Order(Document):
 
 	def pick_up_deduction(self):
 		# return True
-
+		Deductions = frappe.get_doc(Deductions)
 		pick_up_deduction = Deductions.get("pick_up_deduction")
 		order_logs = self.get("order_log")
 		rate = 0
@@ -302,6 +302,7 @@ class Order(Document):
 	def finish_order(self):
 		amount = 0
 		total = 0
+		Deductions = frappe.get_doc(Deductions)
 
 		if self.delivery:
 			if frappe.db.exists("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category')):
@@ -424,6 +425,8 @@ class Order(Document):
 	def finish_order_with_rate(self , rate ):
 		amount = 0
 		total = 0
+
+		Deductions = frappe.get_doc(Deductions)
 
 		if self.delivery:
 			if frappe.db.exists("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category')):

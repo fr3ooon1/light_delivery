@@ -9,7 +9,7 @@ from frappe.utils import now_datetime
 # from light_delivery.api.delivery_request import get_balance
 
 COMPANY = frappe.defaults.get_defaults().get("company")
-Deductions = frappe.get_doc("Deductions")
+Deductions = "Deductions"
 
 
 

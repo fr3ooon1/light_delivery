@@ -69,6 +69,8 @@ class RequestDelivery(Document):
 		delivery_name = frappe.get_value("Delivery",self.delivery,'delivery_name')
 		balance =  float(get_balance(delivery_name) or 0)
 
+		Deductions = frappe.get_doc(Deductions)
+
 		temp = 0
 		if balance < self.total:
 			temp = balance

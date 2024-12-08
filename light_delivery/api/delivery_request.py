@@ -1,6 +1,6 @@
 import frappe
 from frappe import _
-from light_delivery.api.apis import send_notification , search_delivary ,create_error_log , Deductions
+from light_delivery.api.apis import send_notification , search_delivary ,create_error_log
 
 @frappe.whitelist(allow_guest=False)
 def update_location(*args,**kwargs):
