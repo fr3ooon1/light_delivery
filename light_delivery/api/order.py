@@ -113,6 +113,15 @@ def search_by_phone_with_total(phone_number , order_type = False):
 	try:
 		res = {}
 		address = frappe.get_list("Order" , {"phone_number":phone_number},['address'] , pluck='address')
+
+		contact = frappe.get_value("Contact",{"mobile_no":phone_number})
+		customer = frappe.get_value("Dynamic Link",{"parent":contact},["name","link_name"],as_dict=1)
+		if customer:
+			customer_name = customer.get("link_name")
+			address_name = frappe.get_value("Dynamic Link",{"link_name":customer_name,"name":["!=" , customer.get("name")]},["name","parent"],as_dict=1)
+			address_st = frappe.get_value("Address",address_name.get("parent"),"address_line1")
+			address.insert(0, address_st)
+
 		res['address'] = address
 		if order_type in ['Replacing','Refund']:
 			orders = frappe.get_list("Order" , {"phone_number":phone_number},['name','total_order'])
