@@ -4,7 +4,7 @@ app_publisher = "Muhammad Essam"
 app_description = "Delivery Mobile App"
 app_email = "mohamed.essam68.me@gmail.com"
 app_license = "mit"
-app_logo_url = "/assets/erpnext/images/logo.png"
+app_logo_url = "/assets/light_delivery/image/logo.png"
 # required_apps = []
 website_route_rules = [
     # {"from_route": "/custom_search", "to_route": "api/method/light_delivery.api.order.search_by_phone"},
@@ -241,9 +241,9 @@ override_whitelisted_methods = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
-# after_install = [
-#     "light_delivery.setup.after_install",
-#     ]
+after_install = [
+    "light_delivery.setup.after_install",
+    ]
 
 after_migrate = [
     "light_delivery.setup.after_install",
