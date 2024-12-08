@@ -98,6 +98,8 @@ def create_status():
 		},
 	]
 	for i in status:
+		if not frappe.db.exists("Doctype","Status"):
+			return True
 		if not frappe.db.exists("Status",i.get("status")):
 			status = frappe.new_doc("Status")
 			status.status = i.get("status")
