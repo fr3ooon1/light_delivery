@@ -10,9 +10,13 @@ from light_delivery.api.apis import search_delivary , make_journal_entry , Deduc
 
 
 class RequestDelivery(Document):
+
+
 	def before_naming(self):
 		self.calculate_orders()
 		self.follow_request_status()
+
+
 	def validate(self):
 		self.rate_store()
 		if self.status not in ['Pending' ,'Accepted','Collect Money']:
@@ -69,7 +73,7 @@ class RequestDelivery(Document):
 		delivery_name = frappe.get_value("Delivery",self.delivery,'delivery_name')
 		balance =  float(get_balance(delivery_name) or 0)
 
-		Deductions = frappe.get_doc(Deductions)
+		Deductions = frappe.get_doc("Deductions")
 
 		temp = 0
 		if balance < self.total:
