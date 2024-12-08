@@ -21,22 +21,22 @@ def create_customer_groups():
 	if not frappe.db.exists("Customer Group","Delivery"):
 		delivery = frappe.new_doc("Customer Group")
 		delivery.customer_group_name = "Delivery"
-		delivery.insert(ignore_permissions=True)
+		delivery.insert()
 
 	if not frappe.db.exists("Customer Group","Store"):
 		store = frappe.new_doc("Customer Group")
 		store.customer_group_name = "Store"
-		store.insert(ignore_permissions=True)
+		store.insert()
 
 	if not frappe.db.exists("Customer Group","End User"):
 		end_user = frappe.new_doc("Customer Group")
 		end_user.customer_group_name = "End User"
-		end_user.insert(ignore_permissions=True)
+		end_user.insert()
 	
 	if not frappe.db.exists("Customer Group","Consumer"):
 		end_user = frappe.new_doc("Customer Group")
 		end_user.customer_group_name = "Consumer"
-		end_user.insert(ignore_permissions=True)
+		end_user.insert()
 	
 
 def create_status():
@@ -105,7 +105,7 @@ def create_status():
 			status.status = i.get("status")
 			status.status_name_in_arabic = i.get("status_name_in_arabic")
 			status.index = str(i.get("index"))
-			status.insert(ignore_permissions=True)
+			status.insert()
 
 
 @frappe.whitelist(allow_guest=True)
