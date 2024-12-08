@@ -241,9 +241,9 @@ override_whitelisted_methods = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
-after_install = [
-    "light_delivery.setup.after_install",
-    ]
+# after_install = [
+#     "light_delivery.setup.after_install",
+#     ]
 
 after_migrate = [
     "light_delivery.setup.after_install",
