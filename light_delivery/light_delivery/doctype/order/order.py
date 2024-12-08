@@ -317,11 +317,13 @@ class Order(Document):
 					total = amount if self.status == "Delivered" else float(amount or 0) * float(Deductions.rate2 or 1)
 				total = total - (total / 100 * self.discount)
 				self.delivery_fees = total
-				tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
+
+
+				# tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
 				# tax_rate = float(tax or 0) / total
-				tax_rate = (total * tax / 100)
-				self.tax = tax_rate
-				total = total - tax_rate 
+				# tax_rate = (total * tax / 100)
+				# self.tax = tax_rate
+				# total = total - tax_rate 
 
 				
 				self.net_delivery_fees = total
@@ -346,7 +348,17 @@ class Order(Document):
 			else:
 				total = amount if self.status == "Delivered" else float(amount or 0) * float(Deductions.rate2 or 1)
 			self.store_fees = total
+
+			tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
+			tax_rate = (total * tax / 100)
+			self.tax = tax_rate
+			total = total + tax_rate 
+
+
 			total = total - (total / 100 * self.discount)
+
+			
+
 			self.net_store_fees = total
 
 			doc = frappe.new_doc("Transactions")
@@ -375,7 +387,20 @@ class Order(Document):
 			}
 		if self.net_store_fees > 0:
 			make_journal_entry(store)
+			
+		tax = {
+			"account_credit": Deductions.tax_account,
+			"amount_credit": self.tax,
 
+			"account_debit": Deductions.store_account,
+			"party_type_debit": "Customer",
+			"party_debit": frappe.get_value("Store",self.store,'username'),
+			"amount_debit":self.tax,
+
+			"order":self.name
+			}
+		if self.tax > 0 :
+			make_journal_entry(tax)
 
 		delivery = {
 			"account_debit": Deductions.expens_account,
@@ -408,19 +433,6 @@ class Order(Document):
 		if self.delivery_fees > 0:
 			make_journal_entry(prof_delivery)
 		
-		tax = {
-			"account_credit": Deductions.tax_account,
-			"amount_credit": self.tax,
-
-			"account_debit": Deductions.balance,
-			"party_type_debit": "Supplier",
-			"party_debit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
-			"amount_debit":self.tax,
-
-			"order":self.name
-			}
-		if self.tax > 0 :
-			make_journal_entry(tax)
 
 	def finish_order_with_rate(self , rate ):
 		amount = 0
@@ -439,10 +451,11 @@ class Order(Document):
 
 				total =(total - (total / 100 * self.discount))
 				self.delivery_fees = total 
-				tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
-				tax_rate = (total * tax / 100)
-				self.tax = tax_rate
-				total = total - tax_rate 
+
+				# tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
+				# tax_rate = (total * tax / 100)
+				# self.tax = tax_rate
+				# total = total - tax_rate 
 
 				
 				self.net_delivery_fees = total
@@ -465,6 +478,12 @@ class Order(Document):
 			total = float(store.minimum_price or 0) * rate
 			
 			self.store_fees = total
+
+			tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
+			tax_rate = (total * tax / 100)
+			self.tax = tax_rate
+			total = total + tax_rate 
+
 			total = total - (total / 100 * self.discount)
 			self.net_store_fees = total
 
@@ -493,6 +512,20 @@ class Order(Document):
 			}
 		if self.net_store_fees > 0:
 			make_journal_entry(store)
+		
+		tax = {
+			"account_credit": Deductions.tax_account,
+			"amount_credit": self.tax,
+
+			"account_debit": Deductions.store_account,
+			"party_type_debit": "Customer",
+			"party_debit": frappe.get_value("Store",self.store,'username'),
+			"amount_debit":self.tax,
+
+			"order":self.name
+			}
+		if self.tax > 0 :
+			make_journal_entry(tax)
 
 
 		delivery = {
@@ -526,16 +559,3 @@ class Order(Document):
 		if self.delivery_fees > 0:
 			make_journal_entry(prof_delivery)
 		
-		tax = {
-			"account_credit": Deductions.tax_account,
-			"amount_credit": self.tax,
-
-			"account_debit": Deductions.balance,
-			"party_type_debit": "Supplier",
-			"party_debit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
-			"amount_debit":self.tax,
-
-			"order":self.name
-			}
-		if self.tax > 0 :
-			make_journal_entry(tax)
