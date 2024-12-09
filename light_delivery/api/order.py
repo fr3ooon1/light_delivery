@@ -598,7 +598,7 @@ def change_order_status_del(*args, **kwargs):
 	order = kwargs.get("order")
 	status = kwargs.get("status")
 	notification_key = None
-	Deductions = frappe.get_doc(Deductions)
+	Deductions = frappe.get_doc("Deductions")
 
 	if not order or not status:
 		frappe.local.response['http_status_code'] = 400
