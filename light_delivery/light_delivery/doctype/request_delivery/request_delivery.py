@@ -11,6 +11,8 @@ from light_delivery.api.apis import search_delivary , make_journal_entry , Deduc
 
 class RequestDelivery(Document):
 
+	Deductions = frappe.get_doc(Deductions)
+
 
 	def before_naming(self):
 		self.calculate_orders()
