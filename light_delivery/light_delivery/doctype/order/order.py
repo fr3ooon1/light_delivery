@@ -378,12 +378,12 @@ class Order(Document):
 
 		store = {
 			"account_credit": Deductions.light_account,
-			"amount_credit":self.net_store_fees,
+			"amount_credit":self.store_fees,
 
 			"account_debit": Deductions.store_account,
 			"party_type_debit": "Customer",
 			"party_debit": frappe.get_value("Store",self.store,'username'),
-			"amount_debit": self.net_store_fees,
+			"amount_debit": self.store_fees,
 
 			"order":self.name
 			}
