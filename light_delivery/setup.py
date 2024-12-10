@@ -18,25 +18,26 @@ def create_domain_list():
 
 
 def create_customer_groups():
-	if not frappe.db.exists("Customer Group","Delivery"):
-		delivery = frappe.new_doc("Customer Group")
-		delivery.customer_group_name = "Delivery"
-		delivery.insert()
+	if frappe.db.exists("DocType","Customer Group"):
+		if not frappe.db.exists("Customer Group","Delivery"):
+			delivery = frappe.new_doc("Customer Group")
+			delivery.customer_group_name = "Delivery"
+			delivery.insert()
 
-	if not frappe.db.exists("Customer Group","Store"):
-		store = frappe.new_doc("Customer Group")
-		store.customer_group_name = "Store"
-		store.insert()
+		if not frappe.db.exists("Customer Group","Store"):
+			store = frappe.new_doc("Customer Group")
+			store.customer_group_name = "Store"
+			store.insert()
 
-	if not frappe.db.exists("Customer Group","End User"):
-		end_user = frappe.new_doc("Customer Group")
-		end_user.customer_group_name = "End User"
-		end_user.insert()
-	
-	if not frappe.db.exists("Customer Group","Consumer"):
-		end_user = frappe.new_doc("Customer Group")
-		end_user.customer_group_name = "Consumer"
-		end_user.insert()
+		if not frappe.db.exists("Customer Group","End User"):
+			end_user = frappe.new_doc("Customer Group")
+			end_user.customer_group_name = "End User"
+			end_user.insert()
+		
+		if not frappe.db.exists("Customer Group","Consumer"):
+			end_user = frappe.new_doc("Customer Group")
+			end_user.customer_group_name = "Consumer"
+			end_user.insert()
 	
 
 def create_status():
