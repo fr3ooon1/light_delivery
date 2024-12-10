@@ -6,13 +6,12 @@ from frappe.model.document import Document
 from frappe import _
 import json
 from frappe.utils import now_datetime , format_duration, get_datetime , time_diff_in_seconds
-from light_delivery.api.apis import osm_v2 ,osm_v1, make_journal_entry , Deductions
+from light_delivery.api.apis import osm_v2 ,osm_v1, make_journal_entry
 from datetime import datetime
 
 
 class Order(Document):
 
-	Deductions = frappe.get_doc("Deductions")
 	def before_naming(self):
 		self.begain_order()
 
