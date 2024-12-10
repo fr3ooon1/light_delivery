@@ -3,8 +3,8 @@
 body {
     font-family: "Cairo", sans-serif !important;
 
-    --btn-primary: #f18b26;
-    --primary: #f18b26;
+    --btn-primary: #4caf50;
+    --primary: #4caf50;
 }
 
 /* Components */
@@ -70,7 +70,7 @@ h6.uppercase {
 
 .navbar-expand {
     /* background-color: #0e4194 !important; */
-    background: linear-gradient(#f18b26, #f18b26) !important;
+    background: linear-gradient(#4caf50, #4caf50) !important;
 }
 
 /* Widgets */
@@ -101,14 +101,14 @@ h6.uppercase {
 .desk-container .desk-sidebar .sidebar-item {
     font-size: 13px;
     font-weight: 600;
-    color: #f18b26;
+    color: #4caf50;
 }
 
 .desk-container .desk-sidebar .sidebar-item .selected,
 .desk-container .desk-sidebar .sidebar-item:hover {
     /* color: white;
     font-weight: 800;
-    background: linear-gradient(to right, #f18b26, #f18b26) !important; */
+    background: linear-gradient(to right, #4caf50, #4caf50) !important; */
 }
 
 .disabled {
@@ -118,13 +118,13 @@ h6.uppercase {
 .selected {
     color: white !important;
     font-weight: 800;
-    background: linear-gradient(to right, #f18b26, #df750b) !important;
+    background: linear-gradient(to right, #4caf50, #df750b) !important;
 }
 
 .selected:hover {
     color: white;
     font-weight: 800;
-    background: linear-gradient(to right, #f18b26, #df750b) !important;
+    background: linear-gradient(to right, #4caf50, #df750b) !important;
 }
 
 .layout-side-section {
@@ -182,16 +182,16 @@ h6.uppercase {
 }
 
 .list-row-head {
-    background-color: #f18b26 !important;
+    background-color: #4caf50 !important;
     color: #ffff !important;
     font-weight: 600;
-    border-bottom: 1px solid #f18b26 !important;
+    border-bottom: 1px solid #4caf50 !important;
 }
 
 /* Buttons */
 .btn-primary {
     /* background-color: #ffa00a; */
-    /* border-color: #f18b26; */
+    /* border-color: #4caf50; */
 }
 
 .control-label,
@@ -206,17 +206,17 @@ h6.uppercase {
 .btn-primary.active,
 .open>.dropdown-toggle.btn-primary {
     /* background-color: #ffa00a; */
-    /* border-color:#f18b26; */
+    /* border-color:#4caf50; */
 }
 
 .indicator-right.blue:after,
 .indicator.blue:before {
-    background: #f18b26;
+    background: #4caf50;
 }
 
 /*Other Components*/
 input[type=checkbox]:checked:before {
-    color: #f18b26;
+    color: #4caf50;
 }
 
 

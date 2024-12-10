@@ -18,6 +18,10 @@ web_include_css = [
     "/assets/light_delivery/css/light_delivery.css",
     "/assets/light_delivery/css/light_delivery_login.css"
                    ]
+website_context = {
+    "favicon": "/assets/light_delivery/image/logo.png",
+    "splash_image": "/assets/light_delivery/image/logo.png"
+    }
 # Includes in <head>
 # ------------------
 
