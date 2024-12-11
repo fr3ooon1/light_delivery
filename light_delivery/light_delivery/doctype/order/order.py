@@ -120,6 +120,8 @@ class Order(Document):
 			
 			
 		if self.status in ['Delivered','Return to store'] and self.order_finish == 0:
+			self.order_finish = 1
+			frappe.db.commit()
 			self.finish_order()
 	
 
@@ -318,29 +320,9 @@ class Order(Document):
 					total = amount if self.status == "Delivered" else float(amount or 0) * float(Deductions.rate2 or 1)
 				total = total - (total / 100 * self.discount)
 				self.delivery_fees = total
-
-
-				# tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
-				# tax_rate = float(tax or 0) / total
-				# tax_rate = (total * tax / 100)
-				# self.tax = tax_rate
-				# total = total - tax_rate 
-
 				
 				self.net_delivery_fees = total
 
-				
-
-				# doc = frappe.new_doc("Transactions")
-				# doc.party = "Delivery"
-				# doc.party_type = self.delivery
-				# doc.in_wallet = total
-				# doc.aganist = "Store"
-				# doc.aganist_from = self.store
-				# doc.order = self.name
-				# doc.save(ignore_permissions=True)
-				# doc.submit()
-		
 		if self.store:
 			store = frappe.get_doc("Store" , self.store)
 			amount = (float(self.total_distance) / 1000) * float(store.rate_of_km or 0) 
@@ -359,20 +341,6 @@ class Order(Document):
 			self.net_store_fees = total
 			self.tax = tax_rate
 			self.store_fees = discount
-
-
-			# doc = frappe.new_doc("Transactions")
-			# doc.party = "Store"
-			# doc.party_type = self.store
-			# doc.out = total
-			# doc.aganist = "Delivery"
-			# doc.aganist_from = self.delivery
-			# doc.order = self.name
-			# doc.save(ignore_permissions=True)
-			# doc.submit()
-		self.order_finish = 1
-		# frappe.db.commit()
-
 
 		store = {
 			"account_credit": Deductions.light_account,
@@ -435,7 +403,7 @@ class Order(Document):
 		
 
 	def finish_order_with_rate(self , rate ):
-		amount = 0
+
 		total = 0
 
 		Deductions = frappe.get_doc("Deductions")

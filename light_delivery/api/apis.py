@@ -16,9 +16,6 @@ Deductions = "Deductions"
 @frappe.whitelist()
 def make_journal_entry(kwargs):
 	try:
-		finished_order = 0
-		if kwargs.get("finished_order"):
-			finished_order = kwargs.get("finished_order")
 		# Create the Journal Entry document
 		doc = frappe.get_doc({
 			"doctype": "Journal Entry",
@@ -28,7 +25,6 @@ def make_journal_entry(kwargs):
 			"cheque_no": kwargs.get("order"),
 			"cheque_date": now_datetime(),
 			"posting_date": now_datetime(),
-			"finished_order":finished_order
 		})
 
 		# Append the debit entry
@@ -57,6 +53,41 @@ def make_journal_entry(kwargs):
 	except Exception as e:
 		frappe.log_error(message=str(e), title=_('Error in make_journal_entry'))
 		frappe.throw(_("An error occurred while creating the Journal Entry: {0}").format(str(e)))
+	
+
+@frappe.whitelist()
+def check_ledger(kwargs):
+	doc = {
+			"doctype": "Journal Entry",
+			"voucher_type": "Journal Entry",
+			"naming_series": "ACC-JV-.YYYY.-",
+			"company": COMPANY,
+			"cheque_no": kwargs.get("order"),
+			"accounts": [
+				{
+					"account": kwargs.get("account_debit"),
+					"party_type": kwargs.get("party_type_debit"),
+					"party": kwargs.get("party_debit"),
+					"debit_in_account_currency": kwargs.get("amount_debit", 0),
+					"credit_in_account_currency": 0,
+				},
+				{
+					"account": kwargs.get("account_credit"),
+					"party_type": kwargs.get("party_type_credit"),
+					"party": kwargs.get("party_credit"),
+					"debit_in_account_currency": 0,
+					"credit_in_account_currency": kwargs.get("amount_credit", 0),
+				},
+			]
+		}
+
+	print(doc)
+
+	existing_entry = frappe.get_doc(doc)
+	if existing_entry:
+		return True
+	else:
+		return False
 	
 @frappe.whitelist()
 def get_balance(party):
