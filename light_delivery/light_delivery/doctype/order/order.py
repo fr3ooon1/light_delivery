@@ -331,15 +331,15 @@ class Order(Document):
 
 				
 
-				doc = frappe.new_doc("Transactions")
-				doc.party = "Delivery"
-				doc.party_type = self.delivery
-				doc.in_wallet = total
-				doc.aganist = "Store"
-				doc.aganist_from = self.store
-				doc.order = self.name
-				doc.save(ignore_permissions=True)
-				doc.submit()
+				# doc = frappe.new_doc("Transactions")
+				# doc.party = "Delivery"
+				# doc.party_type = self.delivery
+				# doc.in_wallet = total
+				# doc.aganist = "Store"
+				# doc.aganist_from = self.store
+				# doc.order = self.name
+				# doc.save(ignore_permissions=True)
+				# doc.submit()
 		
 		if self.store:
 			store = frappe.get_doc("Store" , self.store)
@@ -361,17 +361,17 @@ class Order(Document):
 			self.store_fees = discount
 
 
-			doc = frappe.new_doc("Transactions")
-			doc.party = "Store"
-			doc.party_type = self.store
-			doc.out = total
-			doc.aganist = "Delivery"
-			doc.aganist_from = self.delivery
-			doc.order = self.name
-			doc.save(ignore_permissions=True)
-			doc.submit()
+			# doc = frappe.new_doc("Transactions")
+			# doc.party = "Store"
+			# doc.party_type = self.store
+			# doc.out = total
+			# doc.aganist = "Delivery"
+			# doc.aganist_from = self.delivery
+			# doc.order = self.name
+			# doc.save(ignore_permissions=True)
+			# doc.submit()
 		self.order_finish = 1
-		frappe.db.commit()
+		# frappe.db.commit()
 
 
 		store = {
@@ -385,8 +385,8 @@ class Order(Document):
 
 			"order":self.name
 			}
-		if self.net_store_fees > 0:
-			make_journal_entry(store)
+		if self.net_store_fees > 0 and not self.r_of_store_fees:
+			self.r_of_store_fees = make_journal_entry(store)
 			
 		tax = {
 			"account_credit": Deductions.tax_account,
@@ -399,8 +399,8 @@ class Order(Document):
 
 			"order":self.name
 			}
-		if self.tax > 0 :
-			make_journal_entry(tax)
+		if self.tax > 0 and not self.reference_of_tax_fees:
+			self.reference_of_tax_fees = make_journal_entry(tax)
 
 		delivery = {
 			"account_debit": Deductions.expens_account,
@@ -414,8 +414,8 @@ class Order(Document):
 			"order":self.name
 			}
 		
-		if self.delivery_fees > 0 :
-			make_journal_entry(delivery)
+		if self.delivery_fees > 0 and not self.reference_of_delivery_fees :
+			self.reference_of_delivery_fees = make_journal_entry(delivery)
 
 		prof_delivery = {
 			"account_debit": Deductions.delivery_account,
@@ -430,8 +430,8 @@ class Order(Document):
 
 			"order":self.name
 			}
-		if self.delivery_fees > 0:
-			make_journal_entry(prof_delivery)
+		if self.delivery_fees > 0 and not self.reference_of_store_fees :
+			self.reference_of_store_fees = make_journal_entry(prof_delivery)
 		
 
 	def finish_order_with_rate(self , rate ):

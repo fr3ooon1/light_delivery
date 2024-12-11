@@ -47,9 +47,18 @@
   "store",
   "valuation",
   "section_break_xvve",
-  "order_finish",
   "comment",
-  "suggest"
+  "suggest",
+  "section_break_fbcg",
+  "order_finish",
+  "column_break_hhnb",
+  "r_of_store_fees",
+  "column_break_uolt",
+  "reference_of_tax_fees",
+  "column_break_dvtg",
+  "reference_of_delivery_fees",
+  "column_break_irev",
+  "reference_of_store_fees"
  ],
  "fields": [
   {
@@ -277,11 +286,55 @@
    "fieldname": "suggest",
    "fieldtype": "Small Text",
    "label": "Suggest"
+  },
+  {
+   "fieldname": "section_break_fbcg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_hhnb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "r_of_store_fees",
+   "fieldtype": "Link",
+   "label": "R of Store Fees",
+   "options": "Journal Entry"
+  },
+  {
+   "fieldname": "column_break_uolt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reference_of_tax_fees",
+   "fieldtype": "Link",
+   "label": "Reference of Tax Fees",
+   "options": "Journal Entry"
+  },
+  {
+   "fieldname": "column_break_dvtg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reference_of_delivery_fees",
+   "fieldtype": "Link",
+   "label": "Reference of Delivery Fees",
+   "options": "Journal Entry"
+  },
+  {
+   "fieldname": "column_break_irev",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reference_of_store_fees",
+   "fieldtype": "Link",
+   "label": "Reference of Store Fees",
+   "options": "Journal Entry"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-08 15:06:40.943495",
+ "modified": "2024-12-11 11:19:44.696811",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",
