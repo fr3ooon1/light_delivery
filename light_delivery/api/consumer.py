@@ -296,7 +296,7 @@ def get_order_history(**kwargs):
 		for order in orders:
 			delivery = order.get("delivery")
 			if delivery :
-				order['phone_number'] = frappe.get_value("User",{"username":delivery},"mobile_no")
+				order['delivery_number'] = frappe.get_value("User",{"username":delivery},"mobile_no")
 
 			creation_date = order.get('creation')
 			if creation_date:
