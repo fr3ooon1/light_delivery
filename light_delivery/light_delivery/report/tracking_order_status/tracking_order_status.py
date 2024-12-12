@@ -28,6 +28,7 @@ def execute(filters=None):
             o.name as order_id,
             o.status,
             o.order_date,
+            o.phone_number as customer_mobile,
 			o.order_type,
             o.delivery,
             d.delivery_name,
@@ -46,14 +47,25 @@ def execute(filters=None):
             o.creation desc
     """.format(conditions=conditions), filters, as_dict=1)
 
+    if data:
+        for i in data:
+            
+            i['store_mobile'] = frappe.get_value("User",{"username":i.get("store")},'mobile_no')
+            i['delivery_mobile'] = frappe.get_value("User",{"username":i.get("delivery")},'mobile_no')
+
     columns = [
-        {"label": "Order ID", "fieldname": "order_id", "fieldtype": "Link", "options": "Order", "width": 180},
-        {"label": "Order Type", "fieldname": "order_type", "fieldtype": "Data", "width": 180},
-		{"label": "Status", "fieldname": "status", "fieldtype": "Select", "options": "Pending\nAccepted\nDelivered\nCancelled", "width": 180},
-		{"label": "Order Date", "fieldname": "order_date", "fieldtype": "Date", "width": 180},
+        {"label": "Order ID", "fieldname": "order_id", "fieldtype": "Link", "options": "Order", "width": 150},
+        {"label": "Order Type", "fieldname": "order_type", "fieldtype": "Data", "width": 150},
+		{"label": "Status", "fieldname": "status", "fieldtype": "Select", "options": "Pending\nAccepted\nDelivered\nCancelled", "width": 150},
+		{"label": "Order Date", "fieldname": "order_date", "fieldtype": "Date", "width": 150},
         {"label": "Delivery Person", "fieldname": "delivery_name", "fieldtype": "Link", "options": "Delivery", "width": 150},
         {"label": "Store", "fieldname": "store_name", "fieldtype": "Link", "options": "Store", "width": 150},
         {"label": "Total Distance", "fieldname": "total_distance", "fieldtype": "Float", "width": 150},
+
+        {"label": "Customer Mobile", "fieldname": "customer_mobile", "fieldtype": "Data", "width": 150},
+        {"label": "Store Mobile", "fieldname": "store_mobile", "fieldtype": "Data", "width": 150},
+        {"label": "Delivery Mobile", "fieldname": "delivery_mobile", "fieldtype": "Data", "width": 150},
+
     ]
     
     summary = get_report_summary(data)
