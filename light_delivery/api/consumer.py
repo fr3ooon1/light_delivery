@@ -289,13 +289,15 @@ def get_order_history(**kwargs):
 			base_query += " AND status = %s"
 			params.append(status)
 
-		frappe.log_error(message=f"SQL Query: {base_query}, Params: {params}", title="Debug: SQL Query")
+		# frappe.log_error(message=f"SQL Query: {base_query}, Params: {params}", title="Debug: SQL Query")
 
-		# Execute query safely
 		orders = frappe.db.sql(base_query, params, as_dict=1)
 
-		# Format creation date for each order
 		for order in orders:
+			delivery = order.get("delivery")
+			if delivery :
+				order['phone_number'] = frappe.get_value("User",{"username":delivery},"mobile_no")
+
 			creation_date = order.get('creation')
 			if creation_date:
 				if isinstance(creation_date, datetime):
@@ -306,12 +308,10 @@ def get_order_history(**kwargs):
 					except ValueError:
 						order['creation'] = str(creation_date)
 
-		# Set successful response
 		frappe.local.response['http_status_code'] = 200
 		frappe.local.response['orders'] = orders
 
 	except Exception as e:
-		# Log the error and set error response
 		frappe.log_error(message=str(e), title=_('Error in get_order_history'))
 		frappe.local.response['http_status_code'] = 500
 		frappe.local.response['message'] = "An error occurred while fetching order history."
