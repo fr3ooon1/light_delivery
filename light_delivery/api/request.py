@@ -210,6 +210,7 @@ def get_requests(*args, **kwargs):
 							   ['name as id', 'status', 'delivery', 'number_of_order', 'request_date','total'])
 
 	for req in requests:
+		req['delivery_mobile'] = frappe.get_value("User",{"username",req.get("delivery"),"mobile_no"})
 		request_del = frappe.get_doc("Request Delivery", req.get('id'))
 		order_list = request_del.get("order_request")
 		order_details = []
@@ -224,8 +225,8 @@ def get_requests(*args, **kwargs):
 					"customer": doc.full_name,
 					"address": doc.address,
 					"status": doc.status,
-					"invoice":doc.invoice
-					
+					"invoice":doc.invoice,
+					"customer_mobile": doc.phone_number,
 				}
 				order_details.append(res)
 
