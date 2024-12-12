@@ -219,6 +219,50 @@ def res_for_delivary(req_del_name , status):
 	return doc
 
 	
+@frappe.whitelist()
+def send_sms():
+	# Replace these values with actual data
+	account_id = "550163042"
+	api_password = "Vodafone.1"
+	sender_name = "Light&Fast"
+	secret_key = "644D22EBED7B44D181B51EEBB8C80D2D"
+	recipient_number = "201069810415"  # Replace with the recipient's phone number
+	message = "Hello! This is a test message from Light&Fast."
+	url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
+
+	# Construct the XML payload
+	xml_payload = f"""
+	<SubmitSMSRequest>
+		<AccountId>{account_id}</AccountId>
+		<Password>{api_password}</Password>
+		<SenderName>{sender_name}</SenderName>
+		<Recipient>{recipient_number}</Recipient>
+		<Message>{message}</Message>
+		<SecretKey>{secret_key}</SecretKey>
+	</SubmitSMSRequest>
+	"""
+
+	headers = {
+		"Content-Type": "application/xml"
+	}
+
+	try:
+		# Send the request
+		response = requests.post(url, data=xml_payload, headers=headers)
+
+		# Check response status
+		if response.status_code == 200:
+			print("SMS sent successfully!")
+			print("Response:", response.text)
+		else:
+			print(f"Failed to send SMS. HTTP Status Code: {response.status_code}")
+			print("Response:", response.text)
+
+	except Exception as e:
+		print("An error occurred:", str(e))
+
+
+
 
 
 @frappe.whitelist(allow_guest=0)
