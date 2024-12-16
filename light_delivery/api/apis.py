@@ -220,44 +220,51 @@ def res_for_delivary(req_del_name , status):
 
 import hmac
 import hashlib
-
+import requests
 
 @frappe.whitelist()
 def sms():
+    # Parameters
+    secret_key = "644D22EBED7B44D181B51EEBB8C80D2D"
+    url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
 
-	secret_key = "644D22EBED7B44D181B51EEBB8C80D2D"
-	url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
+    reciever = "201069810415"
+    msg = "Hello, this is a test message!"
+    account_id = "550163042"
+    password = "Vodafone.1"
+    sender_name = "Light&amp;Fast"  # Replace & with &amp; for valid XML
 
-	reciever = "201069810415"
-	msg = "Hello, this is a test message!"
-	account_id = "550163042"
-	password = "Vodafone.1"
-	sender_name = "Light&Fast"
+    # Generate SecureHash
+    data = f"{account_id}{password}{sender_name}{reciever}{msg}"
+    secure_hash = hmac.new(secret_key.encode(), data.encode(), hashlib.sha256).hexdigest()
 
+    # XML Payload (formatted without extra spaces or newlines)
+    payload = f"""<?xml version="1.0" encoding="UTF-8"?>
+<SubmitSMSRequest>
+    <AccountId>{account_id}</AccountId>
+    <Password>{password}</Password>
+    <SecureHash>{secure_hash}</SecureHash>
+    <SMSList>
+        <SenderName>{sender_name}</SenderName>
+        <ReceiverMSISDN>{reciever}</ReceiverMSISDN>
+        <SMSText>{msg}</SMSText>
+    </SMSList>
+</SubmitSMSRequest>"""
 
-	data = f"""{account_id}{password}{sender_name}{reciever}{msg}"""
-	secure_hash = hmac.new(secret_key.encode(), data.encode(), hashlib.sha256).hexdigest()
+    # Headers
+    headers = {
+        'Content-Type': 'application/xml'
+    }
 
+    # Make the POST request
+    try:
+        response = requests.post(url, headers=headers, data=payload.encode('utf-8'))
+        frappe.log_error(f"Vodafone SMS Response: {response.text}", "SMS API Debug")
+        return {"status_code": response.status_code, "response": response.text}
+    except Exception as e:
+        frappe.log_error(f"Error: {str(e)}", "SMS API Debug")
+        return {"error": str(e)}
 
-	payload = f"""
-				<SubmitSMSRequest>\n    
-					<AccountId>{account_id}</AccountId>\n    
-					<Password>{password}</Password>\n    
-					<SecureHash>{secure_hash}</SecureHash>\n    
-					<SMSList>\n        
-						<SenderName>{sender_name}</SenderName>\n        
-						<ReceiverMSISDN>{reciever}</ReceiverMSISDN>\n        
-						<SMSText>{msg}</SMSText>\n    
-					</SMSList>\n
-				</SubmitSMSRequest>"""
-	headers = {
-	'Content-Type': 'application/xml'
-	}
-
-	response = requests.request("POST", url, headers=headers, data=payload)
-
-	print(response.text)
-	return response
 
 
 @frappe.whitelist()
