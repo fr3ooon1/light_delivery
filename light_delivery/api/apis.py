@@ -228,35 +228,31 @@ def sms():
     secret_key = "644D22EBED7B44D181B51EEBB8C80D2D"
     url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
 
-    reciever = "201069810415"
+    reciever = "01069810415"
     msg = "Hello, this is a test message!"
     account_id = "550163042"
     password = "Vodafone.1"
-    sender_name = "Light&amp;Fast"  # Replace & with &amp; for valid XML
+    sender_name = "Light&amp;Fast" 
 
-    # Generate SecureHash
     data = f"{account_id}{password}{sender_name}{reciever}{msg}"
     secure_hash = hmac.new(secret_key.encode(), data.encode(), hashlib.sha256).hexdigest()
 
-    # XML Payload (formatted without extra spaces or newlines)
     payload = f"""<?xml version="1.0" encoding="UTF-8"?>
-<SubmitSMSRequest>
-    <AccountId>{account_id}</AccountId>
-    <Password>{password}</Password>
-    <SecureHash>{secure_hash}</SecureHash>
-    <SMSList>
-        <SenderName>{sender_name}</SenderName>
-        <ReceiverMSISDN>{reciever}</ReceiverMSISDN>
-        <SMSText>{msg}</SMSText>
-    </SMSList>
-</SubmitSMSRequest>"""
+		<SubmitSMSRequest>
+			<AccountId>{account_id}</AccountId>
+			<Password>{password}</Password>
+			<SecureHash>{secure_hash}</SecureHash>
+			<SMSList>
+				<SenderName>{sender_name}</SenderName>
+				<ReceiverMSISDN>{reciever}</ReceiverMSISDN>
+				<SMSText>{msg}</SMSText>
+			</SMSList>
+		</SubmitSMSRequest>"""
 
-    # Headers
     headers = {
         'Content-Type': 'application/xml'
     }
 
-    # Make the POST request
     try:
         response = requests.post(url, headers=headers, data=payload.encode('utf-8'))
         frappe.log_error(f"Vodafone SMS Response: {response.text}", "SMS API Debug")
