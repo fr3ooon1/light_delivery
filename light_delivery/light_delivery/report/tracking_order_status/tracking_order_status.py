@@ -28,6 +28,7 @@ def execute(filters=None):
             o.name as order_id,
             o.status,
             o.order_date,
+            d.delivery_category ,
             o.phone_number as customer_mobile,
 			o.order_type,
             o.delivery,
@@ -55,6 +56,7 @@ def execute(filters=None):
 
     columns = [
         {"label": "Order ID", "fieldname": "order_id", "fieldtype": "Link", "options": "Order", "width": 150},
+        {"label": "Delivery Category", "fieldname": "delivery_category", "fieldtype": "Link", "options": "Delivery Category", "width": 150},
         {"label": "Order Type", "fieldname": "order_type", "fieldtype": "Data", "width": 150},
 		{"label": "Status", "fieldname": "status", "fieldtype": "Select", "options": "Pending\nAccepted\nDelivered\nCancelled", "width": 150},
 		{"label": "Order Date", "fieldname": "order_date", "fieldtype": "Date", "width": 150},
