@@ -218,22 +218,38 @@ def res_for_delivary(req_del_name , status):
 	doc.save()
 	return doc
 
+import hmac
+import hashlib
+
 
 @frappe.whitelist()
 def sms():
+
+	secret_key = "644D22EBED7B44D181B51EEBB8C80D2D"
 	url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
 
-	payload = """
+	reciever = "201069810415"
+	msg = "Hello, this is a test message!"
+	account_id = "550163042"
+	password = "Vodafone.1"
+	sender_name = "Light&Fast"
+
+
+	data = f"""{account_id}{password}{sender_name}{reciever}{msg}"""
+	secure_hash = hmac.new(secret_key.encode(), data.encode(), hashlib.sha256).hexdigest()
+
+
+	payload = f"""
 				<SubmitSMSRequest>\n    
-					<AccountId>550163042</AccountId>\n    
-					<Password>Vodafone.1</Password>\n    
-					<SecureHash>f7ae020189bbb653ed61a65fc3c6cd3da63245a033c031fdc04228a6db99bb67</SecureHash>\n    
+					<AccountId>{account_id}</AccountId>\n    
+					<Password>{password}</Password>\n    
+					<SecureHash>{secure_hash}</SecureHash>\n    
 					<SMSList>\n        
-						<SenderName>Light&Fast</SenderName>\n        
-						<ReceiverMSISDN>201069810415</ReceiverMSISDN>\n        
-						<SMSText>Hello, this is a test message!</SMSText>\n    
+						<SenderName>{sender_name}</SenderName>\n        
+						<ReceiverMSISDN>{reciever}</ReceiverMSISDN>\n        
+						<SMSText>{msg}</SMSText>\n    
 					</SMSList>\n
-				</SubmitSMSRequest>\n"""
+				</SubmitSMSRequest>"""
 	headers = {
 	'Content-Type': 'application/xml'
 	}
