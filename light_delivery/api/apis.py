@@ -218,7 +218,32 @@ def res_for_delivary(req_del_name , status):
 	doc.save()
 	return doc
 
-	
+
+@frappe.whitelist()
+def sms():
+	url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
+
+	payload = """
+				<SubmitSMSRequest>\n    
+					<AccountId>550163042</AccountId>\n    
+					<Password>Vodafone.1</Password>\n    
+					<SecureHash>f7ae020189bbb653ed61a65fc3c6cd3da63245a033c031fdc04228a6db99bb67</SecureHash>\n    
+					<SMSList>\n        
+						<SenderName>Light&Fast</SenderName>\n        
+						<ReceiverMSISDN>201069810415</ReceiverMSISDN>\n        
+						<SMSText>Hello, this is a test message!</SMSText>\n    
+					</SMSList>\n
+				</SubmitSMSRequest>\n"""
+	headers = {
+	'Content-Type': 'application/xml'
+	}
+
+	response = requests.request("POST", url, headers=headers, data=payload)
+
+	print(response.text)
+	return response
+
+
 @frappe.whitelist()
 def send_sms():
 	# Replace these values with actual data
