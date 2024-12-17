@@ -229,7 +229,7 @@ def sms():
     url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
 
     reciever = "01069810415"
-    msg = "Hello, this is a test message!"
+    msg = "Hello"
     account_id = "550163042"
     password = "Vodafone.1"
     sender_name = "Light&amp;Fast" 
