@@ -29,9 +29,10 @@ def login(*args,**kwargs):
 			}
 		user_obj = frappe.get_doc("User",filters)
 		if not user_obj:
-			return {
+			frappe.local.response["message"] ={
 				'message': 'User Not Found',
 			}
+			return
 		login_manager = frappe.auth.LoginManager()
 		login_manager.authenticate(user=user_obj.name, pwd=password)
 		login_manager.post_login()
