@@ -224,20 +224,21 @@ import requests
 
 @frappe.whitelist()
 def sms():
-    # Parameters
-    secret_key = "644D22EBED7B44D181B51EEBB8C80D2D"
-    url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
+	# Parameters
+	secret_key = "644D22EBED7B44D181B51EEBB8C80D2D"
+	url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
 
-    reciever = "01069810415"
-    msg = "Hello"
-    account_id = "550163042"
-    password = "Vodafone.1"
-    sender_name = "Light&amp;Fast" 
+	reciever = "01069810415"
+	msg = "Hello"
+	account_id = "550163042"
+	password = "Vodafone.1"
+	sender_name = "Light&amp;Fast" 
 
-    data = f"{account_id}{password}{sender_name}{reciever}{msg}"
-    secure_hash = hmac.new(secret_key.encode(), data.encode(), hashlib.sha256).hexdigest()
+	data = f"{account_id}{password}{sender_name}{reciever}{msg}"
+	secure_hash = hmac.new(secret_key.encode(), data.encode(), hashlib.sha256).hexdigest()
+	print(secret_key)
 
-    payload = f"""<?xml version="1.0" encoding="UTF-8"?>
+	payload = f"""<?xml version="1.0" encoding="UTF-8"?>
 		<SubmitSMSRequest>
 			<AccountId>{account_id}</AccountId>
 			<Password>{password}</Password>
@@ -249,17 +250,17 @@ def sms():
 			</SMSList>
 		</SubmitSMSRequest>"""
 
-    headers = {
-        'Content-Type': 'application/xml'
-    }
+	headers = {
+		'Content-Type': 'application/xml'
+	}
 
-    try:
-        response = requests.post(url, headers=headers, data=payload.encode('utf-8'))
-        frappe.log_error(f"Vodafone SMS Response: {response.text}", "SMS API Debug")
-        return {"status_code": response.status_code, "response": response.text}
-    except Exception as e:
-        frappe.log_error(f"Error: {str(e)}", "SMS API Debug")
-        return {"error": str(e)}
+	try:
+		response = requests.post(url, headers=headers, data=payload.encode('utf-8'))
+		frappe.log_error(f"Vodafone SMS Response: {response.text}", "SMS API Debug")
+		return {"status_code": response.status_code, "response": response.text}
+	except Exception as e:
+		frappe.log_error(f"Error: {str(e)}", "SMS API Debug")
+		return {"error": str(e)}
 
 
 
