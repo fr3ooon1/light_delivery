@@ -28,6 +28,10 @@ def login(*args,**kwargs):
 				'message': 'Login failed',
 			}
 		user_obj = frappe.get_doc("User",filters)
+		if not user_obj:
+			return {
+				'message': 'Login failed',
+			}
 		login_manager = frappe.auth.LoginManager()
 		login_manager.authenticate(user=user_obj.name, pwd=password)
 		login_manager.post_login()
