@@ -27,12 +27,16 @@ def login(*args,**kwargs):
 			return {
 				'message': 'Login failed',
 			}
-		user_obj = frappe.get_doc("User",filters)
-		if not user_obj:
+		
+		if not frappe.db.exists("User",filters):
+			frappe.local.response['http_status_code'] = 401
 			frappe.local.response["message"] ={
 				'message': 'User Not Found',
 			}
 			return
+		
+		user_obj = frappe.get_doc("User",filters)
+		
 		login_manager = frappe.auth.LoginManager()
 		login_manager.authenticate(user=user_obj.name, pwd=password)
 		login_manager.post_login()
@@ -45,7 +49,7 @@ def login(*args,**kwargs):
 	except frappe.exceptions.AuthenticationError as e:
 		frappe.local.response['http_status_code'] = 401
 		return {
-			'message': 'Login failed',
+			'message': 'Wronge Password',
 			'error': str(e)
 		}
 

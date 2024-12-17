@@ -236,26 +236,27 @@ def sms(reciever):
 
 	data = f"{account_id}{password}{sender_name}{reciever}{msg}"
 	secure_hash = hmac.new(secret_key.encode(), data.encode(), hashlib.sha256).hexdigest()
-	print(secret_key)
+	print(secure_hash)
 
-	payload = f"""<?xml version="1.0" encoding="UTF-8"?>
-		<SubmitSMSRequest>
-			<AccountId>{account_id}</AccountId>
-			<Password>{password}</Password>
-			<SecureHash>{secure_hash}</SecureHash>
-			<SMSList>
-				<SenderName>{sender_name}</SenderName>
-				<ReceiverMSISDN>{reciever}</ReceiverMSISDN>
-				<SMSText>{msg}</SMSText>
-			</SMSList>
-		</SubmitSMSRequest>"""
+	payload = f"""
+	<?xml version=\"1.0\" encoding=\"UTF-8\"?> <SubmitSMSRequest xmlns:=\"http://www.edafa.com/web2sms/sms/model/\"\n
+	xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.edafa.com/web2sms/sms/model/\nSMSAPI.xsd \" xsi:type=\"SubmitSMSRequest\">   \n
+	<AccountId>{account_id}</AccountId>\n    
+	<Password>{password}</Password>\n    
+	<SecureHash>c1da4c1e0bf95be623fd56b488ea9538e48bd02b5e0fe40daa6a30919f80b5c1</SecureHash>\n    
+	<SMSList>\n        
+		<SenderName>{sender_name}</SenderName>\n        
+		<ReceiverMSISDN>201069810415</ReceiverMSISDN>\n        
+		<SMSText>{msg}</SMSText>\n    
+	</SMSList>\n
+	</SubmitSMSRequest>"""
 
 	headers = {
 		'Content-Type': 'application/xml'
 	}
 
 	try:
-		response = requests.post(url, headers=headers, data=payload.encode('utf-8'))
+		response = requests.request("POST", url, headers=headers, data=payload)
 		frappe.log_error(f"Vodafone SMS Response: {response.text}", "SMS API Debug")
 		return {"status_code": response.status_code, "response": response.text}
 	except Exception as e:
@@ -266,45 +267,19 @@ def sms(reciever):
 
 @frappe.whitelist()
 def send_sms():
-	# Replace these values with actual data
-	account_id = "550163042"
-	api_password = "Vodafone.1"
-	sender_name = "Light&Fast"
-	secret_key = "644D22EBED7B44D181B51EEBB8C80D2D"
-	recipient_number = "201069810415"  # Replace with the recipient's phone number
-	message = "Hello! This is a test message from Light&Fast."
 	url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
 
-	# Construct the XML payload
-	xml_payload = f"""
-	<SubmitSMSRequest>
-		<AccountId>{account_id}</AccountId>
-		<Password>{api_password}</Password>
-		<SenderName>{sender_name}</SenderName>
-		<Recipient>{recipient_number}</Recipient>
-		<Message>{message}</Message>
-		<SecretKey>{secret_key}</SecretKey>
-	</SubmitSMSRequest>
-	"""
-
+	payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> <SubmitSMSRequest xmlns:=\"http://www.edafa.com/web2sms/sms/model/\"\nxmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.edafa.com/web2sms/sms/model/\nSMSAPI.xsd \" xsi:type=\"SubmitSMSRequest\">    \n<AccountId>550163042</AccountId>\n    <Password>Vodafone.1</Password>\n    <SecureHash>c1da4c1e0bf95be623fd56b488ea9538e48bd02b5e0fe40daa6a30919f80b5c1</SecureHash>\n    <SMSList>\n        <SenderName>Light&amp;Fast</SenderName>\n        <ReceiverMSISDN>201069810415</ReceiverMSISDN>\n        <SMSText>Hello</SMSText>\n    </SMSList>\n</SubmitSMSRequest>"	
 	headers = {
-		"Content-Type": "application/xml"
+	'Content-Type': 'application/xml'
 	}
 
-	try:
-		# Send the request
-		response = requests.post(url, data=xml_payload, headers=headers)
+	response = requests.request("POST", url, headers=headers, data=payload)
 
-		# Check response status
-		if response.status_code == 200:
-			print("SMS sent successfully!")
-			print("Response:", response.text)
-		else:
-			print(f"Failed to send SMS. HTTP Status Code: {response.status_code}")
-			print("Response:", response.text)
+	return response
 
-	except Exception as e:
-		print("An error occurred:", str(e))
+
+
 
 
 
