@@ -223,12 +223,12 @@ import hashlib
 import requests
 
 @frappe.whitelist()
-def sms():
+def sms(reciever):
 	# Parameters
 	secret_key = "644D22EBED7B44D181B51EEBB8C80D2D"
 	url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
 
-	reciever = "01069810415"
+	# reciever = "201069810415"
 	msg = "Hello"
 	account_id = "550163042"
 	password = "Vodafone.1"
