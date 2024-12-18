@@ -3,7 +3,6 @@ from frappe import _
 
 # from frappe.core.doctype.user.user import generate_keys
 from light_delivery.api.apis import download_image
-from frappe.utils import nowdate 
 import json
 from light_delivery.api.delivery_request import get_balance
 
@@ -181,7 +180,7 @@ def registration (*args , **kwargs):
 			delivery_obj = frappe.new_doc("Delivery")
 			delivery_obj.national_id = data.national_id
 			delivery_obj.delivery_name = data.full_name
-			delivery_obj.date_of_joining = nowdate() 
+			delivery_obj.date_of_joining = frappe.utils.nowdate() 
 			delivery_obj.status = "Pending"
 			delivery_obj.user = new_user.name
 			delivery_obj.username = new_user.username

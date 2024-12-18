@@ -8,7 +8,9 @@ from frappe.model.document import Document
 
 class Request(Document):
 	def validate(self):
+		self.validation()
 		self.accepted_delivery()
+		
 	
 	def accepted_delivery(self):
 		if self.status in ["Accepted","Cancel","Store Cancel" , "Delivery Cancel"]:
@@ -27,4 +29,10 @@ class Request(Document):
 				frappe.db.commit()
 			doc.save(ignore_permissions=True)
 			frappe.db.commit()
-
+	
+	def validation(self):
+		delivery_request_status = frappe.get_value("Request Delivery",self.request_delivery,'status')
+		if self.status in ['Accepted','Store Cancel','Delivery Cancel','Cancel']:
+			if delivery_request_status != "Waiting for delivery":
+				frappe.throw("The Request Take an action before")
+ 

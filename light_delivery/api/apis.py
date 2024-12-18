@@ -5,7 +5,6 @@ import base64
 import math
 import requests
 import json
-from frappe.utils import now_datetime
 # from light_delivery.api.delivery_request import get_balance
 
 COMPANY = frappe.defaults.get_defaults().get("company")
@@ -23,8 +22,8 @@ def make_journal_entry(kwargs):
 			"naming_series": "ACC-JV-.YYYY.-",
 			"company": COMPANY,
 			"cheque_no": kwargs.get("order"),
-			"cheque_date": now_datetime(),
-			"posting_date": now_datetime(),
+			"cheque_date": frappe.utils.now_datetime(),
+			"posting_date": frappe.utils.now_datetime(),
 		})
 
 		# Append the debit entry
@@ -243,7 +242,7 @@ def sms(reciever):
 	xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.edafa.com/web2sms/sms/model/\nSMSAPI.xsd \" xsi:type=\"SubmitSMSRequest\">   \n
 	<AccountId>{account_id}</AccountId>\n    
 	<Password>{password}</Password>\n    
-	<SecureHash>c1da4c1e0bf95be623fd56b488ea9538e48bd02b5e0fe40daa6a30919f80b5c1</SecureHash>\n    
+	<SecureHash>{secure_hash}</SecureHash>\n    
 	<SMSList>\n        
 		<SenderName>{sender_name}</SenderName>\n        
 		<ReceiverMSISDN>201069810415</ReceiverMSISDN>\n        
@@ -269,7 +268,17 @@ def sms(reciever):
 def send_sms():
 	url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
 
-	payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> <SubmitSMSRequest xmlns:=\"http://www.edafa.com/web2sms/sms/model/\"\nxmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.edafa.com/web2sms/sms/model/\nSMSAPI.xsd \" xsi:type=\"SubmitSMSRequest\">    \n<AccountId>550163042</AccountId>\n    <Password>Vodafone.1</Password>\n    <SecureHash>c1da4c1e0bf95be623fd56b488ea9538e48bd02b5e0fe40daa6a30919f80b5c1</SecureHash>\n    <SMSList>\n        <SenderName>Light&amp;Fast</SenderName>\n        <ReceiverMSISDN>201069810415</ReceiverMSISDN>\n        <SMSText>Hello</SMSText>\n    </SMSList>\n</SubmitSMSRequest>"	
+	payload = """<?xml version=\"1.0\" encoding=\"UTF-8\"?> <SubmitSMSRequest xmlns:=\"http://www.edafa.com/web2sms/sms/model/\"\n
+	xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.edafa.com/web2sms/sms/model/\nSMSAPI.xsd \" xsi:type=\"SubmitSMSRequest\">    \n
+	<AccountId>550163042</AccountId>\n    
+	<Password>Vodafone.1</Password>\n    
+	<SecureHash>c1da4c1e0bf95be623fd56b488ea9538e48bd02b5e0fe40daa6a30919f80b5c1</SecureHash>\n    
+	<SMSList>\n        
+	    <SenderName>Light&amp;Fast</SenderName>\n        
+		<ReceiverMSISDN>201069810415</ReceiverMSISDN>\n        
+		<SMSText>Hello</SMSText>\n    
+		</SMSList>\n
+	</SubmitSMSRequest>"""	
 	headers = {
 	'Content-Type': 'application/xml'
 	}
