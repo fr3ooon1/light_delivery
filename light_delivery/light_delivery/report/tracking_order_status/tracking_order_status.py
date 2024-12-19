@@ -28,31 +28,31 @@ def execute(filters=None):
             o.name as order_id,
             o.status,
             o.order_date,
-            d.delivery_category ,
+            d.delivery_category,
             o.phone_number as customer_mobile,
-			o.order_type,
+            o.order_type,
             o.delivery,
             d.delivery_name,
             o.store,
             s.store_name,
-            o.total_distance
+            o.total_distance,
+            su.mobile_no as store_mobile,
+            du.mobile_no as delivery_mobile
         from
             `tabOrder` o
         left join
             `tabDelivery` d on o.delivery = d.name
         left join
             `tabStore` s on o.store = s.name
+        left join
+            `tabUser` su on su.username = o.store
+        left join
+            `tabUser` du on du.username = o.delivery
         where
             {conditions}
         order by
             o.creation desc
     """.format(conditions=conditions), filters, as_dict=1)
-
-    if data:
-        for i in data:
-            
-            i['store_mobile'] = frappe.get_value("User",{"username":i.get("store")},'mobile_no')
-            i['delivery_mobile'] = frappe.get_value("User",{"username":i.get("delivery")},'mobile_no')
 
     columns = [
         {"label": "Order ID", "fieldname": "order_id", "fieldtype": "Link", "options": "Order", "width": 150},
