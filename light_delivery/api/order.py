@@ -37,9 +37,8 @@ def add_order_to_request(*args, **kwargs):
 			frappe.local.response['http_status_code'] = 400
 			frappe.local.response['message'] = "Order is already added to this request."
 			return
-		order_obj = frappe.get_doc("Order",order)
-		order_obj.request = request
-		order_obj.save(ignore_permissions=True)
+
+		frappe.db.set_value("Order",order,"request",request)
 		doc.append("order_request", {"order": order})
 		doc.save(ignore_permissions=True)
 		frappe.db.commit()
@@ -210,6 +209,7 @@ def get_orders():
 					order['creation'] = order.get('creation').strftime('%Y-%m-%d %H:%M:%S')
 				else:
 					order['creation'] = datetime.strptime(order.get('creation'), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
+				
 				invoice = order.get("invoice")
 				if invoice:
 					file = frappe.get_doc("File", {"file_url": invoice})

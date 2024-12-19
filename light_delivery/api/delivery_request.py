@@ -59,14 +59,13 @@ def sending_request():
 				if delivery.get("notification_key"):
 					res = send_notification(delivery.get("notification_key"), "new request")
 					
-					if res.status_code == 200:
-						doc.delivery = delivery.get("delivery")
-						
-						delivery_obj.status = "Hold"
-						delivery_obj.save(ignore_permissions=True)
-					
-					else:
+					if res.status_code != 200:
 						create_error_log("sending_request", res.text)
+
+					doc.delivery = delivery.get("delivery")
+					delivery_obj.status = "Hold"
+					delivery_obj.save(ignore_permissions=True)
+
 				else:
 					create_error_log("sending_request", "User not had a notification key")
 				doc.deliveries = doc.deliveries[0:-1]
