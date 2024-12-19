@@ -214,11 +214,11 @@ def get_orders():
 				else:
 					order['creation'] = datetime.strptime(order.get('creation'), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
 
-				invoice = order.get("invoice")
-				if invoice:
-					file = frappe.get_doc("File", {"file_url": invoice})
-					url = get_url()
-					order['invoice'] = url + file.file_url
+				# invoice = order.get("invoice")
+				# if invoice:
+				# 	file = frappe.get_doc("File", {"file_url": invoice})
+				# 	url = get_url()
+				# 	order['invoice'] = url + file.file_url
 
 			res = {}
 			if all_orders:
