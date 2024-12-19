@@ -188,34 +188,37 @@ def get_orders():
 	try:
 		user = frappe.session.user
 
-		if not frappe.db.exists("Store" , {"user":user}):
+		if not frappe.db.exists("Store", {"user": user}):
 			frappe.local.response['http_status_code'] = 404
 			return {
 				'status_code': 404,
 				'message': 'No store found for this user'
 			}
-		store = frappe.get_doc("Store" , {"user":user})
+		store = frappe.get_doc("Store", {"user": user})
 		if store:
-			pending_request =frappe.get_list("Request Delivery",{"store":store.name,"status":["in",["Waiting for delivery","Pending"]],"number_of_order":["in",[1,2,3]]},pluck='name',ignore_permissions=True)
+			pending_request = frappe.get_list(
+				"Request Delivery",
+				{"store": store.name, "status": ["in", ["Waiting for delivery", "Pending"]], "number_of_order": ["in", [1, 2, 3]]},
+				pluck='name',
+				ignore_permissions=True
+			)
 			all_orders = frappe.get_list(
 				"Order",
 				filters={"store": store.name, "status": "Pending"},
-				fields=['name', 'full_name', 'phone_number', 'address','zone_address', 'invoice', 'total_order', 'creation' ,'status','order_type','order_reference' ,'previous_order_amount','differente_amount']
+				fields=['name', 'full_name', 'phone_number', 'address', 'zone_address', 'invoice', 'total_order', 'creation', 'status', 'order_type', 'order_reference', 'previous_order_amount', 'differente_amount']
 			)
 			for order in all_orders:
-
-				order['number_of_images'] = len(frappe.get_doc("Order",order.get("name")).get("order_image"))
+				order['number_of_images'] = len(frappe.get_doc("Order", order.get("name")).get("order_image"))
 				if isinstance(order.get('creation'), datetime):
 					order['creation'] = order.get('creation').strftime('%Y-%m-%d %H:%M:%S')
 				else:
 					order['creation'] = datetime.strptime(order.get('creation'), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
-				
+
 				invoice = order.get("invoice")
 				if invoice:
 					file = frappe.get_doc("File", {"file_url": invoice})
 					url = get_url()
 					order['invoice'] = url + file.file_url
-					
 
 			res = {}
 			if all_orders:
@@ -223,7 +226,7 @@ def get_orders():
 					'status_code': 200,
 					'message': _('All Orders'),
 					'data': all_orders,
-					"pending_request":pending_request
+					"pending_request": pending_request
 				}
 			else:
 				frappe.local.response['http_status_code'] = 200
@@ -231,7 +234,7 @@ def get_orders():
 					'status_code': 200,
 					'message': _('No Orders Found'),
 					'data': all_orders,
-					"pending_request":pending_request
+					"pending_request": pending_request
 				}
 			return res
 		else:
@@ -249,7 +252,6 @@ def get_orders():
 			"message": str(e)
 		}
 		return res
-	
 	
 @frappe.whitelist(allow_guest=0)
 def get_order_type():
