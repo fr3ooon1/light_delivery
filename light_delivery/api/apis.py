@@ -116,12 +116,14 @@ def search_delivary(cash, store=None):
 		
 		# Check if the store exists
 		if frappe.db.exists("Store", store):
-			store_doc = frappe.get_doc("Store", store)
+			# store_doc = frappe.get_doc("Store", store)
 			
 			# Parse the store location
 			try:
-				store_location = json.loads(store_doc.store_location)
-				store_coord = store_location.get("features")[0].get("geometry").get("coordinates")
+				# store_location = json.loads(store_doc.store_location)
+				# store_coord = store_location.get("features")[0].get("geometry").get("coordinates")
+				store_doc = frappe.get_value("Store", store, ["pointer_x", "pointer_y"], as_dict=1)
+				store_coord = [float(store_doc.get("pointer_x") or 0), float(store_doc.get("pointer_y") or 0)]
 			except (KeyError, ValueError, IndexError):
 				frappe.throw(_("Invalid store location format for Store: {0}").format(store))
 			
@@ -145,19 +147,19 @@ def search_delivary(cash, store=None):
 				jea.party = d.delivery_name
 				), 0) + d.cash ) AS wallet
 			FROM 
-			`tabDelivery` d
+				`tabDelivery` d
 			JOIN 
-			`tabUser` u ON d.user = u.name
+				`tabUser` u ON d.user = u.name
 			WHERE 
-			d.status = 'Avaliable' 
-			AND (
-			d.cash + COALESCE(
-			(SELECT 
-			SUM(jea.credit_in_account_currency) - SUM(jea.debit_in_account_currency)
-			FROM 
-			`tabJournal Entry Account` AS jea
-			WHERE 
-			jea.party = d.delivery_name), 0)) >= {cash}""", as_dict=True)
+				d.status = 'Avaliable' 
+				AND (
+					d.cash + COALESCE(
+						(SELECT 
+							SUM(jea.credit_in_account_currency) - SUM(jea.debit_in_account_currency)
+						FROM 
+							`tabJournal Entry Account` AS jea
+						WHERE 
+							jea.party = d.delivery_name), 0)) >= {cash}""", as_dict=True)
 
 			# Calculate distances and filter deliveries
 			distance = []
@@ -165,25 +167,25 @@ def search_delivary(cash, store=None):
 				if delivery['pointer_x'] is not None and delivery['pointer_y'] is not None:
 					del_coord = [float(delivery['pointer_x']), float(delivery['pointer_y'])]
 					dist = float(haversine(coord1=del_coord, coord2=store_coord) or 0) * 1000  # Convert to meters
+					if dist <= 8000:  # Filter within 8000 meters
 					
-					delivery_data = {
-						'distance': dist,
-						'user': delivery.get('user'),
-						'name': delivery.get('name'),
-						'coordination': del_coord,
-						'notification_key': delivery.get("notification_key"),
-					}
-					distance.append(delivery_data)
+						delivery_data = {
+							'distance': dist,
+							'user': delivery.get('user'),
+							'name': delivery.get('name'),
+							'coordination': del_coord,
+							'notification_key': delivery.get("notification_key"),
+						}
+						distance.append(delivery_data)
 
 			# Sort and filter by distance
 			sorted_deliveries = sorted(distance, key=lambda x: x['distance'])
-			result = [entry for entry in sorted_deliveries if entry["distance"] <= 8000]  # Filter within 8000 meters
 
-			if not result:
+			if not sorted_deliveries:
 				frappe.local.response['http_status_code'] = 400
 				return []
 
-			return result
+			return sorted_deliveries
 		else:
 			frappe.local.response['http_status_code'] = 400
 			return {
