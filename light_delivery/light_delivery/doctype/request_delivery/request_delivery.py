@@ -6,6 +6,8 @@ from frappe.model.document import Document
 from frappe.utils import now_datetime
 from light_delivery.api.delivery_request import create_transaction , get_balance
 from light_delivery.api.apis import search_delivary , make_journal_entry 
+import datetime
+from frappe.utils import now_datetime , get_datetime , time_diff_in_seconds
 
 
 
@@ -17,6 +19,7 @@ class RequestDelivery(Document):
 
 
 	def validate(self):
+		self.get_deduction()
 		self.rate_store()
 		if self.status not in ['Pending' ,'Accepted','Collect Money']:
 			self.follow_request_status()
@@ -37,16 +40,74 @@ class RequestDelivery(Document):
 		if self.status == "Collect Money" and self.payed_to_store == 0:
 			self.pay_to_store()
 
+		
 
-	# 	if self.status == "Picked":
-	# 		self.start_point()
+	
+	def get_deduction(self):
+		return
+		if self.status == "Arrived":
+			self.late_after_accept()
+
+		if self.status == "Cancel":
+			self.cancele_from_store_after_picked_up()
+			self.cancele_from_store_after_delivery_arrived()
+		
+		if self.status == "Picked":
+			self.pick_up_deduction()
 
 
-	# def start_point(self):
-	# 	self.lat = frappe.get_value("Delivery",self.delivery,"pointer_x")
-	# 	self.lon = frappe.get_value("Delivery",self.delivery,"pointer_y")
+	def late_after_accept(self):
+
+		Deductions = frappe.get_doc("Deductions")
+		request_log = self.get("request_log")
+		accepted_row = next((row for row in request_log if row.get('status') == "Accepted"), None)
+		if accepted_row:
+			time_difference = time_diff_in_seconds(now_datetime(), get_datetime(accepted_row.get("time")))
+			if float(time_difference or 0) / 60 > float(Deductions.late_after_accept or 0):
+				self.status == "Delivery Cancel"
 
 
+	def cancele_from_store_after_picked_up(self):
+		if self.status == "Store Cancel":
+			request_log = self.get("request_log")
+			if request_log:
+				last_log = next((row for row in request_log if row.get('status') == "Picked"), None)
+				if last_log:
+					order_request = self.get('order_request')
+					if order_request:
+						for order in order_request:
+							doc = frappe.get_doc("Order" , order.order)
+							doc.finish_order_with_rate(rate=1.5)
+
+
+	def cancele_from_store_after_delivery_arrived(self):
+		if self.status == "Store Cancel":
+			request_log = self.get("request_log")
+			if request_log:
+				last_log = next((row for row in request_log if row.get('status') == "Arrived"), None)
+				if last_log:
+					self.finish_order_with_rate(rate=1)
+	
+
+	def pick_up_deduction(self):
+		Deductions = frappe.get_doc("Deductions")
+		pick_up_deduction = Deductions.get("pick_up_deduction")
+		request_log = self.get("request_log")
+		rate = 0
+		if not request_log or not pick_up_deduction:
+			return
+		time_difference = float(time_diff_in_seconds(now_datetime(), get_datetime(request_log[-1].get("time")))) / 60
+		row = next(
+			(i for i in pick_up_deduction if i.get("from") < time_difference <= i.get("to")),
+			None
+		)
+
+		try:
+			rate = row.get("rate")
+			if rate >= 100:
+				self.status = "Store Cancel"
+		except Exception as e:
+			frappe.log_error(f"Error while canceling request {self.request}: {str(e)}", "Pick Up Deduction Error")
 
 
 	def calculate_orders(self):
@@ -221,3 +282,133 @@ class RequestDelivery(Document):
 			"status":self.status,
 			"time": now_datetime(),
 		})
+
+
+
+
+	def finish_order_with_rate(self , rate ):
+
+		total = 0
+
+		Deductions = frappe.get_doc("Deductions")
+
+		if self.delivery:
+			if frappe.db.exists("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category')):
+				delivery_category = frappe.get_doc(
+					"Delivery Category" , 
+					frappe.get_value("Delivery" , self.delivery , 'delivery_category')
+				)
+
+				total = float(delivery_category.minimum_rate or 0) * rate
+
+				total =(total - (total / 100 * self.discount))
+				self.delivery_fees = total 
+
+				# tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
+				# tax_rate = (total * tax / 100)
+				# self.tax = tax_rate
+				# total = total - tax_rate 
+
+				
+				self.net_delivery_fees = total
+
+				
+
+				doc = frappe.new_doc("Transactions")
+				doc.party = "Delivery"
+				doc.party_type = self.delivery
+				doc.in_wallet = total
+				doc.aganist = "Store"
+				doc.aganist_from = self.store
+				doc.order = self.name
+				doc.save(ignore_permissions=True)
+				doc.submit()
+		
+		if self.store:
+			store = frappe.get_doc("Store" , self.store)
+
+			total = float(store.minimum_price or 0) * rate
+			
+			tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
+
+			tax_rate = (total * tax / 100)
+
+			total_with_tax = total + tax_rate
+			discount = total_with_tax - (total_with_tax / 100 * self.discount)
+
+			self.net_store_fees = total
+			self.tax = tax_rate
+			self.store_fees = discount
+
+			doc = frappe.new_doc("Transactions")
+			doc.party = "Store"
+			doc.party_type = self.store
+			doc.out = total
+			doc.aganist = "Delivery"
+			doc.aganist_from = self.delivery
+			doc.order = self.name
+			doc.save(ignore_permissions=True)
+			doc.submit()
+		frappe.db.commit()
+
+
+		store = {
+			"account_credit": Deductions.light_account,
+			"amount_credit":float(self.store_fees or 0) - float(self.tax or 0),
+
+			"account_debit": Deductions.store_account,
+			"party_type_debit": "Customer",
+			"party_debit": frappe.get_value("Store",self.store,'username'),
+			"amount_debit": float(self.store_fees or 0) - float(self.tax or 0),
+
+			"order":self.name
+			}
+		if self.net_store_fees > 0:
+			make_journal_entry(store)
+		
+		tax = {
+			"account_credit": Deductions.tax_account,
+			"amount_credit": self.tax,
+
+			"account_debit": Deductions.store_account,
+			"party_type_debit": "Customer",
+			"party_debit": frappe.get_value("Store",self.store,'username'),
+			"amount_debit":self.tax,
+
+			"order":self.name
+			}
+		if self.tax > 0 :
+			make_journal_entry(tax)
+
+
+		delivery = {
+			"account_debit": Deductions.expens_account,
+			"amount_debit": self.delivery_fees,
+
+			"account_credit": Deductions.delivery_account,
+			"party_type_credit": "Supplier",
+			"party_credit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
+			"amount_credit":self.delivery_fees ,	
+
+			"order":self.name
+			}
+		
+		if self.delivery_fees > 0 :
+			make_journal_entry(delivery)
+
+		prof_delivery = {
+			"account_debit": Deductions.delivery_account,
+			"party_type_debit": "Supplier",
+			"party_debit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
+			"amount_debit":self.delivery_fees,
+
+			"account_credit": Deductions.balance,
+			"party_type_credit": "Supplier",
+			"party_credit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
+			"amount_credit":self.delivery_fees,	
+
+			"order":self.name
+			}
+		if self.delivery_fees > 0:
+			make_journal_entry(prof_delivery)
+		

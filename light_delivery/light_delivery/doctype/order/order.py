@@ -17,7 +17,6 @@ class Order(Document):
 
 
 	def validate(self):
-		self.get_deduction()
 		self.order_status()
 		self.get_previous_order_amount()
 		self.rate_delivery()
@@ -165,81 +164,6 @@ class Order(Document):
 			"time": now_datetime(),
 			"note":"Order Created"
 		})
-
-	def get_deduction(self):
-		if self.status == "Arrived":
-			self.late_after_accept()
-
-		if self.status == "Cancel":
-			self.if_order_cancelled_from_store_after_picked_up()
-			self.if_order_cancelled_from_store_after_delivery_arrived()
-		
-		if self.status == "Picked":
-			self.pick_up_deduction()
-
-
-	def pick_up_deduction(self):
-		# return True
-		Deductions = frappe.get_doc("Deductions")
-		pick_up_deduction = Deductions.get("pick_up_deduction")
-		order_logs = self.get("order_log")
-		rate = 0
-		if not order_logs or not pick_up_deduction:
-			return
-		time_difference = float(time_diff_in_seconds(now_datetime(), get_datetime(order_logs[-1].get("time")))) / 60
-		row = next(
-			(i for i in pick_up_deduction if i.get("from") < time_difference <= i.get("to")),
-			None
-		)
-
-		try:
-			rate = row.get("rate")
-			if rate >= 100:
-				request = frappe.get_doc("Request Delivery", self.request)
-				request.status = "Store Cancel"
-				request.save(ignore_permissions=True)
-				frappe.db.commit()
-		except Exception as e:
-			frappe.log_error(f"Error while canceling request {self.request}: {str(e)}", "Pick Up Deduction Error")
-
-		# self.status = "Cancel"
-		# self.cancel_from = "Store"
-
-		self.finish_order_with_rate(rate=rate / 100)
-
-
-
-	
-	def if_order_cancelled_from_store_after_picked_up(self):
-		if self.cancel_from == "Store":
-			order_logs = self.get("order_log")
-			if order_logs:
-				last_order_log = order_logs[-1]
-				if last_order_log.get("status") == "Picked":
-					self.finish_order_with_rate(rate=1.5)
-
-
-	def if_order_cancelled_from_store_after_delivery_arrived(self):
-		if self.cancel_from == "Store":
-			order_logs = self.get("order_log")
-			if order_logs:
-				last_order_log = order_logs[-1]
-				if last_order_log.get("status") == "Arrived":
-					self.finish_order_with_rate(rate=1)
-
-
-	def late_after_accept(self):
-		return True
-		order_logs = self.get("order_log")
-		accepted_row = next((row for row in order_logs if row.get('status') == "Accepted"), None)
-		if accepted_row:
-			time_difference = time_diff_in_seconds(now_datetime(), get_datetime(accepted_row.get("time")))
-			if float(time_difference or 0) / 60 > float(Deductions.late_after_accept or 0):
-				self.status == "Cancel"
-				self.cancel_from = "Delivery"
-				self.finish_order_with_rate(rate=0.5)
-
-
 
 
 	def get_previous_order_amount(self):
