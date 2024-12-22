@@ -235,13 +235,17 @@ def sms(reciever):
 	password = "Vodafone.1"
 	sender_name = "Light&amp;Fast" 
 
-	data = f"{account_id}{password}{sender_name}{reciever}{msg}"
+	# data = f"""{account_id}{password}{sender_name}{reciever}{msg}"""
+
+	data = f"""AccountId={account_id}&Password={password}&SenderName={sender_name}&ReceiverMSISDN=201069810415&SMSText={msg}"""
 	secure_hash = hmac.new(secret_key.encode(), data.encode(), hashlib.sha256).hexdigest()
+
+	secure_hash =  secure_hash.encode('utf-8')
+
 	print(secure_hash)
 
-	payload = f"""
-	<?xml version=\"1.0\" encoding=\"UTF-8\"?> <SubmitSMSRequest xmlns:=\"http://www.edafa.com/web2sms/sms/model/\"\n
-	xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.edafa.com/web2sms/sms/model/\nSMSAPI.xsd \" xsi:type=\"SubmitSMSRequest\">   \n
+	payload = f"""<?xml version=\"1.0\" encoding=\"UTF-8\"?> <SubmitSMSRequest xmlns:=\"http://www.edafa.com/web2sms/sms/model/\"\n
+	xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.edafa.com/web2sms/sms/model/\nSMSAPI.xsd \" xsi:type=\"SubmitSMSRequest\">    \n
 	<AccountId>{account_id}</AccountId>\n    
 	<Password>{password}</Password>\n    
 	<SecureHash>{secure_hash}</SecureHash>\n    
