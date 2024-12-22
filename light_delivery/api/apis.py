@@ -561,6 +561,7 @@ def send_notification(UsersArray , content ):
 			},
 			"data": { "postID": "popup_req" },
 			"include_player_ids": [UsersArray],
+			"target_channel": "push",
 			"android_sound": "onesignal_default_sound.wav",
 			"android_channel_id": "0c37b127-303f-45a4-b298-b8af0f81c9f0",
 		}
