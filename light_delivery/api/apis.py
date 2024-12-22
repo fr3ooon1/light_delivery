@@ -262,10 +262,12 @@ def sms(reciever):
 
 	try:
 		response = requests.request("POST", url, headers=headers, data=payload)
-		frappe.log_error(f"Vodafone SMS Response: {response.text}", "SMS API Debug")
+		print(response.text)
+		# frappe.log_error(f"Vodafone SMS Response: {response.text}", "SMS API Debug")
 		return {"status_code": response.status_code, "response": response.text}
 	except Exception as e:
-		frappe.log_error(f"Error: {str(e)}", "SMS API Debug")
+		# frappe.log_error(f"Error: {str(e)}", "SMS API Debug")
+		print(e)	
 		return {"error": str(e)}
 
 
