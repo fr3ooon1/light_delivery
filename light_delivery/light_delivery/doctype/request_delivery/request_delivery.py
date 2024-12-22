@@ -145,7 +145,7 @@ class RequestDelivery(Document):
 					finish_order_with_rate(doc=doc , rate=1)
 				self.finish_request = 1
 		except Exception as e:
-			frappe.log_error(f"Error while canceling request {self.request}: {str(e)}", "Pick Up Deduction Error")
+			frappe.log_error(f"Error in {self.name}: {str(e)}", "Pick Up Deduction Error")
 
 
 	def calculate_orders(self):
