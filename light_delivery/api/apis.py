@@ -274,7 +274,7 @@ def send_sms():
 	xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.edafa.com/web2sms/sms/model/\nSMSAPI.xsd \" xsi:type=\"SubmitSMSRequest\">    \n
 	<AccountId>550163042</AccountId>\n    
 	<Password>Vodafone.1</Password>\n    
-	<SecureHash>c1da4c1e0bf95be623fd56b488ea9538e48bd02b5e0fe40daa6a30919f80b5c1</SecureHash>\n    
+	<SecureHash>a2e381d8d999fa09b78cb813b6aefb46a72eff2b110c7164334a8807f36cfd44</SecureHash>\n
 	<SMSList>\n        
 	    <SenderName>Light&amp;Fast</SenderName>\n        
 		<ReceiverMSISDN>201069810415</ReceiverMSISDN>\n        
