@@ -32,6 +32,9 @@ def sending_request():
 	for request in requests:
 		try:
 			doc = frappe.get_doc("Request", request.get("name"))
+
+			if doc.delivery :
+				frappe.db.set_value("Delivery", doc.delivery, "status", "Avaliable")
 			
 			if not doc.deliveries:
 				new_deliveries = search_delivary(cash=doc.cash, store=doc.store)
