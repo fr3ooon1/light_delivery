@@ -275,7 +275,8 @@ def cancel_request(*args, **kwargs):
 
 		elif cancel_type == "delivery":
 			request_search_obj.status = "Delivery Cancel"
-			cancel_orders(request_obj, "Delivery")
+			create_new_request(request_obj)
+			# cancel_orders(request_obj, "Delivery")
 			msg = _("Request has been canceled by Delivery.")
 			store_user = frappe.get_value("Store", request_obj.store, "user")
 			notification_key = frappe.get_value("User", store_user, "notification_key")
@@ -310,6 +311,23 @@ def cancel_request(*args, **kwargs):
 		frappe.log_error(message=str(e), title=_("Error in cancel_request"))
 		frappe.local.response['http_status_code'] = 500
 		frappe.local.response['message'] = _("An error occurred while canceling the request.")
+
+
+def create_new_request(doc):
+	obj = frappe.new_doc("Request Delivery")
+	obj.number_of_order = doc.number_of_order
+	obj.store = doc.store
+	obj.status = "Waiting for delivery"
+	obj.request_date = nowdate()
+	obj.total = doc.total
+
+	for i in doc.order_request:
+		obj.append("order_request", {
+			"order": i.order,		
+		})	
+	obj.save(ignore_permissions=True)
+	frappe.db.commit()
+
 
 def cancel_orders(request_obj, cancel_from):
 	"""

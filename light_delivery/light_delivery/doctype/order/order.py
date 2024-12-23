@@ -35,6 +35,9 @@ class Order(Document):
 			doc.zone_address = self.zone_address
 			doc.invoice = self.invoice
 			doc.total_order = self.total_order
+			doc.created_by = self.created_by
+			doc.store = self.store
+			doc.status = "Pending"
 			doc.save(ignore_permissions=True)
 			frappe.db.commit()
 
