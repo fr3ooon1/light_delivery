@@ -139,7 +139,7 @@ def get_delivery_request(*args, **kwargs):
 				"store": store
 			})
 
-		request.insert(ignore_permissions=True)
+		# request.insert(ignore_permissions=True)
 		request.status = "Waiting for delivery"
 		for order_id in orders:
 			order = frappe.get_doc("Order",order_id)
