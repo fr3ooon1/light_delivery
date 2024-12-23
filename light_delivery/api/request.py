@@ -262,8 +262,6 @@ def cancel_request(*args, **kwargs):
 	try:
 		request_obj = frappe.get_doc("Request Delivery", request_id)
 		request_search_obj = frappe.get_doc("Request", request_id)
-		# if request_search_obj.status == "Waiting for Delivery":
-		# 	request_search_obj.delete()
 
 		# Determine the type of cancellation
 		if cancel_type == "store":
@@ -275,7 +273,7 @@ def cancel_request(*args, **kwargs):
 
 		elif cancel_type == "delivery":
 			request_search_obj.status = "Delivery Cancel"
-			create_new_request(request_obj)
+			create_new_request(request_obj.name)
 			# cancel_orders(request_obj, "Delivery")
 			msg = _("Request has been canceled by Delivery.")
 			store_user = frappe.get_value("Store", request_obj.store, "user")
@@ -293,13 +291,7 @@ def cancel_request(*args, **kwargs):
 					message=res.text, 
 					title=_("Error sending notification")
 				)
-				error = frappe.new_doc("Error Log")
-				error.method = "send_notification"
-				error.error = res.text
-				error.insert(ignore_permissions=True)
 
-		# Save changes and commit
-		# request_obj.save(ignore_permissions=True)
 		request_search_obj.db_update()
 		frappe.db.commit()
 
@@ -313,7 +305,8 @@ def cancel_request(*args, **kwargs):
 		frappe.local.response['message'] = _("An error occurred while canceling the request.")
 
 
-def create_new_request(doc):
+def create_new_request(docname):
+	doc = frappe.get_doc("Request Delivery", docname)
 	obj = frappe.new_doc("Request Delivery")
 	obj.number_of_order = doc.number_of_order
 	obj.store = doc.store
@@ -325,7 +318,7 @@ def create_new_request(doc):
 		obj.append("order_request", {
 			"order": i.order,		
 		})	
-	obj.save(ignore_permissions=True)
+	obj.insert()
 	frappe.db.commit()
 
 
