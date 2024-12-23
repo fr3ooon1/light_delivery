@@ -89,16 +89,20 @@ def delivery_accepted_request(*args , **kwargs):
 	delivery = frappe.get_doc("Delivery",{"user":frappe.session.user})
 
 	if kwargs.get("status") == "Accepted":
+		doc.status = "Accepted"
+		delivery.status = "Inorder"
 
-		frappe.db.set_value("Request", request , "status", "Accepted")
-		frappe.db.set_value("Delivery", {"user":frappe.session.user} , "status", "Inorder")
+		delivery.save(ignore_permissions=True)
+		doc.save(ignore_permissions=True)
+		frappe.db.commit()
 
 		frappe.local.response['http_status_code'] = 200
 		frappe.local.response['message'] = _(f"""the request accepted""")
 
 	elif kwargs.get("status") != "Accepted":
-
-		frappe.db.set_value("Delivery", {"user":frappe.session.user} , "status", "Avaliable")
+		delivery.status = "Avaliable"
+		delivery.save(ignore_permissions=True)
+		frappe.db.commit()
 
 		frappe.local.response['http_status_code'] = 200
 		frappe.local.response['message'] = _(f"""the request rejected""")
