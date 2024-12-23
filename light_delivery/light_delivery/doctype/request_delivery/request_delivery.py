@@ -31,8 +31,7 @@ class RequestDelivery(Document):
 		if self.status in ['Arrived' , 'Picked' , 'Cancel' , 'Delivery Cancel','Store Cancel','Waiting for delivery','On The Way']:
 			self.change_status_for_orders()
 
-		if self.status == "Waiting for delivery":
-			self.follow_request_status()
+		if self.status == "Waiting for delivery" or self.status == "Pending":
 			self.create_request()
 		
 		if self.status in ["Delivered" , 'Delivery Cancel' , 'Store Cancel' , 'Cancel' ]:
