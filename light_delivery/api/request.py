@@ -277,7 +277,7 @@ def cancel_request(*args, **kwargs):
 			request_search_obj.status = "Waiting for Delivery"
 			request_obj.status = "Waiting for Delivery"
 			request_obj.delivery = None
-			delivery_user = frappe.db.set_value("Delivery", request_obj.delivery, "status", "Offline")
+			
 			# create_new_request(request_obj.name)
 			# cancel_orders(request_obj, "Delivery")
 			msg = _("Request has been canceled by Delivery.")
@@ -299,6 +299,7 @@ def cancel_request(*args, **kwargs):
 
 		request_search_obj.db_update()
 		frappe.db.commit()
+		delivery_user = frappe.db.set_value("Delivery", request_obj.delivery, "status", "Offline")
 
 		frappe.local.response['http_status_code'] = 200
 		frappe.local.response['message'] = msg
