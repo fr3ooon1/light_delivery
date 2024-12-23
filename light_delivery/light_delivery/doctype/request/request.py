@@ -33,6 +33,6 @@ class Request(Document):
 	def validation(self):
 		delivery_request_status = frappe.get_value("Request Delivery",self.request_delivery,'status')
 		if self.status in ['Accepted','Store Cancel','Delivery Cancel','Cancel']:
-			if delivery_request_status != "Waiting for delivery":
+			if delivery_request_status != "Waiting for Delivery":
 				frappe.throw("The Request Take an action before")
  
