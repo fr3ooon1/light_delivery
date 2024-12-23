@@ -283,6 +283,8 @@ class RequestDelivery(Document):
 			order.save(ignore_permissions=True)
 		self.total = total_request_amount
 
+		frappe.db.commit()
+
 
 	def change_status_for_orders(self):
 		order_request = self.get('order_request')
