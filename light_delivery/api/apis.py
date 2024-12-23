@@ -244,18 +244,20 @@ def sms(reciever):
 
 	print(secure_hash)
 
-	payload = f"""<?xml version=\"1.0\" encoding=\"UTF-8\"?> <SubmitSMSRequest xmlns:=\"http://www.edafa.com/web2sms/sms/model/\"\n
-	xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.edafa.com/web2sms/sms/model/\nSMSAPI.xsd \" xsi:type=\"SubmitSMSRequest\">    \n
-	<AccountId>{account_id}</AccountId>\n    
-	<Password>{password}</Password>\n    
-	<SecureHash>{secure_hash}</SecureHash>\n    
-	<SMSList>\n        
-		<SenderName>{sender_name}</SenderName>\n        
-		<ReceiverMSISDN>201069810415</ReceiverMSISDN>\n        
-		<SMSText>{msg}</SMSText>\n    
-	</SMSList>\n
+	payload = f"""
+	<?xml version="1.0" encoding="UTF-8"?> <SubmitSMSRequest xmlns:="http://www.edafa.com/web2sms/sms/model/"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.edafa.com/web2sms/sms/model/
+	SMSAPI.xsd " xsi:type="SubmitSMSRequest">
+	<AccountId>{account_id}</AccountId>
+	<Password>{password}</Password>
+	<SecureHash>{secure_hash}</SecureHash>
+	<SMSList>        
+		<SenderName>{sender_name}</SenderName>      
+		<ReceiverMSISDN>01069810415</ReceiverMSISDN>        
+		<SMSText>{msg}</SMSText>
+	</SMSList>
 	</SubmitSMSRequest>"""
-
+	
 	headers = {
 		'Content-Type': 'application/xml'
 	}
