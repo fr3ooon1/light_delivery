@@ -7,6 +7,8 @@ from light_delivery.api.apis import download_image
 import json
 from light_delivery.api.apis import send_notification 
 from light_delivery.api.delivery_request import get_balance
+from light_delivery.api.apis import search_delivary  
+
 
 
 @frappe.whitelist(allow_guest=False)
@@ -319,6 +321,39 @@ def create_new_request(docname):
 			"order": i.order,		
 		})	
 	obj.insert()
+
+
+	if frappe.db.exists("Request",doc.name):
+		return 
+	doc = frappe.new_doc("Request")
+	doc.request_delivery = doc.name
+	doc.status = "Waiting for Delivery"
+	doc.store = doc.store
+
+	total_request_amount = 0
+
+	order_request = doc.order_request
+	doc.number_of_order = len(order_request)
+	for i in range(len(order_request)):
+		total_request_amount += frappe.get_value("Order" , doc.get('order_request')[i].get("order") , "total_order")
+	doc.cash = total_request_amount
+	doc.number_of_order = len(order_request)
+	deliveries = search_delivary(total_request_amount , doc.store)
+
+	if deliveries:
+		for i in deliveries:
+			doc.append("deliveries",{
+				"user" :i.get('user'), 
+				"delivery":i.get('name'),
+				"notification_key":frappe.get_value("User",i.get('user'),"notification_key"),
+				"distance":i.get("distance")
+			})
+
+	doc.save(ignore_permissions=True)
+	frappe.db.commit()
+
+
+
 	frappe.db.commit()
 
 
