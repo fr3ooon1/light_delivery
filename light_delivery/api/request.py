@@ -310,7 +310,7 @@ def create_new_request(docname):
 	obj = frappe.new_doc("Request Delivery")
 	obj.number_of_order = doc.number_of_order
 	obj.store = doc.store
-	obj.status = "Waiting for delivery"
+	obj.status = "Pending"
 	obj.request_date = nowdate()
 	obj.total = doc.total
 
