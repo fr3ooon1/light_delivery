@@ -256,7 +256,7 @@ class RequestDelivery(Document):
 					"distance":i.get("distance")
 				})
 
-		doc.save(ignore_permissions=True)
+		doc.insert(ignore_permissions=True)
 		frappe.db.commit()
 
 	def request_accepted(self):
