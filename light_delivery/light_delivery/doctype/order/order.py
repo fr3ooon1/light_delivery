@@ -27,6 +27,7 @@ class Order(Document):
 
 	def cancellation_from_delivery(self):
 		if self.status == "Cancel" and self.cancel_from == "Delivery":
+			frappe.session.user = frappe.get_value("Store",self.store,'user')
 			doc = frappe.new_doc("Order")
 			doc.order_type = self.order_type
 			doc.full_name = self.full_name
@@ -35,7 +36,7 @@ class Order(Document):
 			doc.zone_address = self.zone_address
 			doc.invoice = self.invoice
 			doc.total_order = self.total_order
-			doc.created_by = self.created_by
+			# doc.created_by = self.created_by
 			doc.store = self.store
 			doc.status = "Pending"
 			doc.save(ignore_permissions=True)
