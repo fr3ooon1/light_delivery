@@ -139,11 +139,12 @@ def get_delivery_request(*args, **kwargs):
 				"store": store
 			})
 
-		# request.insert(ignore_permissions=True)
+		request.insert(ignore_permissions=True)
+		frappe.db.commit()
 		request.status = "Waiting for delivery"
 		for order_id in orders:
 			frappe.db.set_value("Order", order_id, "request", request.name)
-		request.insert(ignore_permissions=True)
+		request.save(ignore_permissions=True)
 		frappe.db.commit()
 
 		frappe.local.response['http_status_code'] = 200
