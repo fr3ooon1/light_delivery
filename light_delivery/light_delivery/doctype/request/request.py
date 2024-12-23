@@ -8,7 +8,7 @@ from frappe.model.document import Document
 
 class Request(Document):
 	def validate(self):
-		self.validation()
+		# self.validation()
 		self.accepted_delivery()
 		
 	
