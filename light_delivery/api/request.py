@@ -274,9 +274,10 @@ def cancel_request(*args, **kwargs):
 			notification_key = frappe.get_value("User", delivery_user, "notification_key")
 
 		elif cancel_type == "delivery":
-			request_search_obj.status = "Waiting for delivery"
-			request_obj.status = "Waiting for delivery"
+			request_search_obj.status = "Waiting for Delivery"
+			request_obj.status = "Waiting for Delivery"
 			request_obj.delivery = None
+			delivery_user = frappe.db.set_value("Delivery", request_obj.delivery, "status", "Offline")
 			# create_new_request(request_obj.name)
 			# cancel_orders(request_obj, "Delivery")
 			msg = _("Request has been canceled by Delivery.")
