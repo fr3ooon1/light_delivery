@@ -231,6 +231,7 @@ class RequestDelivery(Document):
 
 	def create_request(self):
 		if frappe.db.exists("Request",self.name):
+			frappe.log_error(f"Error in {self.name}: Request Already Exists", "Request Already Exists")
 			return 
 		doc = frappe.new_doc("Request")
 		doc.request_delivery = self.name
