@@ -1,6 +1,7 @@
 import frappe
 from frappe import _
 from light_delivery.api.apis import send_notification , search_delivary ,create_error_log
+from frappe.utils import nowdate , get_first_day_of_week , get_first_day ,  get_datetime, now_datetime, time_diff_in_seconds
 
 @frappe.whitelist(allow_guest=False)
 def update_location(*args,**kwargs):
@@ -35,6 +36,16 @@ def sending_request():
 
 			if doc.delivery :
 				frappe.db.set_value("Delivery", doc.delivery, "status", "Avaliable")
+
+			if doc.creation:
+				now = now_datetime()
+				creation = get_datetime(doc.creation)
+				diff = time_diff_in_seconds(now, creation)/60
+				if diff > 15:
+					doc.status = "Cancel"
+					doc.save(ignore_permissions=True)
+					frappe.db.commit()
+					continue
 			
 			if not doc.deliveries:
 				new_deliveries = search_delivary(cash=doc.cash, store=doc.store)

@@ -317,7 +317,7 @@ class RequestDelivery(Document):
 		create_transaction(party = "Delivery" , party_type = self.delivery,
 						in_wallet= 0.0 , Out = float(fees) , aganist = "Store", aganist_from = self.store ,  voucher = "Pay Planty")	
 	
-	def follow_request_status(self):
+	def follow_request_status(self) -> None:
 		self.append("request_log",{
 			"status":self.status,
 			"time": now_datetime(),
