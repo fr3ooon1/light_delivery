@@ -49,9 +49,13 @@ def get_profile():
 			res['wallet'] = float(get_balance(user.get("first_name")) or 0)
 			res['price_list'] = price_list
 			# res['image'] = delivery.get("image")
+			res['image'] = frappe.get_value("Delivery",{"user":frappe.session.user},'image')
 			
 		elif frappe.db.exists("Store",{"user":frappe.session.user}):
 			pass
+		else:
+			res['image'] = frappe.get_value("Customer",user.get("username"),'image')
+
 		
 		address = frappe.db.sql(f"""select a.address_line1 from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{user.get("username")}'""",as_dict=True)
 
@@ -59,7 +63,7 @@ def get_profile():
 		res["phone_number"]=user.get("mobile_no")
 		res["email"]=user.get("email")
 		res["address"]=address[0].get("address_line1") if address else None
-		res["image"]=frappe.get_value("Customer",user.get("username"),'image')
+		# res["image"]=frappe.get_value("Customer",user.get("username"),'image')
 		return res
 		
 	except Exception as e:
