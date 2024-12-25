@@ -78,7 +78,7 @@ def change_profile_pic():
 		files = frappe.request.files
 		image = download_image(files.get('image'))
 
-		username = frappe.get_value("User",username,'username')
+		username = frappe.session.user
 
 		if frappe.db.exists("Delivery",{"user":username}):	
 			doc = frappe.get_doc("Delivery",{"user":username})
