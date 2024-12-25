@@ -277,6 +277,7 @@ def cancel_request(*args, **kwargs):
 
 		elif cancel_type == "delivery":
 			frappe.db.set_value("Request", request_id ,{"status": "Waiting for Delivery"})
+			frappe.db.commit()
 
 			frappe.db.set_value("Request Delivery", request_id ,{
 				"status": "Waiting for Delivery",
