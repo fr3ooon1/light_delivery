@@ -284,6 +284,7 @@ def cancel_request(*args, **kwargs):
 				"status": "Waiting for Delivery",
 				"delivery": None
 				})
+			frappe.db.commit()
 
 			msg = _("Request has been canceled by Delivery.")
 			store_user = frappe.get_value("Store", request_obj.store, "user")
