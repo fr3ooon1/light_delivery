@@ -97,7 +97,7 @@ def login(*args,**kwargs):
 		
 
 	
-	frappe.db.commit()
+	# frappe.db.commit()
 	frappe.local.response["message"] = res
 
 
