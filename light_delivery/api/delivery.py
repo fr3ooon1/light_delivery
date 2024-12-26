@@ -14,8 +14,8 @@ def post_suggestion(**kwargs):
 			doc.from_type = "Delivery"
 			from_user = frappe.get_value("Delivery",{"user":user},"name")
 			doc.from_user = from_user
-			doc.complaints = kwargs.get("complaints")
-			doc.suggestion = kwargs.get("suggestion")
+			doc.complaints = kwargs.get("complaints") if kwargs.get("complaints") else None
+			doc.suggestion = kwargs.get("suggestion") if kwargs.get("suggestion") else None
 			doc.save(ignore_permissions=True)
 			frappe.db.commit()
 		elif frappe.db.exists("Store",user):
@@ -27,8 +27,10 @@ def post_suggestion(**kwargs):
 			doc.suggestion = kwargs.get("suggestion") if kwargs.get("suggestion") else None
 			doc.save(ignore_permissions=True)
 			frappe.db.commit()
-			frappe.local.response['http_status_code'] = 200
-			frappe.local.response['message'] = _("Suggestion sent successfully")
+
+			
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = _("Suggestion sent successfully")
 			
 	except Exception as e:
 		frappe.log_error(message=str(e), title="Error in post_suggestion")
