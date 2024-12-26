@@ -106,18 +106,19 @@ def generate_keys(user , notification_key):
 	:param user: Username
 	:return: API secret
 	"""
-	user_details = frappe.get_doc("User", user , ignore_permissions=1)
+	# user_details = frappe.get_doc("User", user , ignore_permissions=1)
 	api_secret = frappe.generate_hash(length=15)
 
+	user = frappe.get_value("User", user , ["api_key", "notification_key"], as_dict=True)
+
 	if notification_key:
-		user_details.notification_key = notification_key
+		frappe.db.set_value("User", user, "notification_key", notification_key)
 
-	if not user_details.api_key:
+	if not user.get("api_key"):
 		api_key = frappe.generate_hash(length=15)
-		user_details.api_key = api_key	
+		frappe.db.set_value("User", user, "api_key", api_key)
 
-	user_details.api_secret = api_secret
-	user_details.save(ignore_permissions=True)	
+	frappe.db.set_value("User", user, "api_secret", api_secret)
 	frappe.db.commit()
 	return {"api_secret": api_secret}
 
