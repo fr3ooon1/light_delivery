@@ -27,6 +27,7 @@ def post_suggestion(**kwargs):
 			doc.suggestion = kwargs.get("suggestion")
 			doc.save(ignore_permissions=True)
 			frappe.db.commit()
+			frappe.local.response['message'] = _("Suggestion sent successfully")
 	except Exception as e:
 		frappe.log_error(message=str(e), title="Error in post_suggestion")
 		frappe.local.response['http_status_code'] = 400
