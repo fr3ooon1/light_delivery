@@ -34,7 +34,10 @@ def login(*args,**kwargs):
 			}
 			return
 		
-		user_obj = frappe.get_doc("User",filters)
+		# user_obj = frappe.get_doc("User",filters)
+
+
+		user_obj = frappe.db.get_value("User", filters, ["name", "username" , "first_name", "api_key", "notification_key","email","mobile_no"], as_dict=True)
 		
 		login_manager = frappe.auth.LoginManager()
 		login_manager.authenticate(user=user_obj.name, pwd=password)
@@ -58,22 +61,21 @@ def login(*args,**kwargs):
 		"status_code": 200,
 		"message": "Authentication success",
 		"sid": frappe.session.sid,
-		"api_key": user_obj.api_key,
+		"api_key": user_obj.get("api_key"),
 		"api_secret": api_secret,
-		"Auth":f"""token {user_obj.api_key}:{api_secret}""",
-		"username": user_obj.username,
-		"email": user_obj.email,
-		"first_name": user_obj.first_name,
-		"phone": user_obj.mobile_no,
-		"username":user_obj.username,
-		"notification_key":kwargs.get("notification_key") if kwargs.get("notification_key") else user_obj.notification_key,
+		"Auth":f"""token {user_obj.get("api_key")}:{api_secret}""",
+		"username": user_obj.get("username"),
+		"email": user_obj.get("email"),
+		"first_name": user_obj.get("first_name"),
+		"phone": user_obj.get("mobile_no"),
+		"notification_key":kwargs.get("notification_key") if kwargs.get("notification_key") else user_obj.get("notification_key"),
 	}
 
 	if frappe.db.exists("Store",{"user":user_obj.name}):
-		store = frappe.get_doc("Store",{"user":user_obj.name})
+		store = frappe.get_value("Store",{"user":user_obj.name},['name','store_location','store_logo','store_cover'],as_dict=True)
 		res['store_logo'] = frappe.get_value("Store",{"user":frappe.session.user},"store_logo")
 		res['store_cover'] = frappe.get_value("Store",{"user":frappe.session.user},"store_cover")
-		if store.store_location:
+		if store.get("store_location"):
 			coordi = json.loads(frappe.get_value("Store",{"user":frappe.session.user},"store_location"))["features"][0]["geometry"].get("coordinates", None)
 			res['coordination'] = coordi if coordi else None
 		else:
