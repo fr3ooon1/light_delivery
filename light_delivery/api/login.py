@@ -40,7 +40,7 @@ def login(*args,**kwargs):
 		user_obj = frappe.db.get_value("User", filters, ["name", "username" , "first_name", "api_key", "notification_key","email","mobile_no"], as_dict=True)
 		
 		login_manager = frappe.auth.LoginManager()
-		login_manager.authenticate(user=user_obj.name, pwd=password)
+		login_manager.authenticate(user=user_obj.get("name"), pwd=password)
 		login_manager.post_login()
 
 
