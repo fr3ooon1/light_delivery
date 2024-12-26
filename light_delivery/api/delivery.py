@@ -7,8 +7,6 @@ from light_delivery.api.apis import download_image
 @frappe.whitelist(allow_guest=False)
 def post_suggestion(**kwargs):
 	try:
-
-		pass
 		user = frappe.session.user
 		
 		if frappe.db.exists("Delivery",{"user":user}):
@@ -30,6 +28,7 @@ def post_suggestion(**kwargs):
 			doc.save(ignore_permissions=True)
 			frappe.db.commit()
 	except Exception as e:
+		frappe.log_error(message=str(e), title="Error in post_suggestion")
 		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = _(e)	
 
