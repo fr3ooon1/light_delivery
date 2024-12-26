@@ -23,8 +23,8 @@ def post_suggestion(**kwargs):
 			doc.from_type = "Store"
 			from_user = frappe.get_value("Store",{"user":user},"name")
 			doc.from_user = from_user
-			doc.complaints = kwargs.get("complaints")
-			doc.suggestion = kwargs.get("suggestion")
+			doc.complaints = kwargs.get("complaints") if kwargs.get("complaints") else None
+			doc.suggestion = kwargs.get("suggestion") if kwargs.get("suggestion") else None
 			doc.save(ignore_permissions=True)
 			frappe.db.commit()
 			frappe.local.response['message'] = _("Suggestion sent successfully")
