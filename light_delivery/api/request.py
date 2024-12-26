@@ -446,7 +446,7 @@ def get_request_details_for_del(*args, **kwargs):
 			username = frappe.get_value("User",{"mobile_no":i.get("phone_number")},['username'],as_dict=1)
 
 			if username:
-				customer = frappe.get_value("Customer",{"user":username.get("username")},['name'],as_dict=1)
+				customer = frappe.get_value("Customer",username.get("username"),['name'],as_dict=1)
 				data = frappe.db.sql(f"""select a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer.get("name")}'""",as_dict=True)
 				if data:
 					i['coordi'] = [float(data[0].get("latitude") , 0),float(data[0].get("longitude") , 0)]
