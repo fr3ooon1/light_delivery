@@ -38,6 +38,7 @@ def login(*args,**kwargs):
 
 
 		user_obj = frappe.db.get_value("User", filters, ["name", "username" , "first_name", "api_key", "notification_key","email","mobile_no"], as_dict=True)
+		# return user_obj
 		
 		login_manager = frappe.auth.LoginManager()
 		login_manager.authenticate(user=user_obj.get("name"), pwd=password)
@@ -108,23 +109,20 @@ def generate_keys(user , notification_key):
 	:param user: Username
 	:return: API secret
 	"""
-	# user_details = frappe.get_doc("User", user , ignore_permissions=1)
 	api_secret = frappe.generate_hash(length=15)
-
-	user = frappe.get_value("User", user , ["api_key", "notification_key"], as_dict=True)
+	user_obj = frappe.get_doc("User", user , ignore_permissions=True)
 
 	if notification_key:
-		frappe.db.set_value("User", user, "notification_key", notification_key)
+		user_obj.notification_key = notification_key
 
-	if not user.get("api_key"):
+	if not user_obj.api_key:
 		api_key = frappe.generate_hash(length=15)
-		frappe.db.set_value("User", user, "api_key", api_key)
+		user_obj.api_key = api_key
 
 
-	user_obj = frappe.get_doc("User", user)
+	
 	user_obj.api_secret = api_secret
 	user_obj.save(ignore_permissions=True)
-	# frappe.db.set_value("User", user, "api_secret", api_secret)
 	frappe.db.commit()
 	return {"api_secret": api_secret}
 
