@@ -17,7 +17,7 @@ def execute(filters=None):
         conditions += " and o.store = %(store)s"
     if filters.get("delivery"):
         conditions += " and o.delivery = %(delivery)s"
-    if filters.get("date_range"):
+    if filters.get("from_date") and filters.get("to_date"):   
         conditions += " and o.order_date between %(from_date)s and %(to_date)s"
     if filters.get("order_type"):
         conditions += " and o.order_type = %(order_type)s"
@@ -51,7 +51,7 @@ def execute(filters=None):
         where
             {conditions}
         order by
-            o.creation desc
+            o.creation  
     """.format(conditions=conditions), filters, as_dict=1)
 
     columns = [
