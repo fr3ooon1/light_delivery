@@ -56,7 +56,7 @@ def login(*args,**kwargs):
 		}
 
 	coordi = []
-	api_secret = generate_keys(user=user_obj.name ,  notification_key=kwargs.get("notification_key")).get('api_secret')
+	api_secret = generate_keys(user=user_obj.get("name") ,  notification_key=kwargs.get("notification_key")).get('api_secret')
 	res = {
 		"status_code": 200,
 		"message": "Authentication success",
