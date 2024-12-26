@@ -4,6 +4,37 @@ from light_delivery.api.delivery_request import get_balance
 from light_delivery.api.apis import download_image
 
 
+@frappe.whitelist(allow_guest=False)
+def post_suggestion(**kwargs):
+	try:
+
+		pass
+		user = frappe.session.user
+		
+		if frappe.db.exists("Delivery",{"user":user}):
+			doc = frappe.new_doc("Complaints")
+			doc.from_type = "Delivery"
+			from_user = frappe.get_value("Delivery",{"user":user},"name")
+			doc.from_user = from_user
+			doc.complaints = kwargs.get("complaints")
+			doc.suggestion = kwargs.get("suggestion")
+			doc.save(ignore_permissions=True)
+			frappe.db.commit()
+		elif frappe.db.exists("Store",user):
+			doc = frappe.new_doc("Complaints")
+			doc.from_type = "Store"
+			from_user = frappe.get_value("Store",{"user":user},"name")
+			doc.from_user = from_user
+			doc.complaints = kwargs.get("complaints")
+			doc.suggestion = kwargs.get("suggestion")
+			doc.save(ignore_permissions=True)
+			frappe.db.commit()
+	except Exception as e:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = _(e)	
+
+
+
 @frappe.whitelist()
 def get_all_customers(user = None):
 	
