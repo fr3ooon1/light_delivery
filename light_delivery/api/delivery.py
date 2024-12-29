@@ -92,12 +92,12 @@ def get_profile():
 			res['image'] = frappe.get_value("Customer",user.get("username"),'image')
 
 		
-		address = frappe.db.sql(f"""select a.address_line1 from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{user.get("username")}'""",as_dict=True)
+		address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{user.get("username")}'""",as_dict=True)
 
 		res["full_name"]=user.get("full_name")
 		res["phone_number"]=user.get("mobile_no")
 		res["email"]=user.get("email")
-		res["address"]=address[0].get("address_line1") if address else None
+		res["address"]= address if address else []
 		# res["image"]=frappe.get_value("Customer",user.get("username"),'image')
 		return res
 		

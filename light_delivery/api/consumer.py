@@ -343,3 +343,34 @@ def get_current_location_delivery(**kwargs):
 		frappe.local.response['http_status_code'] = 500
 		frappe.log_error(message=str(e), title=_('Error in get_order_history'))
 		return str(e)
+	
+
+@frappe.whitelist(allow_guest=False)
+def add_address(**kwargs):
+	user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
+	if not user:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = "User not found."
+		return
+
+	address = kwargs.get("address")
+	lattitude = kwargs.get("lattitude")
+	longitude = kwargs.get("longitude")
+	
+	if not address:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = "Address is required."
+		return
+
+	if frappe.db.exists("Address",{"parent":user.get("username"),"address":address}):
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = "Address already exists."
+		return
+
+	addr = frappe.new_doc("Address")
+	addr.parent = user.get("username")
+	addr.address = address
+	addr.insert(ignore_permissions=True)
+	frappe.db.commit()
+	frappe.local.response['http_status_code'] = 200
+	frappe.local.response['message'] = "Address added successfully."
