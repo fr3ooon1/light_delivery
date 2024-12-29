@@ -238,6 +238,9 @@ def sms(reciever):
 	# data = f"""{account_id}{password}{sender_name}{reciever}{msg}"""
 
 	data = f"""AccountId={account_id}&Password={password}&SenderName={sender_name}&ReceiverMSISDN=201069810415&SMSText={msg}"""
+	print(data)
+
+	
 	secure_hash = hmac.new(secret_key.encode(), data.encode(), hashlib.sha256).hexdigest()
 
 	secure_hash =  secure_hash.encode('utf-8')
@@ -245,9 +248,8 @@ def sms(reciever):
 	print(secure_hash)
 
 	payload = f"""
-	<?xml version="1.0" encoding="UTF-8"?> <SubmitSMSRequest xmlns:="http://www.edafa.com/web2sms/sms/model/"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.edafa.com/web2sms/sms/model/
-	SMSAPI.xsd " xsi:type="SubmitSMSRequest">
+	<?xml version="1.0" encoding="UTF-8"?>
+	<SubmitSMSRequest xmlns="http://www.edafa.com/web2sms/sms/model/">
 	<AccountId>{account_id}</AccountId>
 	<Password>{password}</Password>
 	<SecureHash>{secure_hash}</SecureHash>
