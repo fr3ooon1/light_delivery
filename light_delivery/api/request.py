@@ -305,7 +305,7 @@ def cancel_request(*args, **kwargs):
 
 		request_search_obj.db_update()
 		
-		delivery_user = frappe.db.set_value("Delivery", request_obj.delivery, "status", "Offline")
+		delivery_user = frappe.db.set_value("Delivery", request_obj.delivery, "status", "Avaliable")
 		frappe.db.commit()
 		frappe.local.response['http_status_code'] = 200
 		frappe.local.response['message'] = msg
