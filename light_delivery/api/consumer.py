@@ -356,20 +356,26 @@ def add_address(**kwargs):
 	address = kwargs.get("address")
 	lattitude = kwargs.get("lattitude")
 	longitude = kwargs.get("longitude")
-	
-	if not address:
+
+	if not address or not lattitude or not longitude:
 		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = "Address is required."
 		return
 
-	if frappe.db.exists("Address",{"parent":user.get("username"),"address":address}):
-		frappe.local.response['http_status_code'] = 400
-		frappe.local.response['message'] = "Address already exists."
-		return
+	# if frappe.db.exists("Address",{"parent":user.get("username"),"address":address}):
+	# 	frappe.local.response['http_status_code'] = 400
+	# 	frappe.local.response['message'] = "Address already exists."
+	# 	return
 
 	addr = frappe.new_doc("Address")
 	addr.parent = user.get("username")
 	addr.address = address
+	addr.lattitude = lattitude
+	addr.longitude = longitude
+	addr.append("links", {
+		"link_doctype": "Customer",
+		"link_name": user.get("username")
+	})
 	addr.insert(ignore_permissions=True)
 	frappe.db.commit()
 	frappe.local.response['http_status_code'] = 200

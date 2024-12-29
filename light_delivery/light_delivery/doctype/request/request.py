@@ -22,11 +22,11 @@ class Request(Document):
 			
 			doc.status = self.status
 
-			for order in doc.get("order_request"):
-				order_obj = frappe.get_doc("Order",order.get("order"))
-				order_obj.delivery = self.delivery
-				order_obj.save(ignore_permissions=True)
-				frappe.db.commit()
+			# for order in doc.get("order_request"):
+			# 	order_obj = frappe.get_doc("Order",order.get("order"))
+			# 	order_obj.delivery = self.delivery
+			# 	order_obj.save(ignore_permissions=True)
+			# 	frappe.db.commit()
 			doc.save(ignore_permissions=True)
 			frappe.db.commit()
 	
