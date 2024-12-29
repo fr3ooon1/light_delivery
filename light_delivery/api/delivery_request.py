@@ -34,7 +34,13 @@ def sending_request():
 		try:
 			doc = frappe.get_doc("Request", request.get("name"))
 
+			# if doc.status == "Offline":
+			# 	return
+
 			if doc.delivery :
+				status = frappe.db.get_value("Delivery", doc.delivery, "status")
+				if status in ["Inorder","Offline"]:
+					return True
 				frappe.db.set_value("Delivery", doc.delivery, "status", "Avaliable")
 
 			if doc.creation:
