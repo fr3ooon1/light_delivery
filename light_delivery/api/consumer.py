@@ -369,7 +369,8 @@ def add_address(**kwargs):
 
 	addr = frappe.new_doc("Address")
 	addr.parent = user.get("username")
-	addr.address = address
+	addr.city = "Cairo"
+	addr.address_line1 = address
 	addr.lattitude = lattitude
 	addr.longitude = longitude
 	addr.append("links", {
