@@ -348,15 +348,15 @@ def finish_order_with_rate(doc , rate ):
 
 			
 
-			doc = frappe.new_doc("Transactions")
-			doc.party = "Delivery"
-			doc.party_type = doc.delivery
-			doc.in_wallet = total
-			doc.aganist = "Store"
-			doc.aganist_from = doc.store
-			doc.order = doc.name
-			doc.save(ignore_permissions=True)
-			doc.submit()
+			# doc = frappe.new_doc("Transactions")
+			# doc.party = "Delivery"
+			# doc.party_type = doc.delivery
+			# doc.in_wallet = total
+			# doc.aganist = "Store"
+			# doc.aganist_from = doc.store
+			# doc.order = doc.name
+			# doc.save(ignore_permissions=True)
+			# doc.submit()
 	
 	if doc.store:
 		store = frappe.get_doc("Store" , doc.store)
@@ -374,16 +374,16 @@ def finish_order_with_rate(doc , rate ):
 		doc.tax = tax_rate
 		doc.store_fees = discount
 
-		doc = frappe.new_doc("Transactions")
-		doc.party = "Store"
-		doc.party_type = doc.store
-		doc.out = total
-		doc.aganist = "Delivery"
-		doc.aganist_from = doc.delivery
-		doc.order = doc.name
-		doc.save(ignore_permissions=True)
-		doc.submit()
-	frappe.db.commit()
+	# 	doc = frappe.new_doc("Transactions")
+	# 	doc.party = "Store"
+	# 	doc.party_type = doc.store
+	# 	doc.out = total
+	# 	doc.aganist = "Delivery"
+	# 	doc.aganist_from = doc.delivery
+	# 	doc.order = doc.name
+	# 	doc.save(ignore_permissions=True)
+	# 	doc.submit()
+	# frappe.db.commit()
 
 
 	store = {
