@@ -354,10 +354,10 @@ def add_address(**kwargs):
 		return
 
 	address = kwargs.get("address")
-	lattitude = kwargs.get("lattitude")
+	latitude = kwargs.get("latitude")
 	longitude = kwargs.get("longitude")
 
-	if not address or not lattitude or not longitude:
+	if not address or not latitude or not longitude:
 		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = "Address is required."
 		return
@@ -371,7 +371,7 @@ def add_address(**kwargs):
 	addr.parent = user.get("username")
 	addr.city = "Cairo"
 	addr.address_line1 = address
-	addr.lattitude = lattitude
+	addr.latitude = latitude
 	addr.longitude = longitude
 	addr.append("links", {
 		"link_doctype": "Customer",
