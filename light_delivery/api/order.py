@@ -118,9 +118,11 @@ def search_by_phone_with_total(phone_number , order_type = False):
 		customer = frappe.get_value("Dynamic Link",{"parent":contact},["name","link_name"],as_dict=1)
 		if customer:
 			customer_name = customer.get("link_name")
-			address_name = frappe.get_value("Dynamic Link",{"link_name":customer_name,"name":["!=" , customer.get("name")]},["name","parent"],as_dict=1)
-			address_st = frappe.get_value("Address",address_name.get("parent"),"address_line1")
-			address.insert(0, address_st)
+			# address_name = frappe.get_value("Dynamic Link",{"link_name":customer_name,"name":["!=" , customer.get("name")]},["name","parent"],as_dict=1)
+			# address_st = frappe.get_value("Address",address_name.get("parent"),"address_line1")
+			# address.insert(0, address_st)
+			address = frappe.db.sql("""SELECT a.address_line1 FROM `tabDynamic Link` dl JOIN `tabAddress` a on a.name = dl.parent WHERE dl.link_name = %s """, (customer_name), as_dict=1)
+
 
 		res['address'] = address
 		if order_type in ['Replacing','Refund']:
