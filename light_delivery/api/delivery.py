@@ -72,6 +72,8 @@ def get_all_customers(user = None):
 def get_profile():
 	try:
 		user = frappe.get_value("User",frappe.session.user,['full_name','mobile_no','email','username','first_name'],as_dict=True)
+
+		address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{user.get("username")}'""",as_dict=True)
 		
 		res = {}
 		if frappe.db.exists("Delivery",{"user":frappe.session.user}):
@@ -85,19 +87,21 @@ def get_profile():
 			res['price_list'] = price_list
 			# res['image'] = delivery.get("image")
 			res['image'] = frappe.get_value("Delivery",{"user":frappe.session.user},'image')
+			res["address"]=address[0].get("address_line1") if address else None
 			
 		elif frappe.db.exists("Store",{"user":frappe.session.user}):
 			pass
 		else:
 			res['image'] = frappe.get_value("Customer",user.get("username"),'image')
+			res["address"]= address if address else None
 
 		
-		address = frappe.db.sql(f"""select a.address_line1 from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{user.get("username")}'""",as_dict=True)
+		
 
 		res["full_name"]=user.get("full_name")
 		res["phone_number"]=user.get("mobile_no")
 		res["email"]=user.get("email")
-		res["address"]=address[0].get("address_line1") if address else None
+		
 		# res["image"]=frappe.get_value("Customer",user.get("username"),'image')
 		return res
 		
