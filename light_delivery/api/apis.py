@@ -542,7 +542,7 @@ def send_notification(UsersArray , content ):
 	if content == "modification":
 		payload = {
 			"app_id": "e75df22c-56df-4e69-8a73-fc80c73c4337",
-			"priority": 8,
+			# "priority": 8,
 			"headings": { 
 				"en": "Edit Request"
 			},
@@ -558,7 +558,7 @@ def send_notification(UsersArray , content ):
 	elif content == "new request":
 		payload = {
 			"app_id": "e75df22c-56df-4e69-8a73-fc80c73c4337",
-			"priority": 8,
+			# "priority": 8,
 			"headings": { 
 				"en": "New Request"
 			},
