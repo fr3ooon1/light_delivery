@@ -35,7 +35,7 @@ def login(*args,**kwargs):
 			}
 			
 		else:
-			if float(kwargs.get("version")) < "1.0.1":
+			if float(kwargs.get("version")) != "1.0.1":
 				frappe.local.response['http_status_code'] = 401
 				return {
 					'message': 'Please Update Your App',
