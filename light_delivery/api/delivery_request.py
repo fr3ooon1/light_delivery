@@ -119,6 +119,8 @@ def delivery_accepted_request(*args , **kwargs):
 	elif kwargs.get("status") != "Accepted":
 		delivery.status = "Avaliable"
 		delivery.save(ignore_permissions=True)
+		doc.delivery = None
+		doc.save(ignore_permissions=True)
 		frappe.db.commit()
 
 		frappe.local.response['http_status_code'] = 200
