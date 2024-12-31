@@ -462,7 +462,10 @@ def upload_images(*args , **kwargs):
 
 
 
-
+@frappe.whitelist(allow_guest=True)
+def version(**kwargs):
+	version = "1.0.1"
+	return version
 
 @frappe.whitelist(allow_guest=True)
 def download_image(image):
