@@ -45,10 +45,10 @@ def login(*args,**kwargs):
 
 		if not frappe.db.exists("User",filters):
 			frappe.local.response['http_status_code'] = 401
-			frappe.local.response["message"] ={
+			return {
 				'message': 'User Not Found',
 			}
-			return
+			# return
 		
 		# user_obj = frappe.get_doc("User",filters)
 
