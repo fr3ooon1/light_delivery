@@ -27,6 +27,22 @@ def login(*args,**kwargs):
 				'message': 'Login failed',
 			}
 		
+
+		if not kwargs.get("version"):
+			frappe.local.response['http_status_code'] = 401
+			frappe.local.response["message"] ={
+				'message': 'Please Update Your App',
+			}
+			return
+		else:
+			if float(kwargs.get("version")) < "1.0.1":
+				frappe.local.response['http_status_code'] = 401
+				frappe.local.response["message"] ={
+					'message': 'Please Update Your App',
+				}
+				return
+
+
 		if not frappe.db.exists("User",filters):
 			frappe.local.response['http_status_code'] = 401
 			frappe.local.response["message"] ={

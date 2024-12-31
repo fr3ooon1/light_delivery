@@ -464,8 +464,13 @@ def upload_images(*args , **kwargs):
 
 @frappe.whitelist(allow_guest=True)
 def version(**kwargs):
-	version = "1.0.1"
-	return version
+	last_version = "1.0.1"
+	version = kwargs.get("version")
+
+	if version == last_version:
+		return True
+	else:
+		return False
 
 @frappe.whitelist(allow_guest=True)
 def download_image(image):
