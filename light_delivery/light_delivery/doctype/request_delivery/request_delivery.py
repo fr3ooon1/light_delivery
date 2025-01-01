@@ -127,10 +127,7 @@ class RequestDelivery(Document):
 		if not request_log or not pick_up_deduction:
 			return
 		time_difference = float(time_diff_in_seconds(now_datetime(), get_datetime(request_log[-1].get("time")))) / 60
-		row = next(
-			(i for i in pick_up_deduction if i.get("from") < time_difference <= i.get("to")),
-			None
-		)
+		row = next((i for i in pick_up_deduction if i.get("from") < time_difference <= i.get("to")),None)
 
 		try:
 			rate = row.get("rate")
@@ -138,10 +135,10 @@ class RequestDelivery(Document):
 				self.status = "Store Cancel"
 			
 			order_request = self.get('order_request')
-			if order_request:
+			if order_request and rate > 0:
 				for order in order_request:
 					doc = frappe.get_doc("Order" , order.order)
-					finish_order_with_rate(doc=doc , rate=1)
+					finish_order_with_rate(doc=doc , rate=rate)
 				self.finish_request = 1
 		except Exception as e:
 			frappe.log_error(f"Error in {self.name}: {str(e)}", "Pick Up Deduction Error")

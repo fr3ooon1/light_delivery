@@ -85,8 +85,7 @@ def login(*args,**kwargs):
 			res['coordination'] = []
 	
 	if frappe.db.exists("Delivery",{"user":frappe.session.user}):
-
-
+		
 		if kwargs.get("version"):
 			if kwargs.get("version") != "1.0.1":
 				frappe.local.response['http_status_code'] = 405
