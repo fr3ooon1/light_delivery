@@ -96,8 +96,12 @@ def get_balance(party):
 				SUM(jea.credit_in_account_currency) - SUM(jea.debit_in_account_currency) AS total
 			FROM
 				`tabJournal Entry Account` as jea
+			JOIN 
+				`tabJournal Entry` AS je ON je.name = jea.parent
 			WHERE
-				jea.party = '{party}';
+				jea.party = '{party}'
+				AND je.docstatus = 1
+				;
 
 	"""
 	sql = frappe.db.sql(sql,as_dict=1)

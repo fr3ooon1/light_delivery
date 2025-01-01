@@ -85,7 +85,7 @@ def login(*args,**kwargs):
 			res['coordination'] = []
 	
 	if frappe.db.exists("Delivery",{"user":frappe.session.user}):
-		
+
 		if kwargs.get("version"):
 			if kwargs.get("version") != "1.0.1":
 				frappe.local.response['http_status_code'] = 405
@@ -139,13 +139,11 @@ def generate_keys(user , notification_key):
 
 @frappe.whitelist()
 def get_user_permissions(user):
-	user_permissions = frappe.get_all('User Permission', filters={'user': user}, fields=['allow', 'for_value'])
-	permissions_dict = {}
-	for perm in user_permissions:
-		if perm['allow'] not in permissions_dict:
-			permissions_dict[perm['allow']] = []
-		permissions_dict[perm['allow']].append(perm['for_value'])
-	return permissions_dict
+	doc = frappe.get_doc('User', user)
+	permissions = []
+	for i in range(len(doc.roles)):
+		permissions.append(doc.roles[i].role)
+	return permissions
 
 @frappe.whitelist(allow_guest = True)
 def registration (*args , **kwargs):
