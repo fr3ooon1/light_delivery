@@ -138,7 +138,7 @@ class RequestDelivery(Document):
 			if order_request and rate > 0:
 				for order in order_request:
 					doc = frappe.get_doc("Order" , order.order)
-					finish_order_with_rate(doc=doc , rate=rate)
+					finish_order_with_rate(doc=doc , rate=rate/100)
 				self.finish_request = 1
 		except Exception as e:
 			frappe.log_error(f"Error in {self.name}: {str(e)}", "Pick Up Deduction Error")
