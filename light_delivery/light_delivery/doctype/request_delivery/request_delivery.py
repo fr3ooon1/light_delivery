@@ -130,7 +130,7 @@ class RequestDelivery(Document):
 		row = next((i for i in pick_up_deduction if i.get("from") < time_difference <= i.get("to")),None)
 
 		try:
-			rate = row.get("rate")
+			rate = row.get("rate") if row else 0
 			if rate >= 100:
 				self.status = "Store Cancel"
 			
