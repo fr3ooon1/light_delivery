@@ -86,7 +86,12 @@ def login(*args,**kwargs):
 	
 	if frappe.db.exists("Delivery",{"user":frappe.session.user}):
 
-		if kwargs.get("version"):
+		if not kwargs.get("version"):
+			frappe.local.response['http_status_code'] = 405
+			return {
+				'message': 'Please Update Your App',
+			}
+		else:
 			if kwargs.get("version") != "1.0.1":
 				frappe.local.response['http_status_code'] = 405
 				return {
