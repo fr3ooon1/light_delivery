@@ -87,3 +87,32 @@ def get_wallet():
 		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = e
 
+
+
+@frappe.whitelist(allow_guest=False)
+def get_profile():
+	store = frappe.get_value("Store",{"user":frappe.session.user},['name' , 'creation' , 'store_logo' , 'store_cover' , 'status'],as_dict=1)
+	try:
+		res = {}
+		orders = frappe.db.sql(f"SELECT name FROM `tabOrder` WHERE store = '{store.get('name')}' ",as_dict=True)
+		total_orders = len(orders) if orders else 0
+
+		since_joining = frappe.utils.data.getdate(frappe.utils.data.now()) - frappe.utils.data.getdate(store.get('creation'))
+
+		res = {
+			'store': store,
+			'total_orders': total_orders,
+			'since_joining': since_joining.days,
+			'balance': get_balance(store.get('username')),
+			'store_cover': store.get('store_cover'),
+			'store_logo': store.get('store_logo'),
+			'status': store.get('status')
+		}
+
+		return res
+	except Exception as e:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = e
+		frappe.log_error(message=str(e), title=_('Error in get_profile'))
+		return 
+	
