@@ -251,6 +251,9 @@ class Order(Document):
 				
 				self.net_delivery_fees = total
 
+				delivery_name = frappe.get_value("Delivery",self.delivery,'delivery_name')
+				delivery_id = frappe.get_value("Supplier",{"supplier_name":delivery_name},'name')
+
 		if self.store:
 			store = frappe.get_doc("Store" , self.store)
 			amount = (float(self.total_distance) / 1000) * float(store.rate_of_km or 0) 
@@ -270,13 +273,16 @@ class Order(Document):
 			self.tax = tax_rate
 			self.store_fees = discount
 
+			store_username = frappe.get_value("Store",self.store,'username')
+			store_id = frappe.get_value("Customer",{"customer_name":store_username},'name')
+
 		store = {
 			"account_credit": Deductions.light_account,
 			"amount_credit":float(self.store_fees or 0) - float(self.tax or 0),
 
 			"account_debit": Deductions.store_account,
 			"party_type_debit": "Customer",
-			"party_debit": frappe.get_value("Store",self.store,'username'),
+			"party_debit": store_id,
 			"amount_debit": float(self.store_fees or 0) - float(self.tax or 0),
 
 			"order":self.name
@@ -290,7 +296,7 @@ class Order(Document):
 
 			"account_debit": Deductions.store_account,
 			"party_type_debit": "Customer",
-			"party_debit": frappe.get_value("Store",self.store,'username'),
+			"party_debit":store_id,
 			"amount_debit":self.tax,
 
 			"order":self.name
@@ -304,7 +310,7 @@ class Order(Document):
 
 			"account_credit": Deductions.delivery_account,
 			"party_type_credit": "Supplier",
-			"party_credit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
+			"party_credit": delivery_id,
 			"amount_credit":self.delivery_fees ,	
 
 			"order":self.name
@@ -316,7 +322,7 @@ class Order(Document):
 		prof_delivery = {
 			"account_debit": Deductions.delivery_account,
 			"party_type_debit": "Supplier",
-			"party_debit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
+			"party_debit": delivery_id,
 			"amount_debit":self.delivery_fees,
 
 			"account_credit": Deductions.balance,
