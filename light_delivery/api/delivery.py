@@ -115,7 +115,15 @@ def get_profile():
 def change_profile_pic():
 	try:
 		files = frappe.request.files
-		image = download_image(files.get('image'))
+
+		if files.get('image'):
+			image = download_image(files.get('image'))
+
+		if files.get('store_cover'):
+			store_cover = download_image(files.get('store_cover'))
+		
+		if files.get('store_logo'):
+			store_logo = download_image(files.get('store_logo'))
 
 		username = frappe.session.user
 
@@ -132,6 +140,18 @@ def change_profile_pic():
 			doc.save(ignore_permissions=True)
 			frappe.db.commit()
 			return f"""image updated successfully"""
+		elif frappe.db.exists("Store",username):
+			doc = frappe.get_doc("Store",username)
+
+			if store_cover:
+				doc.store_cover = store_cover.file_url
+			if store_logo:
+				doc.store_logo = store_logo.file_url
+				
+			doc.save(ignore_permissions=True)
+			frappe.db.commit()
+			return f"""image updated successfully"""
+		
 		else:
 			frappe.local.response['http_status_code'] = 400
 			return f"""no user like {frappe.session.user}"""
