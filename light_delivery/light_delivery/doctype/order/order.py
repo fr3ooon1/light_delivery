@@ -327,7 +327,7 @@ class Order(Document):
 
 			"account_credit": Deductions.balance,
 			"party_type_credit": "Supplier",
-			"party_credit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
+			"party_credit": delivery_id,
 			"amount_credit":self.delivery_fees,	
 
 			"order":self.name
