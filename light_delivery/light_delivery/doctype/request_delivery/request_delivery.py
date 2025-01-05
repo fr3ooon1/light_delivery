@@ -78,7 +78,7 @@ class RequestDelivery(Document):
 					"party_debit": frappe.get_value("Delivery",self.delivery,'delivery_name'),
 					"amount_debit":minimum_rate / 2,	
 
-					"order":self.name
+					"order": f"""Late After Accept for Delivery in Request {self.name}"""
 					}
 				
 				if minimum_rate > 0 :
@@ -100,7 +100,7 @@ class RequestDelivery(Document):
 						if order_request:
 							for order in order_request:
 								doc = frappe.get_doc("Order" , order.order)
-								finish_order_with_rate(doc=doc , rate=1.5)
+								finish_order_with_rate(doc=doc , rate=1.5 , note=f"""Store Cancel for Order {doc.name}""")
 							self.finish_request = 1
 
 
@@ -115,7 +115,7 @@ class RequestDelivery(Document):
 						if order_request:
 							for order in order_request:
 								doc = frappe.get_doc("Order" , order.order)
-								finish_order_with_rate(doc=doc , rate=1)
+								finish_order_with_rate(doc=doc , rate=1 , note=f"""Store Cancel for Order {doc.name}""")
 							self.finish_request = 1
 	
 
@@ -138,7 +138,7 @@ class RequestDelivery(Document):
 			if order_request and rate > 0:
 				for order in order_request:
 					doc = frappe.get_doc("Order" , order.order)
-					finish_order_with_rate(doc=doc , rate=rate/100)
+					finish_order_with_rate(doc=doc , rate=rate/100 , note=f"""Pick Up Deduction for Order {doc.name}""")
 				self.finish_request = 1
 		except Exception as e:
 			frappe.log_error(f"Error in {self.name}: {str(e)}", "Pick Up Deduction Error")
@@ -323,7 +323,7 @@ class RequestDelivery(Document):
 
 
 
-def finish_order_with_rate(doc , rate ):
+def finish_order_with_rate(doc , rate , note = None):
 
 	total = 0
 
@@ -392,7 +392,7 @@ def finish_order_with_rate(doc , rate ):
 		"party_debit": frappe.get_value("Store",doc.store,'username'),
 		"amount_debit": float(doc.store_fees or 0) - float(doc.tax or 0),
 
-		"order":doc.name
+		"order": note if note else doc.name
 		}
 	if doc.net_store_fees > 0:
 		make_journal_entry(store)
@@ -406,7 +406,7 @@ def finish_order_with_rate(doc , rate ):
 		"party_debit": frappe.get_value("Store",doc.store,'username'),
 		"amount_debit":doc.tax,
 
-		"order":doc.name
+		"order": note if note else doc.name
 		}
 	if doc.tax > 0 :
 		make_journal_entry(tax)
@@ -421,7 +421,7 @@ def finish_order_with_rate(doc , rate ):
 		"party_credit": frappe.get_value("Delivery",doc.delivery,'delivery_name'),
 		"amount_credit":doc.delivery_fees ,	
 
-		"order":doc.name
+		"order": note if note else doc.name
 		}
 	
 	if doc.delivery_fees > 0 :
@@ -438,7 +438,7 @@ def finish_order_with_rate(doc , rate ):
 		"party_credit": frappe.get_value("Delivery",doc.delivery,'delivery_name'),
 		"amount_credit":doc.delivery_fees,	
 
-		"order":doc.name
+		"order": note if note else doc.name
 		}
 	if doc.delivery_fees > 0:
 		make_journal_entry(prof_delivery)
