@@ -100,7 +100,7 @@ def get_profile():
 		since_joining = frappe.utils.data.getdate(frappe.utils.data.now()) - frappe.utils.data.getdate(store.get('creation'))
 
 		res = {
-			'store': store,
+			# 'store': store,
 			'total_orders': total_orders,
 			'since_joining': since_joining.days,
 			'balance': get_balance(store.get('username')),
