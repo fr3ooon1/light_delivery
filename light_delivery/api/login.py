@@ -75,6 +75,18 @@ def login(*args,**kwargs):
 	}
 
 	if frappe.db.exists("Store",{"user":user_obj.get("name")}):
+
+		if not kwargs.get("version"):
+			frappe.local.response['http_status_code'] = 405
+			return {
+				'message': 'Please Update Your App',
+			}
+		else:
+			if kwargs.get("version") != "1.0.1":
+				frappe.local.response['http_status_code'] = 405
+				return {
+					'message': 'Please Update Your App',
+				}
 			
 		store = frappe.get_value("Store",{"user":user_obj.get("name")},['name','store_location','store_logo','store_cover'],as_dict=True)
 		res['store_logo'] = frappe.get_value("Store",{"user":frappe.session.user},"store_logo")
