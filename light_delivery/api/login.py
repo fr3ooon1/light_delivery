@@ -57,7 +57,22 @@ def login(*args,**kwargs):
 			'message': 'Wronge Password',
 			'error': str(e)
 		}
+	
+	if frappe.db.exists("Store",{"user":user_obj.get("name")}):
 
+		if not kwargs.get("version"):
+			frappe.local.response['http_status_code'] = 405
+			return {
+				'message': 'Please Update Your App',
+			}
+		else:
+			if kwargs.get("version") != "1.0.1":
+				frappe.local.response['http_status_code'] = 405
+				return {
+					'message': 'Please Update Your App',
+				}
+			
+			
 	coordi = []
 	api_secret = generate_keys(user=user_obj.get("name") ,  notification_key=kwargs.get("notification_key")).get('api_secret')
 	res = {
