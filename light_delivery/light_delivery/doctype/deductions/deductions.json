@@ -5,6 +5,12 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "version_section",
+  "store_version",
+  "column_break_lbia",
+  "delivery_version",
+  "column_break_yogl",
+  "customer_version",
   "section_break_grsh",
   "if_order_cancelled_from_store_after_delivery_arrived",
   "if_order_cancelled_from_store_after_picked_up",
@@ -179,12 +185,40 @@
    "fieldtype": "Link",
    "label": "Delivery Balance",
    "options": "Account"
+  },
+  {
+   "fieldname": "version_section",
+   "fieldtype": "Section Break",
+   "label": "Version"
+  },
+  {
+   "fieldname": "store_version",
+   "fieldtype": "Data",
+   "label": "Store Version"
+  },
+  {
+   "fieldname": "column_break_lbia",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "delivery_version",
+   "fieldtype": "Data",
+   "label": "Delivery Version"
+  },
+  {
+   "fieldname": "column_break_yogl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customer_version",
+   "fieldtype": "Data",
+   "label": "Customer Version"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-12-09 19:46:03.282534",
+ "modified": "2025-01-08 13:52:31.579964",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Deductions",
