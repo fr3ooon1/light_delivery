@@ -391,13 +391,13 @@ def get_order_history(status = None):
 			order['valuation'] = float(order['valuation'] or 0) * 5
 			
 		today = nowdate()
-		count_today = frappe.db.count('Order', filters={'creation': ['>=', today] , 'store':store})
+		count_today = frappe.db.count('Order', {'creation': ['>=', today] , 'store':store})
 
 		start_of_week = get_first_day_of_week(today)
-		count_this_week = frappe.db.count('Order', filters={'creation': ['>=', start_of_week] , 'store':store})
+		count_this_week = frappe.db.count('Order', {'creation': ['>=', start_of_week] , 'store':store})
 
 		start_of_month = get_first_day(today)
-		count_this_month = frappe.db.count('Order', filters={'creation': ['>=', start_of_month] , 'store':store})
+		count_this_month = frappe.db.count('Order', {'creation': ['>=', start_of_month] , 'store':store})
 
 		frappe.local.response['http_status_code'] = 200
 		return {
