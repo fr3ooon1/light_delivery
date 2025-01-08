@@ -377,10 +377,12 @@ def get_order_history(status = None):
 			orders = frappe.get_list("Order" , {"store":store} ,['name', 'creation', 'status', 'total_order','valuation'])
 		else:
 			status = status.strip("[]").split(",")
-			orders = frappe.get_list("Order" , filters = {'status':['in', status],"store":store} ,  fields=['name', 'creation', 'status' , 'total_order','valuation'])
+			orders = frappe.get_list("Order" , filters = {'status':['in', status],"store":store} ,  fields=['name', 'creation', 'status' , 'total_order','valuation','duration','total_distance'])
 		
 		
 		for order in orders:
+			order['total_distance'] = f"""{float(order['total_distance'] or 0) / 1000} KM"""
+
 			if isinstance(order.get('creation'), datetime):
 				order['creation'] = order.get('creation').strftime('%Y-%m-%d %H:%M:%S')
 			else:
