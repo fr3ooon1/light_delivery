@@ -373,7 +373,7 @@ def get_order_history(status = None):
 		store = frappe.get_value("Store",{"user":frappe.session.user},'name')
 		orders = []
 
-		if status == ["All" ,"all" , "ALL" , None]:
+		if status in ["All" ,"all" , "ALL" , None]:
 			orders = frappe.get_list("Order" , {"store":store} ,['name', 'creation', 'status', 'total_order','valuation','duration','total_distance'])
 		elif status and status != ["All" ,"all" , "ALL" , None]:
 			status = status.strip("[]").split(",")
