@@ -7,15 +7,13 @@ from frappe.utils import nowdate , get_first_day_of_week , get_first_day ,  get_
 def update_location(*args,**kwargs):
 	try:
 		if frappe.db.exists("Delivery",{"user":frappe.session.user}):
-			doc = frappe.get_value("Delivery",{"user":frappe.session.user} , ['name','status','pointer_y','pointer_x'],as_dict=4)
-			if doc.get("status") not in ['Avaliable','Inorder']:
+			doc = frappe.get_doc("Delivery",{"user":frappe.session.user})
+			if doc.status not in ['Avaliable','Inorder']:
 				return 
-			# doc.get("pointer_x") = kwargs.get("pointer_x")
-			# doc.get("pointer_y") = kwargs.get("pointer_y")
-			frappe.db.set_value("Delivery",doc.get("name") , {
-				'pointer_x':kwargs.get("pointer_x"),
-				'pointer_y':kwargs.get("pointer_y")
-			})
+			doc.pointer_x = kwargs.get("pointer_x")
+			doc.pointer_y = kwargs.get("pointer_y")
+			doc.save(ignore_permissions=True)
+
 			frappe.db.commit()
 			frappe.local.response['http_status_code'] = 200
 			frappe.local.response['message'] = _(f"""Update location""")
