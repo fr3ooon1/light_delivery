@@ -100,26 +100,47 @@ def sending_request():
 @frappe.whitelist(allow_guest=False)
 def delivery_accepted_request(*args , **kwargs):
 
+	status = kwargs.get("status")
 	request = kwargs.get("request")
-	doc = frappe.get_doc("Request",request)
-	delivery = frappe.get_doc("Delivery",{"user":frappe.session.user})
 
-	if kwargs.get("status") == "Accepted":
-		doc.status = "Accepted"
-		delivery.status = "Inorder"
+	request_delivery = frappe.get_doc("Request Delivery",request )
+	request = frappe.get_value("Request",request , "name")
+	delivery = frappe.get_value("Delivery",{"user":frappe.session.user},["name","pointer_x","pointer_y"], as_dict=1)
 
-		delivery.save(ignore_permissions=True)
-		doc.save(ignore_permissions=True)
+	if status == "Accepted":
+		# doc.status = "Accepted"
+		# delivery.status = "Inorder"
+
+		frappe.db.set_value("Request", request, "status", "Accepted")
+		frappe.db.set_value("Delivery", delivery.get("name"), "status", "Inorder")
+		request_delivery.status = "Accepted"
+		request_delivery.delivery = delivery.get("name")
+		request_delivery.lat = delivery.get("pointer_x")
+		request_delivery.lon = delivery.get("pointer_y")
+		request_delivery.save(ignore_permissions=True)
+		
+		# frappe.db.set_value("Request Delivery", request_delivery, {
+		# 	"status": "Accepted",
+		# 	"delivery": delivery.get("name"),
+		# 	"lat": delivery.get("pointer_x"),
+		# 	"lon": delivery.get("pointer_y")
+		# })
+
+		# delivery.save(ignore_permissions=True)
+		# doc.save(ignore_permissions=True)
+
 		frappe.db.commit()
 
 		frappe.local.response['http_status_code'] = 200
 		frappe.local.response['message'] = _(f"""the request accepted""")
 
 	elif kwargs.get("status") != "Accepted":
-		delivery.status = "Avaliable"
-		delivery.save(ignore_permissions=True)
-		doc.delivery = None
-		doc.save(ignore_permissions=True)
+		# delivery.status = "Avaliable"
+		# delivery.save(ignore_permissions=True)
+		# doc.delivery = None
+		# doc.save(ignore_permissions=True)
+		frappe.db.set_value("Delivery", delivery.get("name"), "status", "Avaliable")
+		frappe.db.set_value("Request", request, "delivery", None)
 		frappe.db.commit()
 
 		frappe.local.response['http_status_code'] = 200
