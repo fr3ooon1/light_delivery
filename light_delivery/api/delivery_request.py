@@ -99,48 +99,31 @@ def sending_request():
 			
 @frappe.whitelist(allow_guest=False)
 def delivery_accepted_request(*args , **kwargs):
-	try:
 
-		request = kwargs.get("request")
+	request = kwargs.get("request")
+	doc = frappe.get_doc("Request",request)
+	delivery = frappe.get_doc("Delivery",{"user":frappe.session.user})
 
-		# doc = frappe.get_value("Request",request , 'name')
-		delivery = frappe.get_value("Delivery",{"user":frappe.session.user} , 'name')
+	if kwargs.get("status") == "Accepted":
+		doc.status = "Accepted"
+		delivery.status = "Inorder"
 
-		if kwargs.get("status") == "Accepted":
+		delivery.save(ignore_permissions=True)
+		doc.save(ignore_permissions=True)
+		frappe.db.commit()
 
-			# doc.status = "Accepted"
-			# doc.save(ignore_permissions=True)
-			frappe.db.set_value("Request", request , "status", "Accepted")
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = _(f"""the request accepted""")
 
-			# delivery.status = "Inorder"
-			# delivery.save(ignore_permissions=True) 
-			
-			frappe.db.set_value("Delivery", delivery , "status", "Inorder")
+	elif kwargs.get("status") != "Accepted":
+		delivery.status = "Avaliable"
+		delivery.save(ignore_permissions=True)
+		doc.delivery = None
+		doc.save(ignore_permissions=True)
+		frappe.db.commit()
 
-			
-			frappe.db.commit()
-
-			frappe.local.response['http_status_code'] = 200
-			frappe.local.response['message'] = _(f"""the request accepted""")
-
-		elif kwargs.get("status") != "Accepted":
-			
-			# delivery.status = "Avaliable"
-			# delivery.save(ignore_permissions=True)
-			frappe.db.set_value("Delivery", delivery , "status", "Avaliable")
-
-			# doc.delivery = None
-			# doc.save(ignore_permissions=True)
-			frappe.db.set_value("Request", request , "delivery", None)
-
-			frappe.db.commit()
-
-			frappe.local.response['http_status_code'] = 200
-			frappe.local.response['message'] = _(f"""the request rejected""")
-	except Exception as e:
-		frappe.local.response['http_status_code'] = 400
-		frappe.local.response['message'] = _(e)
-		frappe.log_error(frappe.get_traceback(), f"""delivery_accepted_request in request {request}""")
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = _(f"""the request rejected""")
 
 
 
