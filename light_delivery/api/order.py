@@ -669,7 +669,7 @@ def change_order_status_del(*args, **kwargs):
 
 	except Exception as e:
 		# Log unexpected errors and respond with error message
-		frappe.log_error(message=str(e), title=_("Error in change_order_status_del"))
+		frappe.log_error(message=str(e), title=_(f"""Error in change_order_status_del in order {order}"""))
 		frappe.local.response['http_status_code'] = 500
 		frappe.local.response['message'] = _("An error occurred while updating the order.")
 
