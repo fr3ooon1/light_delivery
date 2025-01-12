@@ -236,8 +236,13 @@ def get_requests(*args, **kwargs):
 		req['cash'] = 0
 		req['balance'] = 0
 		if request_del.delivery:
-			req['cash'] = frappe.get_value("Delivery",request_del.delivery,'cash')
+			
 			req['balance'] = get_balance(frappe.get_value("Delivery",request_del.delivery,'delivery_name')) 
+			# req['cash'] = frappe.get_value("Delivery",request_del.delivery,'cash')
+			if float(req['total'] or 0) < float(get_balance(frappe.get_value("Delivery",request_del.delivery,'delivery_name')) or 0):
+				req['cash'] = float(req['total'] or 0) 
+			else:
+				req['cash'] = float(req['total'] or 0) - float(get_balance(frappe.get_value("Delivery",request_del.delivery,'delivery_name')) or 0)
 	if not requests:
 		frappe.local.response['http_status_code'] = 400
 		# frappe.local.response['message'] = _("No requests for this store.")	
