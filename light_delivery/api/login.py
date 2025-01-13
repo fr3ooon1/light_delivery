@@ -61,7 +61,8 @@ def login(*args,**kwargs):
 	
 	if frappe.db.exists("Store",{"user":user_obj.get("name")}):
 
-		store_version = frappe.db.get_single_value('Deductions', 'store_version')
+		store_version = frappe.get_list("Store Version",{"parent":"Deductions"},pluck="version")
+
 
 		if not kwargs.get("version"):
 			frappe.local.response['http_status_code'] = 405
@@ -69,7 +70,7 @@ def login(*args,**kwargs):
 				'message': 'Please Update Your App',
 			}
 		else:
-			if kwargs.get("version") != store_version:
+			if kwargs.get("version") not in  store_version:
 				frappe.local.response['http_status_code'] = 405
 				return {
 					'message': 'Please Update Your App',
@@ -77,7 +78,7 @@ def login(*args,**kwargs):
 			
 	elif frappe.db.exists("Delivery",{"user":user_obj.get("name")}):
 
-		delivery_version = frappe.db.get_single_value('Deductions', 'delivery_version')
+		delivery_version = frappe.get_list("Delivery Version",{"parent":"Deductions"},pluck="version")
 
 		if not kwargs.get("version"):
 			frappe.local.response['http_status_code'] = 405
@@ -85,7 +86,7 @@ def login(*args,**kwargs):
 				'message': 'Please Update Your App',
 			}
 		else:
-			if kwargs.get("version") != delivery_version:
+			if kwargs.get("version") not in delivery_version:
 				frappe.local.response['http_status_code'] = 405
 				return {
 					'message': 'Please Update Your App',

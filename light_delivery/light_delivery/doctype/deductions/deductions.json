@@ -192,33 +192,36 @@
    "label": "Version"
   },
   {
-   "fieldname": "store_version",
-   "fieldtype": "Data",
-   "label": "Store Version"
-  },
-  {
    "fieldname": "column_break_lbia",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "delivery_version",
-   "fieldtype": "Data",
-   "label": "Delivery Version"
   },
   {
    "fieldname": "column_break_yogl",
    "fieldtype": "Column Break"
   },
   {
+   "fieldname": "store_version",
+   "fieldtype": "Table",
+   "label": "Store Version",
+   "options": "Store Version"
+  },
+  {
+   "fieldname": "delivery_version",
+   "fieldtype": "Table",
+   "label": "Delivery Version",
+   "options": "Delivery Version"
+  },
+  {
    "fieldname": "customer_version",
-   "fieldtype": "Data",
-   "label": "Customer Version"
+   "fieldtype": "Table",
+   "label": "Customer Version",
+   "options": "Customer Version"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-01-08 13:52:31.579964",
+ "modified": "2025-01-13 16:18:36.958381",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Deductions",
