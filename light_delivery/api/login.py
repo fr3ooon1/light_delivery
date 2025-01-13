@@ -61,7 +61,7 @@ def login(*args,**kwargs):
 	
 	if frappe.db.exists("Store",{"user":user_obj.get("name")}):
 
-		store_version = frappe.get_list("Store Version",{"parent":"Deductions"},pluck="version",ignore_permission=True)
+		store_version = frappe.get_list("Store Version",{"parent":"Deductions"},pluck="version",ignore_permissions=True)
 
 
 		if not kwargs.get("version"):
@@ -78,7 +78,7 @@ def login(*args,**kwargs):
 			
 	elif frappe.db.exists("Delivery",{"user":user_obj.get("name")}):
 
-		delivery_version = frappe.get_list("Delivery Version",{"parent":"Deductions"},pluck="version",ignore_permission=True)
+		delivery_version = frappe.get_list("Delivery Version",{"parent":"Deductions"},pluck="version",ignore_permissions=True)
 
 		if not kwargs.get("version"):
 			frappe.local.response['http_status_code'] = 405
