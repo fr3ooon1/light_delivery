@@ -107,6 +107,8 @@ def delivery_accepted_request(*args , **kwargs):
 	request = frappe.get_value("Request",request , "name")
 	delivery = frappe.get_value("Delivery",{"user":frappe.session.user},["name","pointer_x","pointer_y"], as_dict=1)
 
+	doc = frappe.get_doc("Request" , request)
+
 	if status == "Accepted":
 		# doc.status = "Accepted"
 		# delivery.status = "Inorder"
@@ -129,6 +131,13 @@ def delivery_accepted_request(*args , **kwargs):
 		# delivery.save(ignore_permissions=True)
 		# doc.save(ignore_permissions=True)
 
+		doc.append("log",{
+			"Delivery":delivery.get("name"),
+			"status":f"""{delivery.get("name")} Accept The Order""",
+			"time":now_datetime()
+		})
+		doc.db_update(ignore_permissions=True)
+
 		frappe.db.commit()
 
 		frappe.local.response['http_status_code'] = 200
@@ -141,6 +150,14 @@ def delivery_accepted_request(*args , **kwargs):
 		# doc.save(ignore_permissions=True)
 		frappe.db.set_value("Delivery", delivery.get("name"), "status", "Avaliable")
 		frappe.db.set_value("Request", request, "delivery", None)
+
+		doc.append("log",{
+			"Delivery":delivery.get("name"),
+			"status":f"""{delivery.get("name")} Reject The Order""",
+			"time":now_datetime()
+		})
+		doc.db_update(ignore_permissions=True)
+
 		frappe.db.commit()
 
 		frappe.local.response['http_status_code'] = 200
