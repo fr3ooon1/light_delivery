@@ -137,7 +137,7 @@ def delivery_accepted_request(*args , **kwargs):
 				"status":f"""{delivery.get("name")} Accept The Order""",
 				"time":now_datetime()
 			})
-			doc.save(ignore_permissions=True)
+			# doc.save(ignore_permissions=True)
 
 			frappe.db.commit()
 
@@ -157,7 +157,7 @@ def delivery_accepted_request(*args , **kwargs):
 				"status":f"""{delivery.get("name")} Reject The Order""",
 				"time":now_datetime()
 			})
-			doc.save(ignore_permissions=True)
+			# doc.save(ignore_permissions=True)
 
 			frappe.db.commit()
 
