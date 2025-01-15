@@ -167,11 +167,12 @@ def search_delivary(cash, store=None):
 
 			# Calculate distances and filter deliveries
 			distance = []
+			searching_area = frappe.db.get_single_value('Deductions', 'searching_area')
 			for delivery in deliveries:
 				if delivery['pointer_x'] is not None and delivery['pointer_y'] is not None:
 					del_coord = [float(delivery['pointer_x']), float(delivery['pointer_y'])]
 					dist = float(haversine(coord1=del_coord, coord2=store_coord) or 0) * 1000  # Convert to meters
-					if dist <= 8000:  # Filter within 8000 meters
+					if dist <= float(searching_area or 0):  # Filter within 8000 meters
 					
 						delivery_data = {
 							'distance': dist,

@@ -6,11 +6,14 @@
  "engine": "InnoDB",
  "field_order": [
   "version_section",
+  "column_break_gypd",
   "store_version",
   "column_break_lbia",
   "delivery_version",
   "column_break_yogl",
   "customer_version",
+  "section_break_vdep",
+  "searching_area",
   "section_break_grsh",
   "if_order_cancelled_from_store_after_delivery_arrived",
   "if_order_cancelled_from_store_after_picked_up",
@@ -216,12 +219,25 @@
    "fieldtype": "Table",
    "label": "Customer Version",
    "options": "Customer Version"
+  },
+  {
+   "fieldname": "column_break_gypd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_vdep",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "searching_area",
+   "fieldtype": "Float",
+   "label": "Searching Area In Meters"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-01-13 16:18:36.958381",
+ "modified": "2025-01-15 12:33:29.415794",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Deductions",
