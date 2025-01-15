@@ -23,6 +23,7 @@
   "price_list_section",
   "minimum_price",
   "rate_of_km",
+  "maximum_orders",
   "column_break_rigx",
   "store_discount",
   "section_break_zreq",
@@ -159,11 +160,16 @@
    "fieldname": "valuation",
    "fieldtype": "Rating",
    "label": "Valuation"
+  },
+  {
+   "fieldname": "maximum_orders",
+   "fieldtype": "Float",
+   "label": "Maximum Order"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-03 14:49:13.128823",
+ "modified": "2025-01-15 13:43:51.378447",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Store",

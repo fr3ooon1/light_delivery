@@ -184,7 +184,7 @@ def search_delivary(cash, store=None):
 						distance.append(delivery_data)
 
 			# Sort and filter by distance
-			sorted_deliveries = sorted(distance, key=lambda x: x['distance'])
+			sorted_deliveries = sorted(distance, key=lambda x: x['distance'] , reverse=True)
 
 			if not sorted_deliveries:
 				frappe.local.response['http_status_code'] = 400

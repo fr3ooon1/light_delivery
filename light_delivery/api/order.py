@@ -227,7 +227,8 @@ def get_orders():
 					'status_code': 200,
 					'message': _('All Orders'),
 					'data': all_orders,
-					"pending_request": pending_request
+					"pending_request": pending_request,
+					"maximum_orders":store.maximum_orders
 				}
 			else:
 				frappe.local.response['http_status_code'] = 200
@@ -235,7 +236,8 @@ def get_orders():
 					'status_code': 200,
 					'message': _('No Orders Found'),
 					'data': all_orders,
-					"pending_request": pending_request
+					"pending_request": pending_request,
+					"maximum_orders":store.maximum_orders
 				}
 			return res
 		else:
