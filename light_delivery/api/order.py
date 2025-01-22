@@ -164,7 +164,7 @@ def new_order(*args , **kwargs):
 
 		if ( not data.get("zone_address") ) or data.get("zone_address") == ""  or data.get("zone_address") == None:
 			frappe.local.response['http_status_code'] = 404
-			frappe.local.response['message'] = _('الرجاء إدخال نوع الطلب')
+			frappe.local.response['message'] = _('الرجاء إدخال عنوان المنطقة')
 			return
 			
 
