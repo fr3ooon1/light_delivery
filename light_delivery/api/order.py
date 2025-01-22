@@ -156,6 +156,13 @@ def new_order(*args , **kwargs):
 		files = frappe.request.files.get('invoice')
 		data = frappe.form_dict
 
+
+		if not data.get("order_type") :
+			frappe.local.response['http_status_code'] = 404
+			frappe.local.response['message'] = _('الرجاء إدخال نوع الطلب')
+			return
+			
+
 		
 
 		doc = frappe.new_doc("Order")
