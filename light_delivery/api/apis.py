@@ -234,7 +234,6 @@ def sms(reciever):
 	secret_key = "644D22EBED7B44D181B51EEBB8C80D2D"
 	url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
 
-	# reciever = "201069810415"
 	msg = "Hello"
 	account_id = "550163042"
 	password = "Vodafone.1"
@@ -242,7 +241,7 @@ def sms(reciever):
 
 	# data = f"""{account_id}{password}{sender_name}{reciever}{msg}"""
 
-	data = f"""AccountId={account_id}&Password={password}&SenderName={sender_name}&ReceiverMSISDN=201069810415&SMSText={msg}"""
+	data = f"""AccountId={account_id}&Password={password}&SenderName={sender_name}&ReceiverMSISDN={reciever}&SMSText={msg}"""
 	print(data)
 
 	
@@ -260,7 +259,7 @@ def sms(reciever):
 	<SecureHash>{secure_hash}</SecureHash>
 	<SMSList>        
 		<SenderName>{sender_name}</SenderName>      
-		<ReceiverMSISDN>01069810415</ReceiverMSISDN>        
+		<ReceiverMSISDN>{reciever}</ReceiverMSISDN>        
 		<SMSText>{msg}</SMSText>
 	</SMSList>
 	</SubmitSMSRequest>"""
