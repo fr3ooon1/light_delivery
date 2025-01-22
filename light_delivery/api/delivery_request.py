@@ -47,7 +47,7 @@ def sending_request():
 				now = now_datetime()
 				creation = get_datetime(doc.creation)
 				diff = time_diff_in_seconds(now, creation)/60
-				if diff > 15:
+				if diff > 20:
 					doc.status = "Cancel"
 					doc.save(ignore_permissions=True)
 					frappe.db.commit()
@@ -73,8 +73,8 @@ def sending_request():
 			if doc.deliveries:
 				delivery = doc.deliveries[-1]
 				delivery_obj = frappe.get_value("Delivery",delivery.get("delivery") , ["status","user"], as_dict=1)
-				if delivery_obj.get("status") == "Hold":
-					return "The Delivery has a request"
+				if delivery_obj.get("status") != "Avaliable":
+					return "The Delivery not avaliable"
 				
 				if delivery.get("notification_key"):
 					res = send_notification(delivery.get("notification_key"), "new request")
