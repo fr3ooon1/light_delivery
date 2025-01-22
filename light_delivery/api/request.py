@@ -125,9 +125,9 @@ def delivery_request_status(*args , **kwargs):
 			"delivery_cancel":0,
 			"store_cacnel":0,
 			"price_list":0,
-			"delivery_status":delivery.get("status"),
+			"delivery_status":delivery.get("status") if delivery else None,
 			"wallet":float(wallet or 0),
-			"cash": delivery.get("cash" or 0)
+			"cash": delivery.get("cash" or 0) if delivery else 0
 		}
 		return res
 
