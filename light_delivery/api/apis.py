@@ -281,18 +281,34 @@ def sms(reciever):
 
 
 @frappe.whitelist()
-def send_sms():
+def send_sms(reciever):
+
+	secret_key = "644D22EBED7B44D181B51EEBB8C80D2D"
 	url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
 
-	payload = """<?xml version=\"1.0\" encoding=\"UTF-8\"?> <SubmitSMSRequest xmlns:=\"http://www.edafa.com/web2sms/sms/model/\"\n
+	msg = "Hello"
+	account_id = "550163042"
+	password = "Vodafone.1"
+	sender_name = "Light&amp;Fast" 
+
+	data = f"""AccountId={account_id}&Password={password}&SenderName={sender_name}&ReceiverMSISDN={reciever}&SMSText={msg}"""
+
+	secure_hash = hmac.new(secret_key.encode(), data.encode(), hashlib.sha256).hexdigest()
+
+	secure_hash =  secure_hash.encode('utf-8')
+
+
+	url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
+
+	payload = f"""<?xml version=\"1.0\" encoding=\"UTF-8\"?> <SubmitSMSRequest xmlns:=\"http://www.edafa.com/web2sms/sms/model/\"\n
 	xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.edafa.com/web2sms/sms/model/\nSMSAPI.xsd \" xsi:type=\"SubmitSMSRequest\">    \n
-	<AccountId>550163042</AccountId>\n    
-	<Password>Vodafone.1</Password>\n    
-	<SecureHash>a2e381d8d999fa09b78cb813b6aefb46a72eff2b110c7164334a8807f36cfd44</SecureHash>\n
+	<AccountId>{account_id}</AccountId>\n    
+	<Password>{password}</Password>\n    
+	<SecureHash>{secure_hash}</SecureHash>\n
 	<SMSList>\n        
-	    <SenderName>Light&amp;Fast</SenderName>\n        
-		<ReceiverMSISDN>201069810415</ReceiverMSISDN>\n        
-		<SMSText>Hello</SMSText>\n    
+	    <SenderName>{sender_name}</SenderName>\n        
+		<ReceiverMSISDN>{reciever}</ReceiverMSISDN>\n        
+		<SMSText>{msg}</SMSText>\n    
 		</SMSList>\n
 	</SubmitSMSRequest>"""	
 	headers = {
