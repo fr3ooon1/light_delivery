@@ -111,6 +111,7 @@ def delivery_accepted_request(*args , **kwargs):
 		doc = frappe.get_doc("Request" , request)
 
 		if status == "Accepted":
+
 			# doc.status = "Accepted"
 			# delivery.status = "Inorder"
 
@@ -128,7 +129,9 @@ def delivery_accepted_request(*args , **kwargs):
 			# 	"lat": delivery.get("pointer_x"),
 			# 	"lon": delivery.get("pointer_y")
 			# })
-			notification_key = frappe.get_value("User", delivery.get("user"), "notification_key")
+			store = request_delivery.store
+			store_user = frappe.get_value("Store", store, "user")
+			notification_key = frappe.get_value("User", store_user, "notification_key")
 			if notification_key:
 				res = send_notification(notification_key, "modification")
 				if res.status_code != 200:
