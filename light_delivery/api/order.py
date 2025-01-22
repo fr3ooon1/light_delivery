@@ -157,7 +157,7 @@ def new_order(*args , **kwargs):
 		data = frappe.form_dict
 
 
-		if ( not data.get("order_type") ) or data.get("order_type") == "" or data.get("order_type") == "Order Type":
+		if ( not data.get("order_type") ) or data.get("order_type") == "" or data.get("order_type") == "Order Type" or data.get("order_type") == None:
 			frappe.local.response['http_status_code'] = 404
 			frappe.local.response['message'] = _('الرجاء إدخال نوع الطلب')
 			return
