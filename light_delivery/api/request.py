@@ -272,7 +272,7 @@ def cancel_request(*args, **kwargs):
 
 		# Determine the type of cancellation
 		if cancel_type == "store":
-			frappe.db.set_value("Request", request_id ,"status", "Store Cancel")
+			frappe.db.set_value("Request", request_id ,"status", "Cancel")
 			cancel_orders(request_obj, "Store")
 			msg = _("Request has been canceled by Store.")
 			delivery_user = frappe.get_value("Delivery", request_obj.delivery, "user")
