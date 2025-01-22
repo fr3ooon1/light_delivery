@@ -106,7 +106,7 @@ def delivery_accepted_request(*args , **kwargs):
 
 		request_delivery = frappe.get_doc("Request Delivery",request )
 		request = frappe.get_value("Request",request , "name")
-		delivery = frappe.get_value("Delivery",{"user":frappe.session.user},["name","pointer_x","pointer_y"], as_dict=1)
+		delivery = frappe.get_value("Delivery",{"user":frappe.session.user},["name","pointer_x","pointer_y","user"], as_dict=1)
 
 		doc = frappe.get_doc("Request" , request)
 
@@ -128,7 +128,14 @@ def delivery_accepted_request(*args , **kwargs):
 			# 	"lat": delivery.get("pointer_x"),
 			# 	"lon": delivery.get("pointer_y")
 			# })
-
+			notification_key = frappe.get_value("User", delivery.get("user"), "notification_key")
+			if notification_key:
+				res = send_notification(notification_key, "modification")
+				if res.status_code != 200:
+					frappe.log_error(
+						message=f"Notification failed: {res.text}",
+						title="Error in send_notification"
+					)
 			# delivery.save(ignore_permissions=True)
 			# doc.save(ignore_permissions=True)
 
