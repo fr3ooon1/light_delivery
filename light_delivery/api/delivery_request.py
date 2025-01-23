@@ -142,11 +142,11 @@ def delivery_accepted_request(*args , **kwargs):
 			# delivery.save(ignore_permissions=True)
 			# doc.save(ignore_permissions=True)
 
-			doc.append("log",{
-				"Delivery":delivery.get("name"),
-				"status":f"""{delivery.get("name")} Accept The Order""",
-				"time":now_datetime()
-			})
+			# doc.append("log",{
+			# 	"Delivery":delivery.get("name"),
+			# 	"status":f"""{delivery.get("name")} Accept The Order""",
+			# 	"time":now_datetime()
+			# })
 			# doc.save(ignore_permissions=True)
 
 			frappe.db.commit()
@@ -162,17 +162,19 @@ def delivery_accepted_request(*args , **kwargs):
 			frappe.db.set_value("Delivery", delivery.get("name"), "status", "Avaliable")
 			frappe.db.set_value("Request", request, "delivery", None)
 
-			doc.append("log",{
-				"Delivery":delivery.get("name"),
-				"status":f"""{delivery.get("name")} Reject The Order""",
-				"time":now_datetime()
-			})
+			# doc.append("log",{
+			# 	"Delivery":delivery.get("name"),
+			# 	"status":f"""{delivery.get("name")} Reject The Order""",
+			# 	"time":now_datetime()
+			# })
 			# doc.save(ignore_permissions=True)
 
 			frappe.db.commit()
 
 			frappe.local.response['http_status_code'] = 200
 			frappe.local.response['message'] = _(f"""the request rejected""")
+
+		log_request(request,delivery.get("name"),status)
 	except Exception as e:
 		frappe.log_error(frappe.get_traceback(), "delivery_accepted_request")
 		frappe.local.response['http_status_code'] = 400
@@ -180,8 +182,17 @@ def delivery_accepted_request(*args , **kwargs):
 		return {"status": "error", "message": str(e)}
 
 
-import ast
+# import ast
 
+def log_request(request,delivery,status):
+	doc = frappe.get_doc("Request Log", request)
+	doc.append("log",{
+		"Delivery":delivery,
+		"status":status,
+		"time":now_datetime()
+	})
+	doc.save(ignore_permissions=True)
+	frappe.db.commit()
 
 @frappe.whitelist(allow_guest=False)
 def get_delivery_request(*args, **kwargs):
