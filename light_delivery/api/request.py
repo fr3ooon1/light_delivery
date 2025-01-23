@@ -395,6 +395,42 @@ def change_delivery_status(*args, **kwargs):
 		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = _("The Delivery is already in this status.")
 
+
+def change_del_status(**kwargs):
+	delivery = frappe.db.exists("Delivery", {"user": kwargs.get("user")})
+	if not delivery:
+		return {"status": "error", "message": "No delivery found for the current user."}
+
+	delivery = frappe.get_value("Delivery", {"user": kwargs.get("user")},['name','status','cash'],as_dict=1)
+	new_status = kwargs.get("status")
+
+	if delivery.get("status") == "Inorder":
+		return {"status": "error", "message": "Cannot change status while processing a delivery order."}
+
+	if new_status == "Online" and delivery.get("status") in ["Offline","Hold"]:
+		delivery.status = "Avaliable"
+		delivery.cash = float(kwargs.get("cash", 0))
+		frappe.db.set_value("Delivery", delivery.get("name"), "status", "Avaliable")
+		frappe.db.set_value("Delivery", delivery.get("name"), "cash", float(kwargs.get("cash", 0)))
+		# delivery.save(ignore_permissions=True)
+		frappe.db.commit()
+		return {
+			"status": "success",
+			"message": "The delivery status has been changed to Available.",
+			"cash": float(kwargs.get("cash", 0))
+		}
+
+	elif new_status == "Offline" and delivery.get("status") in ["Avaliable","Hold","Offline"]:
+		# delivery.status = "Offline"
+		frappe.db.set_value("Delivery", delivery.get("name"), "status", "Offline")
+		# delivery.save(ignore_permissions=True)
+		frappe.db.commit()
+		return {"status": "success", "message": "The delivery status has been changed to Offline."}
+
+	else:
+		return {"status": "error", "message": "The Delivery is already in this status."}
+	
+
 @frappe.whitelist(allow_guest=True)
 def get_request_details_for_del(*args, **kwargs):
 
