@@ -58,7 +58,7 @@ class Order(Document):
 			# res = osm_v2(start_coordi,end_coordi)
 			res = osm_v2(str(f"""{self.start_lat},{self.start_lon}"""),str(f"""{frappe.db.get_value("Delivery",self.delivery,"pointer_x")},{frappe.db.get_value("Delivery",self.delivery,"pointer_y")}"""))
 
-			if res.status_code == 200:
+			if 100 == 200:
 				res = res.json()
 				features = res.get("features",None)
 				if features:
