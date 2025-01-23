@@ -108,7 +108,7 @@ def delivery_accepted_request(*args , **kwargs):
 		request = frappe.get_value("Request",request , "name")
 		delivery = frappe.get_value("Delivery",{"user":frappe.session.user},["name","pointer_x","pointer_y","user"], as_dict=1)
 
-		doc = frappe.get_doc("Request" , request)
+		# doc = frappe.get_doc("Request" , request)
 
 		if status == "Accepted":
 
@@ -187,7 +187,7 @@ def delivery_accepted_request(*args , **kwargs):
 def log_request(request,delivery,status):
 	doc = frappe.get_doc("Request Log", request)
 	doc.append("log",{
-		"Delivery":delivery,
+		"delivery":delivery,
 		"status":status,
 		"time":now_datetime()
 	})
