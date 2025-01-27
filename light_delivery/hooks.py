@@ -11,7 +11,7 @@ website_route_rules = [
 ]
 
 app_include_css = "/assets/light_delivery/css/light_delivery.css"
-# app_include_js = "/assets/dynamic_15/js/dynamic_15.js"
+app_include_js = "/assets/light_delivery/js/light_delivery.js"
 
 # include js, css files in header of web template
 web_include_css = [

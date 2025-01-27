@@ -7,7 +7,11 @@
  "engine": "InnoDB",
  "field_order": [
   "zone",
-  "name_in_arabic"
+  "name_in_arabic",
+  "x",
+  "y",
+  "column_break_zutt",
+  "geolocation_klnh"
  ],
  "fields": [
   {
@@ -20,11 +24,29 @@
    "fieldname": "name_in_arabic",
    "fieldtype": "Data",
    "label": "Name In Arabic"
+  },
+  {
+   "fieldname": "column_break_zutt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "geolocation_klnh",
+   "fieldtype": "Geolocation"
+  },
+  {
+   "fieldname": "x",
+   "fieldtype": "Data",
+   "label": "x"
+  },
+  {
+   "fieldname": "y",
+   "fieldtype": "Data",
+   "label": "y"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-01 10:53:34.195454",
+ "modified": "2025-01-27 19:18:27.442975",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Zone Address",
