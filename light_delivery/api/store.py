@@ -9,7 +9,8 @@ def get_category():
 			SELECT
 				name as id,
 				category_name as en,
-				category_name_in_arabic as ar
+				category_name_in_arabic as ar,
+				image as image
 			FROM
 				`tabStore Category`
 		"""

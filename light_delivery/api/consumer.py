@@ -49,7 +49,11 @@ def get_slider():
 @frappe.whitelist(allow_guest=False)
 def get_stores(*args,**kwargs):
 	idx=0
-	tot_stores = frappe.db.count('Store')
+	if kwargs.get("category"):
+		category = kwargs.get("category")
+		tot_stores = frappe.db.count('Store',{"store_category":category})
+	else:
+		tot_stores = frappe.db.count('Store')
 	pages = (tot_stores/10)
 	if pages%10 > 0:
 		pages = int(pages) +1
@@ -61,7 +65,12 @@ def get_stores(*args,**kwargs):
 	page_length=10
 	order_by = "creation desc"
 
-	stores = frappe.db.get_list("Store",['name as id'],order_by=order_by,start=start,page_length=page_length,ignore_permissions=True)
+	if kwargs.get("category"):
+		category = kwargs.get("category")
+		stores = frappe.db.get_list("Store",{"store_category":category},['name as id'],order_by=order_by,start=start,page_length=page_length,ignore_permissions=True)
+	else:
+		stores = frappe.db.get_list("Store",['name as id'],order_by=order_by,start=start,page_length=page_length,ignore_permissions=True)
+
 	res = []
 
 	user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)

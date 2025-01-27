@@ -7,7 +7,8 @@
  "engine": "InnoDB",
  "field_order": [
   "category_name",
-  "category_name_in_arabic"
+  "category_name_in_arabic",
+  "image"
  ],
  "fields": [
   {
@@ -20,11 +21,16 @@
    "fieldname": "category_name_in_arabic",
    "fieldtype": "Data",
    "label": "Category Name in Arabic"
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach",
+   "label": "Image"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-06 10:18:59.357100",
+ "modified": "2025-01-27 12:18:58.862504",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Store Category",
