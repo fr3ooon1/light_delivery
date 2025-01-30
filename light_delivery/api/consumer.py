@@ -410,7 +410,7 @@ def get_offers(*args,**kwargs):
 	offers = frappe.get_list("Offers",{"from":["in",stores],"status":"Active"},['from','offer','descriptions','title'],ignore_permissions=True)
 	for store in offers:
 		doc = frappe.get_doc("Store",store.get("from"))
-		store['store'] ={
+		store['store'] = {
 			"id":doc.name,
 			"is_favorite":is_favorite(user.get("username") , store.get("id")),
 			"cover":doc.store_cover,
