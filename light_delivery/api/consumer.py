@@ -3,6 +3,7 @@ from frappe import _
 from frappe.utils import add_to_date, today, nowdate
 from frappe.utils import nowdate , get_first_day_of_week , get_first_day ,  get_datetime, now_datetime, time_diff_in_seconds
 from datetime import datetime
+from light_delivery.api.apis import search_by_zone
 
 
 
@@ -390,3 +391,39 @@ def add_address(**kwargs):
 	frappe.db.commit()
 	frappe.local.response['http_status_code'] = 200
 	frappe.local.response['message'] = "Address added successfully."
+
+
+@frappe.whitelist(allow_guest=False)
+def get_offers(*args,**kwargs):
+	if not kwargs.get("latitude") or not kwargs.get("longitude"):
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = "Latitude and Longitude are required."
+		return
+	
+	user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
+	coordi = [float(kwargs.get("latitude")),float(kwargs.get("longitude"))]
+
+	zones = search_by_zone(coordi)
+
+	stores = frappe.get_list("Store",{"zone":["in",zones]},pluck="name",ignore_permissions=True)
+
+	offers = frappe.get_list("Offers",{"from":["in",stores],"status":"Active"},['from','offer','descriptions','title'],ignore_permissions=True)
+	for store in offers:
+		doc = frappe.get_doc("Store",store.get("from"))
+		store['store'] ={
+			"id":doc.name,
+			"is_favorite":is_favorite(user.get("username") , store.get("id")),
+			"cover":doc.store_cover,
+			"logo":doc.store_logo,
+			"store_name":frappe.get_value("User",doc.user,"full_name"),
+			"location":[doc.pointer_y,doc.pointer_x] if doc.pointer_y and doc.pointer_x else []  ,
+			"address":doc.address,
+			"phone": frappe.get_value("User",doc.user,"mobile_no"),
+			"delivery_time":10,
+			"menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True)
+		}
+
+	return offers
+
+
+# /home/fero/frappe-15/apps/light_delivery/light_delivery/api/consumer.py
