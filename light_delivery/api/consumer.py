@@ -400,30 +400,79 @@ def get_offers(*args,**kwargs):
 		frappe.local.response['message'] = "Latitude and Longitude are required."
 		return
 	
-	user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
-	coordi = [float(kwargs.get("latitude")),float(kwargs.get("longitude"))]
+	try:
+	
+		user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
+		coordi = [float(kwargs.get("latitude")),float(kwargs.get("longitude"))]
 
-	zones = search_by_zone(coordi)
+		zones = search_by_zone(coordi)
 
-	stores = frappe.get_list("Store",{"zone":["in",zones]},pluck="name",ignore_permissions=True)
+		stores = frappe.get_list("Store",{"zone":["in",zones]},pluck="name",ignore_permissions=True)
 
-	offers = frappe.get_list("Offers",{"from":["in",stores],"status":"Active"},['from','offer','descriptions','title'],ignore_permissions=True)
-	for store in offers:
-		doc = frappe.get_doc("Store",store.get("from"))
-		store['store'] = {
-			"id":doc.name,
-			"is_favorite":is_favorite(user.get("username") , store.get("id")),
-			"cover":doc.store_cover,
-			"logo":doc.store_logo,
-			"store_name":frappe.get_value("User",doc.user,"full_name"),
-			"location":[doc.pointer_y,doc.pointer_x] if doc.pointer_y and doc.pointer_x else []  ,
-			"address":doc.address,
-			"phone": frappe.get_value("User",doc.user,"mobile_no"),
-			"delivery_time":10,
-			"menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True)
-		}
+		offers = frappe.get_list("Offers",{"from":["in",stores],"status":"Active"},['from','offer','descriptions','title'],ignore_permissions=True)
+		for store in offers:
+			doc = frappe.get_doc("Store",store.get("from"))
+			store['store'] = {
+				"id":doc.name,
+				"is_favorite":is_favorite(user.get("username") , store.get("id")),
+				"cover":doc.store_cover,
+				"logo":doc.store_logo,
+				"store_name":frappe.get_value("User",doc.user,"full_name"),
+				"location":[doc.pointer_y,doc.pointer_x] if doc.pointer_y and doc.pointer_x else []  ,
+				"address":doc.address,
+				"phone": frappe.get_value("User",doc.user,"mobile_no"),
+				"delivery_time":10,
+				"menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True)
+			}
 
-	return offers
+		return offers
+	except Exception as e:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = f"An error occurred: {e}"
+		frappe.log_error(message=str(e), title=_('Error in get_offers'))
+
+@frappe.whitelist(allow_guest=False)
+def post_reorder(*args,**kwargs):
+	files = frappe.request.files
+	data = frappe.form_dict
+	order = data.get("order")
+	if not order:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = "Order is required."
+		return
+	
+	type = data.get("type")
+	if not type:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = "Type is required."
+		return
+	
+	try:
+		
+		if type == "Refund":
+			doc = frappe.get_doc("Order",order)
+			order = frappe.new_doc("Order",order)
+			order.append({
+				"phone_number":doc.phone_number,
+				"store":doc.store,
+				"owner":doc.owner,
+
+				"order_type":"Refund",
+				"total_order":doc.total_order,
+				"status":"Pending",
+				"invoice":doc.invoice
+			})
+		elif type == "Replase":
+			return type
+		else:
+			frappe.local.response['http_status_code'] = 400
+			frappe.local.response['message'] = f"Please enter a valid type."
+			return
+	
+	except Exception as e:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = f"An error occurred: {e}"
+		frappe.log_error(message=str(e), title=_('Error in post_reorder'))
 
 
-# /home/fero/frappe-15/apps/light_delivery/light_delivery/api/consumer.py
+	pass

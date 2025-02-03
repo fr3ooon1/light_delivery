@@ -477,7 +477,7 @@ def get_url():
 	else:
 
 		port = site_config.get('nginx_port', 8002)  
-		url = f"{base_url}:{port}"
+		url = f"{base_url}"
 
 	return url
 

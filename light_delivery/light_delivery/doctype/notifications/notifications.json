@@ -1,0 +1,125 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{Notifi}-{########}",
+ "creation": "2025-02-03 11:01:23.823710",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "audience_section",
+  "send_to",
+  "party_type",
+  "zone_address",
+  "delivery_category",
+  "send_to_particular_segments",
+  "user",
+  "message_section",
+  "title",
+  "heading",
+  "message",
+  "image",
+  "launch_url"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "send_to",
+   "fieldtype": "Check",
+   "label": "Send to"
+  },
+  {
+   "default": "0",
+   "fieldname": "send_to_particular_segments",
+   "fieldtype": "Check",
+   "label": "Send to particular segment(s)"
+  },
+  {
+   "fieldname": "audience_section",
+   "fieldtype": "Section Break",
+   "label": "Audience"
+  },
+  {
+   "depends_on": "send_to",
+   "fieldname": "party_type",
+   "fieldtype": "Select",
+   "label": "Party Type",
+   "options": "\nStore\nDelivery\nCustomer"
+  },
+  {
+   "fieldname": "message_section",
+   "fieldtype": "Section Break",
+   "label": "Message"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title"
+  },
+  {
+   "fieldname": "message",
+   "fieldtype": "Small Text",
+   "label": "Message"
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach",
+   "label": "Image"
+  },
+  {
+   "fieldname": "launch_url",
+   "fieldtype": "Data",
+   "label": "Launch URL"
+  },
+  {
+   "fieldname": "heading",
+   "fieldtype": "Data",
+   "label": "Heading"
+  },
+  {
+   "depends_on": "send_to_particular_segments",
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "user",
+   "options": "User"
+  },
+  {
+   "fieldname": "zone_address",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Zone Address",
+   "options": "Zone Address"
+  },
+  {
+   "fieldname": "delivery_category",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Delivery Category",
+   "options": "Delivery Category"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-02-03 15:04:20.660312",
+ "modified_by": "Administrator",
+ "module": "Light Delivery",
+ "name": "Notifications",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
