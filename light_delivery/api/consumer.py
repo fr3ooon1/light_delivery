@@ -397,7 +397,7 @@ def add_address(**kwargs):
 def get_offers(*args,**kwargs):
 	user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
 
-	customer = frappe.get_value("Customer",{"username":user},'name')
+	customer = frappe.get_value("Customer",{"username":user.get("username")},'name')
 	
 
 
