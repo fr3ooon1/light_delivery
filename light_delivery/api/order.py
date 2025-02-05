@@ -227,13 +227,25 @@ def get_orders(**kwargs):
 					order['creation'] = datetime.strptime(order.get('creation'), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
 
 			res = {}
+			sql = """
+					SELECT
+						name as id,
+						type as en,
+						name_in_arabic as ar
+					FROM
+						`tabOrder Type`
+					WHERE enable = 1 ;
+			"""
+			order_type = frappe.db.sql(sql,as_dict =1)
+
 			if all_orders:
 				res = {
 					'status_code': 200,
 					'message': _('All Orders'),
 					'data': all_orders,
 					"pending_request": pending_request,
-					"maximum_orders":store.maximum_orders
+					"maximum_orders":store.maximum_orders,
+					"types":order_type
 				}
 			else:
 				frappe.local.response['http_status_code'] = 200
@@ -242,7 +254,8 @@ def get_orders(**kwargs):
 					'message': _('No Orders Found'),
 					'data': all_orders,
 					"pending_request": pending_request,
-					"maximum_orders":store.maximum_orders
+					"maximum_orders":store.maximum_orders,
+					"types":order_type
 				}
 			return res
 		else:
