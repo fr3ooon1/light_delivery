@@ -166,9 +166,7 @@ def new_order(*args , **kwargs):
 			frappe.local.response['http_status_code'] = 404
 			frappe.local.response['message'] = _('الرجاء إدخال عنوان المنطقة')
 			return
-			
-
-		
+				
 
 		doc = frappe.new_doc("Order")
 		doc.full_name =  data.get('full_name')
@@ -202,12 +200,6 @@ def get_orders(**kwargs):
 	try:
 		user = frappe.session.user
 
-		# order_type = kwargs.get("order_type")
-		# if not order_type:
-		# 	frappe.local.response['http_status_code'] = 404
-		# 	frappe.local.response['message']="Please Select Order Type"
-		# 	return
-		
 		if not frappe.db.exists("Store", {"user": user}):
 			frappe.local.response['http_status_code'] = 404
 			return {
@@ -233,12 +225,6 @@ def get_orders(**kwargs):
 					order['creation'] = order.get('creation').strftime('%Y-%m-%d %H:%M:%S')
 				else:
 					order['creation'] = datetime.strptime(order.get('creation'), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
-
-				# invoice = order.get("invoice")
-				# if invoice:
-				# 	file = frappe.get_doc("File", {"file_url": invoice})
-				# 	url = get_url()
-				# 	order['invoice'] = url + file.file_url
 
 			res = {}
 			if all_orders:
