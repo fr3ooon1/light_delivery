@@ -397,12 +397,13 @@ def add_address(**kwargs):
 def get_offers(*args,**kwargs):
 	user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
 
-	customer = frappe.get_value("Customer",user.get("username"),'name')
+	
 	
 
 
 	if not kwargs.get("latitude") or not kwargs.get("longitude"):
-		customer = frappe.get_value("Customer",{"username":user},'name')
+		# customer = frappe.get_value("Customer",{"username":user},'name')
+		customer = frappe.get_value("Customer",user.get("username"),'name')
 		address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}'""",as_dict=True)
 		if not address:
 			frappe.local.response['http_status_code'] = 400
