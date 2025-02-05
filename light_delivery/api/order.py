@@ -202,11 +202,11 @@ def get_orders(**kwargs):
 	try:
 		user = frappe.session.user
 
-		order_type = kwargs.get("order_type")
-		if not order_type:
-			frappe.local.response['http_status_code'] = 404
-			frappe.local.response['message']="Please Select Order Type"
-			return
+		# order_type = kwargs.get("order_type")
+		# if not order_type:
+		# 	frappe.local.response['http_status_code'] = 404
+		# 	frappe.local.response['message']="Please Select Order Type"
+		# 	return
 		
 		if not frappe.db.exists("Store", {"user": user}):
 			frappe.local.response['http_status_code'] = 404
@@ -218,7 +218,7 @@ def get_orders(**kwargs):
 		if store:
 			pending_request = frappe.get_list(
 				"Request Delivery",
-				{"order_type":order_type,"store": store.name, "status": ["in", ["Waiting for delivery", "Pending"]], "number_of_order": ["in", [1, 2, 3]]},
+				{"store": store.name, "status": ["in", ["Waiting for delivery", "Pending"]], "number_of_order": ["in", [1, 2, 3]]},
 				pluck='name',
 				ignore_permissions=True
 			)
