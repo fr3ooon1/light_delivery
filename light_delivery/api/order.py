@@ -198,10 +198,16 @@ def new_order(*args , **kwargs):
 		return {"status": "error", "message": str(e)}
 
 @frappe.whitelist(allow_guest=False)
-def get_orders():
+def get_orders(**kwargs):
 	try:
 		user = frappe.session.user
 
+		order_type = kwargs.get("order_type")
+		if not order_type:
+			frappe.local.response['http_status_code'] = 404
+			frappe.local.response['message']="Please Select Order Type"
+			return
+		
 		if not frappe.db.exists("Store", {"user": user}):
 			frappe.local.response['http_status_code'] = 404
 			return {
@@ -212,7 +218,7 @@ def get_orders():
 		if store:
 			pending_request = frappe.get_list(
 				"Request Delivery",
-				{"store": store.name, "status": ["in", ["Waiting for delivery", "Pending"]], "number_of_order": ["in", [1, 2, 3]]},
+				{"order_type":order_type,"store": store.name, "status": ["in", ["Waiting for delivery", "Pending"]], "number_of_order": ["in", [1, 2, 3]]},
 				pluck='name',
 				ignore_permissions=True
 			)

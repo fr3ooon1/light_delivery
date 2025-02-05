@@ -41,24 +41,37 @@ def send_notification(doc):
 def send_message(UsersArray , message , title , heading ,  url , image):
 
 	image = f"{get_url()}{image}"
+	# payload = {
+	# 	"app_id": "e75df22c-56df-4e69-8a73-fc80c73c4337",
+	# 	"headings": { 
+	# 		"en": heading
+	# 	},
+	# 	"title": { 
+	# 		"en": title
+	# 	},
+	# 	"contents": { 
+	# 		"en": message
+	# 	},
+	# 	"include_player_ids": UsersArray,
+	# 	"url":url,
+	# 	"global_image":image,
+	# 	"big_picture":image,
+	# 	"large_icon":image,
+	# 	"android_image":image,
+
+	# }
 	payload = {
 		"app_id": "e75df22c-56df-4e69-8a73-fc80c73c4337",
-		"headings": { 
-			"en": heading
-		},
-		"title": { 
-			"en": title
-		},
-		"contents": { 
-			"en": message
-		},
+		"headings": { "en": heading },
+		"title": { "en": title },
+		"contents": { "en": message },
 		"include_player_ids": UsersArray,
-		"url":url,
-		"global_image":image,
-		"big_picture":image,
-		"large_icon":image,
-		"android_image":image
-	}
+		"url": url,
+		"big_picture": image,
+		"chrome_big_picture": image,
+		"ios_attachments": { "image": image },
+	}	
+
 	url = "https://onesignal.com/api/v1/notifications"
 
 	headers = {

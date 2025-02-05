@@ -395,15 +395,30 @@ def add_address(**kwargs):
 
 @frappe.whitelist(allow_guest=False)
 def get_offers(*args,**kwargs):
+	user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
+
+	customer = frappe.get_value("Customer",{"username":user},'name')
+	
+
+
 	if not kwargs.get("latitude") or not kwargs.get("longitude"):
-		frappe.local.response['http_status_code'] = 400
-		frappe.local.response['message'] = "Latitude and Longitude are required."
-		return
+		customer = frappe.get_value("Customer",{"username":user},'name')
+		address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}'""",as_dict=True)
+		if not address:
+			frappe.local.response['http_status_code'] = 400
+			frappe.local.response['message'] = "Latitude and Longitude are required."
+			return
+		
+		address = address[-1]
+		coordi = [float(address.get("latitude")),float(address.get("longitude"))]
+	else:
+		coordi = [float(kwargs.get("latitude")),float(kwargs.get("longitude"))]
+
 	
 	try:
 	
-		user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
-		coordi = [float(kwargs.get("latitude")),float(kwargs.get("longitude"))]
+		
+		# coordi = [float(kwargs.get("latitude")),float(kwargs.get("longitude"))]
 
 		zones = search_by_zone(coordi)
 
