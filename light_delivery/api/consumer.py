@@ -317,6 +317,9 @@ def get_order_history(**kwargs):
 						order['creation'] = datetime.strptime(creation_date, '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
 					except ValueError:
 						order['creation'] = str(creation_date)
+			
+
+
 
 		frappe.local.response['http_status_code'] = 200
 		frappe.local.response['orders'] = orders
@@ -430,10 +433,10 @@ def get_offers(*args,**kwargs):
 
 		offers = frappe.get_list("Offers",{"from":["in",stores],"status":"Active"},['from','offer','descriptions','title'],ignore_permissions=True)
 
-		if not offers:
-			frappe.local.response['http_status_code'] = 400
-			frappe.local.response['message'] = "no offers."
-			return
+		# if not offers:
+		# 	frappe.local.response['http_status_code'] = 400
+		# 	frappe.local.response['message'] = "no offers."
+		# 	return
 
 		for store in offers:
 			doc = frappe.get_doc("Store",store.get("from"))
