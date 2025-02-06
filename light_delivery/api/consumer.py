@@ -408,16 +408,33 @@ def get_offers(*args,**kwargs):
 		
 		address = address[-1]
 		coordi = [float(address.get("latitude")),float(address.get("longitude"))]
+		print(address)
+		print(coordi)
 	else:
+		
 		coordi = [float(kwargs.get("latitude")),float(kwargs.get("longitude"))]
+		print(coordi)
 
 	
 	try:
+		print(coordi)
 		zones = search_by_zone(coordi)
+
+		if not zones:
+			frappe.local.response['http_status_code'] = 400
+			frappe.local.response['message'] = "no zones in this location."
+			return
+
 
 		stores = frappe.get_list("Store",{"zone":["in",zones]},pluck="name",ignore_permissions=True)
 
 		offers = frappe.get_list("Offers",{"from":["in",stores],"status":"Active"},['from','offer','descriptions','title'],ignore_permissions=True)
+
+		if not offers:
+			frappe.local.response['http_status_code'] = 400
+			frappe.local.response['message'] = "no offers."
+			return
+			
 		for store in offers:
 			doc = frappe.get_doc("Store",store.get("from"))
 			store['store'] = {
