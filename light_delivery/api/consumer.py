@@ -3,7 +3,7 @@ from frappe import _
 from frappe.utils import add_to_date, today, nowdate
 from frappe.utils import nowdate , get_first_day_of_week , get_first_day ,  get_datetime, now_datetime, time_diff_in_seconds
 from datetime import datetime
-from light_delivery.api.apis import search_by_zone
+from light_delivery.api.apis import search_by_zone , download_image
 
 
 
@@ -466,7 +466,7 @@ def get_offers(*args,**kwargs):
 		frappe.log_error(message=str(e), title=_('Error in get_offers'))
 
 @frappe.whitelist(allow_guest=False)
-def post_reorder(*args,**kwargs):
+def post_reorder():
 	files = frappe.request.files
 	data = frappe.form_dict
 	order = data.get("order")
@@ -483,21 +483,35 @@ def post_reorder(*args,**kwargs):
 	
 	try:
 		
-		if type == "Refund":
+		if type:
 			doc = frappe.get_doc("Order",order)
-			order = frappe.new_doc("Order",order)
-			order.append({
-				"phone_number":doc.phone_number,
-				"store":doc.store,
-				"owner":doc.owner,
+			order = frappe.new_doc("Order")
+			
+			order.store = doc.store
+			order.owner = doc.owner
+			order.full_name = doc.full_name
+			order.order_type = type
+			order.order_reference = doc.name
+			order.previous_order_amount = doc.total_order
+			order.phone_number = doc.phone_number
+			order.address = doc.address
+			order.zone_address = doc.zone_address
+			order.invoice = doc.invoice
+			order.status = "Pending"
+			order.order_date = frappe.utils.now_datetime()
 
-				"order_type":"Refund",
-				"total_order":doc.total_order,
-				"status":"Pending",
-				"invoice":doc.invoice
-			})
-		elif type == "Replase":
-			return type
+			if files:
+				for i in files.getlist('order_image'):
+					saved_file = download_image(i)
+					if saved_file:
+						order.append("order_image", {
+							"image": saved_file.file_url 
+						})
+			order.save(ignore_permissions=True)
+			frappe.db.commit()
+
+			return order
+
 		else:
 			frappe.local.response['http_status_code'] = 400
 			frappe.local.response['message'] = f"Please enter a valid type."
