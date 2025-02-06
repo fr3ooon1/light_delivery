@@ -434,7 +434,7 @@ def get_offers(*args,**kwargs):
 			frappe.local.response['http_status_code'] = 400
 			frappe.local.response['message'] = "no offers."
 			return
-			
+
 		for store in offers:
 			doc = frappe.get_doc("Store",store.get("from"))
 			store['store'] = {
@@ -500,4 +500,15 @@ def post_reorder(*args,**kwargs):
 		frappe.log_error(message=str(e), title=_('Error in post_reorder'))
 
 
-	pass
+
+@frappe.whitelist(allow_guest=True)
+def get_address(**kwargs):
+	user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
+
+	customer = frappe.get_value("Customer",user.get("username"),'name')
+	address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}'""",as_dict=True)
+	if not address:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = "Latitude and Longitude are required."
+		return
+	return address
