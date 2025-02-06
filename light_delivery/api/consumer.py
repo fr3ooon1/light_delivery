@@ -499,6 +499,7 @@ def post_reorder():
 			order.invoice = doc.invoice
 			order.status = "Pending"
 			order.order_date = frappe.utils.now_datetime()
+			order.note = data.note
 
 			if files:
 				for i in files.getlist('order_image'):

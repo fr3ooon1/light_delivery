@@ -10,6 +10,7 @@
   "order_type",
   "order_reference",
   "previous_order_amount",
+  "note",
   "differente_amount",
   "address",
   "zone_address",
@@ -330,12 +331,17 @@
    "fieldtype": "Link",
    "label": "Reference of Store Fees",
    "options": "Journal Entry"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-22 11:19:07.380497",
+ "modified": "2025-02-06 14:54:47.986723",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Order",
