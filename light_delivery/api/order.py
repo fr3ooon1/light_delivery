@@ -125,8 +125,8 @@ def search_by_phone_with_total(phone_number , order_type = False):
 
 		res['address'] = address
 		res['full_name'] = frappe.get_value("Contact",{"mobile_no":phone_number},"first_name")
-		if order_type in ['Replacing','Refund']:
-			orders = frappe.get_list("Order" , {"phone_number":phone_number,"order_type":"Delivery","order_reference":["!=",None],"reorder":0},['name','total_order'])
+		if order_type != "Delivery":
+			orders = frappe.get_list("Order" , {"phone_number":phone_number,"order_type":"Delivery","order_reference":["!=",None],"reorder":False},['name','total_order'])
 			res['order'] = orders 
 		return _(res)
 	except Exception as e:
