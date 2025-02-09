@@ -321,7 +321,7 @@ def get_order_history(**kwargs):
 					except ValueError:
 						order['creation'] = str(creation_date)
 
-			order_types = frappe.get_list("Store Order Type",{"parent":order.get("store")},['order_type as id','type','name_in_arabic as ar'])
+			order_types = frappe.get_list("Store Order Type",{"parent":order.get("store")},['order_type as id','type','name_in_arabic as ar'],ignore_permissions=True)
 			temp = []
 			if order.get("order_type")=="Delivery":
 				for i in order_types:
