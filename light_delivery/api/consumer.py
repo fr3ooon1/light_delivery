@@ -325,7 +325,7 @@ def get_order_history(**kwargs):
 			temp = []
 			if order.get("order_type")=="Delivery":
 				for i in order_types:
-					temp.append({"id":i.name,"enable":True})
+					temp.append({"id":i.get("id"),"enable":True , "ar":i.get("ar")})
 
 			order['reorder'] = temp
 
