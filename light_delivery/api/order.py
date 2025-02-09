@@ -237,7 +237,7 @@ def get_orders(**kwargs):
 					WHERE enable = 1 ;
 			"""
 			# order_type = frappe.db.sql(sql,as_dict =1)
-			order_type = frappe.get_list("Store Order Type",{"parent":store.name},['order_type as id','type','name_in_arabic as ar'])
+			order_type = frappe.get_list("Store Order Type",{"parent":store.name},['order_type as id','type','name_in_arabic as ar'],ignore_permission=True)
 
 			if all_orders:
 				res = {
