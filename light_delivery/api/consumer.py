@@ -286,7 +286,8 @@ def get_order_history(**kwargs):
 				total_order,
 				store,
 				delivery,
-				invoice 
+				invoice,
+				reorder
 			FROM 
 				`tabOrder` 
 			WHERE 
@@ -323,7 +324,9 @@ def get_order_history(**kwargs):
 
 			order_types = frappe.get_list("Store Order Type",{"parent":order.get("store"),"order_type":["!=","Delivery"]},['order_type as id','type','name_in_arabic as ar'],ignore_permissions=True)
 
-			order['reorder'] = order_types
+
+			if order['reorder'] == 0:
+				order['reorder'] = order_types
 
 
 
@@ -508,6 +511,8 @@ def post_reorder():
 						order.append("order_image", {
 							"image": saved_file.file_url 
 						})
+			doc.reorder = 1
+			doc.save(ignore_permissions=True)
 			order.save(ignore_permissions=True)
 			frappe.db.commit()
 
