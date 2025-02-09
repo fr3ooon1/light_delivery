@@ -287,7 +287,7 @@ def get_order_history(**kwargs):
 				store,
 				delivery,
 				invoice,
-				reorder
+				reorder as enable_to_reorder
 			FROM 
 				`tabOrder` 
 			WHERE 
@@ -324,8 +324,8 @@ def get_order_history(**kwargs):
 
 			order_types = frappe.get_list("Store Order Type",{"parent":order.get("store"),"order_type":["!=","Delivery"]},['order_type as id','type','name_in_arabic as ar'],ignore_permissions=True)
 
-
-			if order['reorder'] == 0:
+			order['reorder'] = []
+			if order['enable_to_reorder'] == 0:
 				order['reorder'] = order_types
 
 
