@@ -511,7 +511,9 @@ def post_reorder():
 			order.save(ignore_permissions=True)
 			frappe.db.commit()
 
-			return order
+			frappe.local.response['http_status_code'] = 200
+			frappe.local.response['message'] = f"Order Created Successfully."
+			return
 
 		else:
 			frappe.local.response['http_status_code'] = 400
