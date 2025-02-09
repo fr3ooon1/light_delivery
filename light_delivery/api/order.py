@@ -176,6 +176,7 @@ def new_order(*args , **kwargs):
 		if data.get("order_type") in ["Refund" , "Replacing"]:
 			doc.order_reference = data.get("order_reference")
 			doc.previous_order_amount = data.get("previous_order_amount")
+			frappe.db.set_value("Order",data.get("order_reference"),"reorder",1)
 
 		doc.zone_address= data.get('zone_address')
 		if files:
