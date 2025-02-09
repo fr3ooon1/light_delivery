@@ -306,7 +306,7 @@ def send_sms(reciever):
 	<Password>{password}</Password>\n    
 	<SecureHash>{secure_hash}</SecureHash>\n
 	<SMSList>\n        
-	    <SenderName>{sender_name}</SenderName>\n        
+		<SenderName>{sender_name}</SenderName>\n        
 		<ReceiverMSISDN>{reciever}</ReceiverMSISDN>\n        
 		<SMSText>{msg}</SMSText>\n    
 		</SMSList>\n
@@ -323,55 +323,60 @@ def send_sms(reciever):
 
 @frappe.whitelist(allow_guest=0)
 def search_by_zone(coord1):
-    """
-    Search for zones where the given coordinate is within their radius.
+	"""
+	Search for zones where the given coordinate is within their radius.
 
-    Args:
-        coord1 (list): A list with latitude and longitude of the input point [lat, lon].
-    
-    Returns:
-        list: A list of zone IDs where the input coordinate falls within the radius.
-    """
-    # Validate input
-    if not coord1 or len(coord1) != 2:
-        frappe.throw("Invalid input. Coordinate must be a list with two elements: [latitude, longitude].")
-    
-    try:
-        # Convert coord1 to float values
-        coord1 = [float(coord1[0]), float(coord1[1])]
-    except ValueError:
-        frappe.throw("Coordinates must be valid float values.")
+	Args:
+		coord1 (list): A list with latitude and longitude of the input point [lat, lon].
+	
+	Returns:
+		list: A list of zone IDs where the input coordinate falls within the radius.
+	"""
+	# Validate input
+	if not coord1 or len(coord1) != 2:
+		frappe.throw("Invalid input. Coordinate must be a list with two elements: [latitude, longitude].")
+	
+	try:
+		# Convert coord1 to float values
+		coord1 = [float(coord1[0]), float(coord1[1])]
+	except ValueError:
+		frappe.throw("Coordinates must be valid float values.")
 
-    result = []
-    zones = frappe.get_all("Zone Address", fields=["name as id", "geolocation_klnh"])
-    
-    for zone in zones:
-        geolocation_klnh = json.loads(zone.get("geolocation_klnh") or "{}")
-        
-        # Extract geometry and radius information
-        features = geolocation_klnh.get("features", [])
-        if not features or len(features) == 0:
-            continue  # Skip if no features are found
-        
-        geometry = features[0].get("geometry", {})
-        properties = features[0].get("properties", {})
-        
-        # Validate geometry and properties
-        coord2 = geometry.get("coordinates")
-        radius = properties.get("radius")
-        if not coord2 or not radius:
-            continue  # Skip invalid zone data
-        
-        # Calculate distance
-        distance = haversine(coord1, coord2)
-        
-        print(f"Zone: {zone.get('id')}, Radius: {radius}, Distance: {distance}")
-        
-        # Check if the coordinate is within the zone's radius
-        if distance <= (radius / 1000):  # Convert radius from meters to kilometers
-            result.append(zone.get("id"))
-    
-    return result
+	result = []
+	zones = frappe.get_all("Zone Address", fields=["name as id", "geolocation_klnh"])
+	
+	for zone in zones:
+		geolocation_klnh = json.loads(zone.get("geolocation_klnh") or "{}")
+
+		# print(geolocation_klnh)
+		# return geolocation_klnh
+		
+		# Extract geometry and radius information
+		features = geolocation_klnh.get("features", [])
+		if not features or len(features) == 0:
+			continue  # Skip if no features are found
+		
+		geometry = features[0].get("geometry", {})
+		properties = features[0].get("properties", {})
+		
+		# Validate geometry and properties
+		coord2 = geometry.get("coordinates")
+		radius = properties.get("radius")
+		if not coord2 or not radius:
+			continue  # Skip invalid zone data
+		
+		# Calculate distance
+		distance = haversine(coord1, coord2)
+		
+		print(f"Zone: {zone.get('id')}, Radius: {radius}, Distance: {distance}")
+
+		# return f"Zone: {zone.get('id')}, Radius: {radius}, Distance: {distance}"
+		
+		# Check if the coordinate is within the zone's radius
+		if distance <= (radius):  # Convert radius from meters to kilometers
+			result.append(zone.get("id"))
+	
+	return result
 
 	
 
