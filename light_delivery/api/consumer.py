@@ -295,6 +295,7 @@ def get_order_history(**kwargs):
 		params = [phone_number]
 
 		order_types = frappe.get_list("Order Type",{"enable":1 , "name":["!=","Delivery"]},['name'])
+		
 
 		# Add condition for status if provided
 		if status and status.lower() not in ["all", ""]:
@@ -304,7 +305,7 @@ def get_order_history(**kwargs):
 		# frappe.log_error(message=f"SQL Query: {base_query}, Params: {params}", title="Debug: SQL Query")
 
 		orders = frappe.db.sql(base_query, params, as_dict=1)
-
+		
 		for order in orders:
 			delivery = order.get("delivery")
 			if delivery :
@@ -319,9 +320,12 @@ def get_order_history(**kwargs):
 						order['creation'] = datetime.strptime(creation_date, '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
 					except ValueError:
 						order['creation'] = str(creation_date)
+
+			order_types = frappe.get_list("Store Order Type",{"parent":order.get("store")},['order_type as id','type','name_in_arabic as ar'])
 			temp = []
-			for i in order_types:
-				temp.append({"id":i.name,"enable":True})
+			if order.get("order_type")=="Delivery":
+				for i in order_types:
+					temp.append({"id":i.name,"enable":True})
 
 			order['reorder'] = temp
 

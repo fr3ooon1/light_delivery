@@ -40,7 +40,7 @@ def sending_request():
 			if doc.delivery :
 				status = frappe.db.get_value("Delivery", doc.delivery, "status")
 				if status in ["Inorder","Offline"]:
-					return True
+					continue
 				frappe.db.set_value("Delivery", doc.delivery, "status", "Avaliable")
 
 			if doc.creation:
@@ -57,7 +57,7 @@ def sending_request():
 				new_deliveries = search_delivary(cash=doc.cash, store=doc.store)
 
 				if not new_deliveries:
-					return True
+					continue
 				
 				for delivery in new_deliveries:
 					doc.append("deliveries", {
@@ -74,6 +74,7 @@ def sending_request():
 				delivery = doc.deliveries[-1]
 				delivery_obj = frappe.get_value("Delivery",delivery.get("delivery") , ["status","user"], as_dict=1)
 				if delivery_obj.get("status") != "Avaliable":
+					continue
 					return "The Delivery not avaliable"
 				
 				if delivery.get("notification_key"):

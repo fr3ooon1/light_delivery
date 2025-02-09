@@ -26,6 +26,7 @@
   "maximum_orders",
   "column_break_rigx",
   "store_discount",
+  "order_type",
   "section_break_zreq",
   "num_of_rates",
   "total_rates",
@@ -165,11 +166,17 @@
    "fieldname": "maximum_orders",
    "fieldtype": "Float",
    "label": "Maximum Order"
+  },
+  {
+   "fieldname": "order_type",
+   "fieldtype": "Table",
+   "label": "Order Type",
+   "options": "Store Order Type"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-15 13:43:51.378447",
+ "modified": "2025-02-06 15:19:14.321882",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Store",
