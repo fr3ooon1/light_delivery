@@ -61,7 +61,7 @@ def login(*args,**kwargs):
 	
 	if frappe.db.exists("Store",{"user":user_obj.get("name")}):
 
-		if kwargs.get("is_store") != 1:
+		if int(kwargs.get("is_store")) != 1:
 			frappe.local.response['http_status_code'] = 401
 			return {
 				'message': 'Please login with Store user',
@@ -84,7 +84,7 @@ def login(*args,**kwargs):
 			
 	elif frappe.db.exists("Delivery",{"user":user_obj.get("name")}):
 
-		if kwargs.get("is_store") != 0:
+		if int(kwargs.get("is_store")) != 0:
 			frappe.local.response['http_status_code'] = 401
 			return {
 				'message': 'Please login with Store user',
