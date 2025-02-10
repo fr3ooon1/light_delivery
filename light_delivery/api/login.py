@@ -61,11 +61,11 @@ def login(*args,**kwargs):
 	
 	if frappe.db.exists("Store",{"user":user_obj.get("name")}):
 
-		if int(kwargs.get("is_store")) != 1:
-			frappe.local.response['http_status_code'] = 401
-			return {
-				'message': 'Please login with Store user',
-			}
+		# if int(kwargs.get("is_store")) != 1:
+		# 	frappe.local.response['http_status_code'] = 401
+		# 	return {
+		# 		'message': 'Please login with Store user',
+		# 	}
 
 		store_version = frappe.get_list("Store Version",{"parent":"Deductions"},pluck="version",ignore_permissions=True)
 
