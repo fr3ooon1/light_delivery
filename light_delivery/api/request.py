@@ -445,7 +445,7 @@ def get_request_details_for_del(*args, **kwargs):
 			"delivery": delivery,
 			"status": ["not in", ['Pending', 'Time Out', 'Delivery Cancel', 'Delivered', 'Store Cancel', 'Cancel' , 'Waiting for delivery']]
 		},
-		fields=["name", "number_of_order", "total", "store" , "status" ,"delivery","order_type"],
+		fields=["name", "number_of_order", "total", "store" , "status" ,"delivery",],
 		limit=1
 	)
 	if request:
