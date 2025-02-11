@@ -518,7 +518,7 @@ def upload_images(*args , **kwargs):
 				order.append("order_image",{
 					"image":forth_image.file_url
 				})
-			order.save(ignore_permission=True)
+			order.save(ignore_permissions=True)
 			frappe.db.commit()
 			frappe.local.response['http_status_code'] = 200
 			frappe.local.response['message'] = _(f"""The Images Updated in {data.get('order')}""")
