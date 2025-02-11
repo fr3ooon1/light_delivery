@@ -15,6 +15,7 @@
   "column_break_zsov",
   "store",
   "lat",
+  "order_type",
   "column_break_qnyl",
   "status",
   "lon",
@@ -100,11 +101,13 @@
   {
    "fieldname": "lat",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "lat"
   },
   {
    "fieldname": "lon",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "lon"
   },
   {
@@ -141,11 +144,17 @@
    "fieldname": "payed_to_store",
    "fieldtype": "Check",
    "label": "Payed To Store"
+  },
+  {
+   "fieldname": "order_type",
+   "fieldtype": "Link",
+   "label": "Order Type",
+   "options": "Order Type"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-08 10:39:29.686127",
+ "modified": "2025-02-11 11:43:24.191923",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Request Delivery",

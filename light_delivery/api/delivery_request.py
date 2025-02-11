@@ -215,6 +215,7 @@ def get_delivery_request(*args, **kwargs):
 		request = frappe.new_doc("Request Delivery")
 		request.store = store
 		request.request_date = frappe.utils.nowdate()
+		request.order_type = kwargs.get("order_type")
 
 		for order_id in orders:
 			request.append("order_request", {
