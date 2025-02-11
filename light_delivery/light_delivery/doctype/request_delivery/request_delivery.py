@@ -35,10 +35,12 @@ class RequestDelivery(Document):
 			self.create_request()
 		
 		if self.status in ["Delivered" , 'Delivery Cancel' , 'Store Cancel' , 'Cancel' ]:
-			self.close_request()
+			if self.order_type == "Delivery":
+				self.close_request()
 			
 		if self.status == "Collect Money" and self.payed_to_store == 0:
-			self.pay_to_store()
+			if self.order_type == "Delivery":
+				self.pay_to_store()
 
 		
 
