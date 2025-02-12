@@ -209,7 +209,7 @@ def get_requests(*args, **kwargs):
 	requests = frappe.get_list("Request Delivery", 
 							   {"store": store, 
 								'status': ['in', ['Accepted', 'Arrived', 'Collect Money', 'Picked', 'On The Way', 'Partially Delivered','Waiting for delivery']]}, 
-							   ['name as id', 'status', 'delivery', 'number_of_order', 'request_date','total'])
+							   ['name as id', 'status', 'delivery', 'number_of_order', 'request_date','total','order_type'])
 
 	for req in requests:
 		temp = req.get('delivery')
@@ -445,7 +445,7 @@ def get_request_details_for_del(*args, **kwargs):
 			"delivery": delivery,
 			"status": ["not in", ['Pending', 'Time Out', 'Delivery Cancel', 'Delivered', 'Store Cancel', 'Cancel' , 'Waiting for delivery']]
 		},
-		fields=["name", "number_of_order", "total", "store" , "status" ,"delivery",],
+		fields=["name", "number_of_order", "total", "store" , "status" ,"delivery","order_type"],
 		limit=1
 	)
 	if request:
