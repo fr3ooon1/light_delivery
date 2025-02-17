@@ -111,7 +111,7 @@ def get_balance(party):
 
 
 @frappe.whitelist(allow_guest=False)
-def search_delivary(cash, store=None):
+def search_delivary(cash, store=None , order_type = None):
 	try:
 		cash = float(cash or 0)
 		# Get the store assigned to the current user if not provided
@@ -132,6 +132,19 @@ def search_delivary(cash, store=None):
 				frappe.throw(_("Invalid store location format for Store: {0}").format(store))
 			
 			# Fetch deliveries
+			condition = "+ 0"
+
+			if order_type:
+				if order_type != "Refund":
+					condition = f""" + COALESCE(
+							(SELECT 
+								SUM(jea.credit_in_account_currency) - SUM(jea.debit_in_account_currency)
+							FROM 
+								`tabJournal Entry Account` AS jea
+							WHERE 
+								jea.party = d.delivery_name), 0))"""
+				
+		
 
 			deliveries = frappe.db.sql(f"""
 			SELECT 
@@ -156,14 +169,7 @@ def search_delivary(cash, store=None):
 				`tabUser` u ON d.user = u.name
 			WHERE 
 				d.status = 'Avaliable' 
-				AND (
-					d.cash + COALESCE(
-						(SELECT 
-							SUM(jea.credit_in_account_currency) - SUM(jea.debit_in_account_currency)
-						FROM 
-							`tabJournal Entry Account` AS jea
-						WHERE 
-							jea.party = d.delivery_name), 0)) >= {cash}""", as_dict=True)
+				AND ( d.cash {condition} >= {cash} )""", as_dict=True)
 
 			# Calculate distances and filter deliveries
 			distance = []

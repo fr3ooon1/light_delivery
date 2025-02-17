@@ -54,7 +54,7 @@ def sending_request():
 					continue
 			
 			if not doc.deliveries:
-				new_deliveries = search_delivary(cash=doc.cash, store=doc.store)
+				new_deliveries = search_delivary(cash=doc.cash, store=doc.store , order_type=doc.order_type)
 
 				if not new_deliveries:
 					continue

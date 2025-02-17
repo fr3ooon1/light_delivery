@@ -254,7 +254,7 @@ class RequestDelivery(Document):
 			total_request_amount += frappe.get_value("Order" , self.get('order_request')[i].get("order") , "total_order")
 		doc.cash = total_request_amount
 		doc.number_of_order = len(order_request)
-		deliveries = search_delivary(total_request_amount , self.store)
+		deliveries = search_delivary(total_request_amount , self.store , self.order_type)
 
 		if deliveries:
 			for i in deliveries:
