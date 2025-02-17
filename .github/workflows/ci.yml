@@ -81,6 +81,12 @@ jobs:
           mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL character_set_server = 'utf8mb4'"
           mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL collation_server = 'utf8mb4_unicode_ci'"
 
+      - name: install erpnext
+        working-directory: /home/runner/frappe-bench
+        run: |
+          bench get-app erpnext
+          bench --site test_site install-app erpnext
+
       - name: Install
         working-directory: /home/runner/frappe-bench
         run: |
@@ -91,12 +97,7 @@ jobs:
           bench build
         env:
           CI: 'Yes'
-      
-      - name: install erpnext
-        working-directory: /home/runner/frappe-bench
-        run: |
-          bench get-app erpnext --branch version-15
-          bench --site test_site install-app erpnext
+
       - name: Run Tests
         working-directory: /home/runner/frappe-bench
         run: |
