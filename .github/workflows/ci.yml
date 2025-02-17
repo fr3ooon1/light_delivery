@@ -85,6 +85,7 @@ jobs:
         working-directory: /home/runner/frappe-bench
         run: |
           bench get-app erpnext
+          bench new-site --db-root-password root --admin-password admin test_site
           bench --site test_site install-app erpnext
 
       - name: Install
@@ -92,7 +93,6 @@ jobs:
         run: |
           bench get-app light_delivery $GITHUB_WORKSPACE
           bench setup requirements --dev
-          bench new-site --db-root-password root --admin-password admin test_site
           bench --site test_site install-app light_delivery
           bench build
         env:
