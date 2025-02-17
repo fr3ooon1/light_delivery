@@ -27,6 +27,7 @@ def make_journal_entry(kwargs):
 		})
 
 		# Append the debit entry
+		
 		doc.append("accounts", {
 			"account": kwargs.get("account_debit"),
 			"party_type":kwargs.get("party_type_debit"),
