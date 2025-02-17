@@ -91,7 +91,12 @@ jobs:
           bench build
         env:
           CI: 'Yes'
-
+      
+      - name: install erpnext
+        working-directory: /home/runner/frappe-bench
+        run: |
+          bench get-app erpnext --branch version-15
+          bench --site test_site install-app erpnext
       - name: Run Tests
         working-directory: /home/runner/frappe-bench
         run: |
