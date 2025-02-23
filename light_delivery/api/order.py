@@ -651,7 +651,7 @@ def change_order_status_del(*args, **kwargs):
 				notification_key = frappe.get_value("User", user, "notification_key")
 
 		# Handle refused status with time constraints
-		if status == "Refused":
+		if status == "Refused" and doc.order_type == "Delivery":
 			order_logs = frappe.db.sql(
 				"""SELECT status, time FROM `tabOrder Log` WHERE parent = %s""",
 				(order,),

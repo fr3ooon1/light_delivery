@@ -475,7 +475,7 @@ def get_request_details_for_del(*args, **kwargs):
 			JOIN `tabRequest Delivery` as rd ON rd.name = '{request_name}'
 			JOIN `tabOrder Request` as orq ON orq.parent = rd.name AND orq.order = o.name
 			WHERE rd.name = '{request_name}'
-			AND o.status NOT IN ('Pending','Store Cancel','Delivered','Delivery Cancel','Cancel','Return to store') ;
+			AND o.status NOT IN ('Pending','Store Cancel','Delivery Cancel','Cancel','Return to store') ;
 		""", as_dict=1)
 		
 		for i in order:
@@ -495,11 +495,6 @@ def get_request_details_for_del(*args, **kwargs):
 				if coordi:
 					i['coordi'] = [float(coordi.get("longitude") or 0) ,float(coordi.get("latitude") or 0) ]
 			
-				# customer = frappe.get_value("Customer",username.get("username"),['name'],as_dict=1)
-				# data = frappe.db.sql(f"""select a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer.get("name")}'""",as_dict=True)
-				# if data:
-				# 	i['coordi'] = [float(data[0].get("latitude") or None),float(data[0].get("longitude") or None)]
-				
 			i['images_of_orders'] = images_of_orders
 			
 		

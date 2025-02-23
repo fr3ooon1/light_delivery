@@ -26,6 +26,7 @@ def update_location(*args,**kwargs):
 		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = _(e)
 
+
 @frappe.whitelist()
 def sending_request():
 	requests = frappe.get_list("Request", {"status": "Waiting for Delivery"})
@@ -52,9 +53,11 @@ def sending_request():
 					doc.save(ignore_permissions=True)
 					frappe.db.commit()
 					continue
+
+			order_type = frappe.get_value("Request Delivery",doc.name,"order_type")
 			
 			if not doc.deliveries:
-				new_deliveries = search_delivary(cash=doc.cash, store=doc.store , order_type=doc.order_type)
+				new_deliveries = search_delivary(cash=doc.cash, store=doc.store , order_type=order_type)
 
 				if not new_deliveries:
 					continue
@@ -75,7 +78,6 @@ def sending_request():
 				delivery_obj = frappe.get_value("Delivery",delivery.get("delivery") , ["status","user"], as_dict=1)
 				if delivery_obj.get("status") != "Avaliable":
 					continue
-					return "The Delivery not avaliable"
 				
 				if delivery.get("notification_key"):
 					res = send_notification(delivery.get("notification_key"), "new request")
