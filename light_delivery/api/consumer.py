@@ -559,7 +559,12 @@ def delete_address(id):
 
 def edit_address(kwargs):
 	try:
+		if not kwargs.get("id"):
+			frappe.local.response['http_status_code'] = 400
+			frappe.local.response['message'] = "Missing Address ID"
+		id = kwargs.get("id")
 		doc = frappe.get_doc("Address" , id )
+		doc.flags.ignore_permissions = True
 		address = kwargs.get("address")
 		latitude = kwargs.get("latitude")
 		longitude = kwargs.get("longitude")
