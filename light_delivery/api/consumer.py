@@ -551,7 +551,7 @@ def delete_address(id):
 		doc = frappe.get_doc("Address" , id )
 		doc.delete(ignore_permissions=True)
 		frappe.db.commit()
-		return "Address Updated"
+		return "Address Removed"
 	except Exception as e:
 		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = f"An error occurred: {e}"
