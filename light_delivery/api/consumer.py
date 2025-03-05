@@ -533,7 +533,33 @@ def post_reorder():
 
 
 @frappe.whitelist(allow_guest=True)
-def get_address(**kwargs):
+def address(**kwargs):
+	id = kwargs.get("id")
+	address = kwargs.get("address")
+	latitude = kwargs.get("latitude")
+	longitude = kwargs.get("longitude")
+	if frappe.request.method == 'GET':
+		get_address()
+	if frappe.request.method == 'PATCH':
+		edit_address(id , address , latitude  , longitude )
+	if frappe.request.method == 'DELETE': 
+		delete_address(id)
+
+
+def delete_address(id):
+	doc = frappe.get_doc("Address" , id )
+	doc.delete(ignore_permissions=True)
+	frappe.db.commit()
+
+def edit_address(id , address = None, latitude = None , longitude = None):
+	doc = frappe.get_doc("Address" , id )
+	doc.address_line1 = address
+	doc.latitude = latitude if latitude else doc.latitude
+	doc.longitude = longitude if longitude else doc.longitude
+	doc.save(ignore_permissions=True)
+	frappe.db.commit()
+
+def get_address():
 	user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
 
 	customer = frappe.get_value("Customer",user.get("username"),'name')
