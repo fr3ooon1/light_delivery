@@ -73,7 +73,7 @@ def get_profile():
 	try:
 		user = frappe.get_value("User",frappe.session.user,['full_name','mobile_no','email','username','first_name'],as_dict=True)
 
-		address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{user.get("username")}'""",as_dict=True)
+		address = frappe.db.sql(f"""select a.name as id , a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{user.get("username")}'""",as_dict=True)
 		
 		res = {}
 		if frappe.db.exists("Delivery",{"user":frappe.session.user}):

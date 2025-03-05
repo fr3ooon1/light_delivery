@@ -539,25 +539,42 @@ def address(**kwargs):
 	latitude = kwargs.get("latitude")
 	longitude = kwargs.get("longitude")
 	if frappe.request.method == 'GET':
-		get_address()
+		res = get_address()
 	if frappe.request.method == 'PATCH':
-		edit_address(id , address , latitude  , longitude )
+		res = edit_address(id , address , latitude  , longitude )
 	if frappe.request.method == 'DELETE': 
-		delete_address(id)
+		res = delete_address(id)
+	return res
+
 
 
 def delete_address(id):
-	doc = frappe.get_doc("Address" , id )
-	doc.delete(ignore_permissions=True)
-	frappe.db.commit()
+	try:
+		doc = frappe.get_doc("Address" , id )
+		doc.delete(ignore_permissions=True)
+		frappe.db.commit()
+		return "Address Updated"
+	except Exception as e:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = f"An error occurred: {e}"
+		frappe.log_error(message=str(e), title=_('Error in delete_address'))
 
 def edit_address(id , address = None, latitude = None , longitude = None):
-	doc = frappe.get_doc("Address" , id )
-	doc.address_line1 = address
-	doc.latitude = latitude if latitude else doc.latitude
-	doc.longitude = longitude if longitude else doc.longitude
-	doc.save(ignore_permissions=True)
-	frappe.db.commit()
+	try:
+
+		doc = frappe.get_doc("Address" , id )
+		doc.address_line1 = address
+		doc.latitude = latitude if latitude else doc.latitude
+		doc.longitude = longitude if longitude else doc.longitude
+		doc.save(ignore_permissions=True)
+		frappe.db.commit()
+		return "Address Updated"
+
+	except Exception as e:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = f"An error occurred: {e}"
+		frappe.log_error(message=str(e), title=_('Error in edit_address'))
+
 
 def get_address():
 	user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
