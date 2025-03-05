@@ -535,11 +535,15 @@ def post_reorder():
 @frappe.whitelist(allow_guest=True)
 def address(**kwargs):
 	id = kwargs.get("id")
-	
+	address = kwargs.get("address")
+	latitude = kwargs.get("latitude")
+	longitude = kwargs.get("longitude")
+		
 	if frappe.request.method == 'GET':
 		res = get_address()
-	elif frappe.request.method == 'PATCH':
-		res = edit_address(**kwargs)
+	elif frappe.request.method == 'PUT':
+		
+		res = edit_address(id , address , latitude , longitude)
 	elif frappe.request.method == 'DELETE': 
 		res = delete_address(id)
 	return res
@@ -551,23 +555,21 @@ def delete_address(id):
 		doc = frappe.get_doc("Address" , id )
 		doc.delete(ignore_permissions=True)
 		frappe.db.commit()
-		return "Address Updated"
+		return "Address Removed"
 	except Exception as e:
 		frappe.local.response['http_status_code'] = 400
 		frappe.local.response['message'] = f"An error occurred: {e}"
 		frappe.log_error(message=str(e), title=_('Error in delete_address'))
 
-def edit_address(kwargs):
+def edit_address(id , address =None, latitude =None,longitude =None):
 	try:
-		if not kwargs.get("id"):
+		if not id:
 			frappe.local.response['http_status_code'] = 400
 			frappe.local.response['message'] = "Missing Address ID"
-		id = kwargs.get("id")
+			return "Missing Address ID"
 		doc = frappe.get_doc("Address" , id )
 		doc.flags.ignore_permissions = True
-		address = kwargs.get("address")
-		latitude = kwargs.get("latitude")
-		longitude = kwargs.get("longitude")
+		
 		doc.address_line1 = address if address else doc.address_line1
 		doc.latitude = latitude if latitude else doc.latitude
 		doc.longitude = longitude if longitude else doc.longitude
