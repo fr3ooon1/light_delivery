@@ -535,14 +535,12 @@ def post_reorder():
 @frappe.whitelist(allow_guest=True)
 def address(**kwargs):
 	id = kwargs.get("id")
-	address = kwargs.get("address")
-	latitude = kwargs.get("latitude")
-	longitude = kwargs.get("longitude")
+	
 	if frappe.request.method == 'GET':
 		res = get_address()
-	if frappe.request.method == 'PATCH':
-		res = edit_address(id , address , latitude  , longitude )
-	if frappe.request.method == 'DELETE': 
+	elif frappe.request.method == 'PATCH':
+		res = edit_address(**kwargs)
+	elif frappe.request.method == 'DELETE': 
 		res = delete_address(id)
 	return res
 
@@ -559,11 +557,13 @@ def delete_address(id):
 		frappe.local.response['message'] = f"An error occurred: {e}"
 		frappe.log_error(message=str(e), title=_('Error in delete_address'))
 
-def edit_address(id , address = None, latitude = None , longitude = None):
+def edit_address(kwargs):
 	try:
-
 		doc = frappe.get_doc("Address" , id )
-		doc.address_line1 = address
+		address = kwargs.get("address")
+		latitude = kwargs.get("latitude")
+		longitude = kwargs.get("longitude")
+		doc.address_line1 = address if address else doc.address_line1
 		doc.latitude = latitude if latitude else doc.latitude
 		doc.longitude = longitude if longitude else doc.longitude
 		doc.save(ignore_permissions=True)
