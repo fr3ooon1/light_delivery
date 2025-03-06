@@ -590,6 +590,6 @@ def get_address():
 	address = frappe.db.sql(f"""select a.name as id ,a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}'""",as_dict=True)
 	if not address:
 		frappe.local.response['http_status_code'] = 400
-		frappe.local.response['message'] = "Latitude and Longitude are required."
+		frappe.local.response['message'] = []
 		return
 	return address
