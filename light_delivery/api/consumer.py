@@ -292,6 +292,9 @@ def get_order_history(**kwargs):
 				`tabOrder` 
 			WHERE 
 				phone_number = %s
+			ORDER BY
+				creation DESC ;
+
 		"""
 		params = [phone_number]
 
