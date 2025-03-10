@@ -41,7 +41,17 @@
   "bank_expense",
   "section_break_trbk",
   "light_account",
-  "expens_account"
+  "expens_account",
+  "sms_integration_tab",
+  "url",
+  "column_break_phgn",
+  "username",
+  "column_break_leap",
+  "password",
+  "column_break_nlzq",
+  "sendername",
+  "section_break_dvhg",
+  "message"
  ],
  "fields": [
   {
@@ -232,12 +242,58 @@
    "fieldname": "searching_area",
    "fieldtype": "Float",
    "label": "Searching Area In Meters"
+  },
+  {
+   "fieldname": "sms_integration_tab",
+   "fieldtype": "Tab Break",
+   "label": "SMS Integration"
+  },
+  {
+   "fieldname": "url",
+   "fieldtype": "Data",
+   "label": "URL"
+  },
+  {
+   "fieldname": "column_break_phgn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "username",
+   "fieldtype": "Data",
+   "label": "username"
+  },
+  {
+   "fieldname": "column_break_leap",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "password",
+   "fieldtype": "Data",
+   "label": "Password"
+  },
+  {
+   "fieldname": "column_break_nlzq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sendername",
+   "fieldtype": "Data",
+   "label": "sendername"
+  },
+  {
+   "fieldname": "section_break_dvhg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "message",
+   "fieldtype": "Text",
+   "label": "Message"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-01-15 12:33:29.415794",
+ "modified": "2025-03-09 14:08:37.814265",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Deductions",

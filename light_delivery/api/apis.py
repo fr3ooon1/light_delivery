@@ -13,6 +13,28 @@ Deductions = "Deductions"
 
 
 @frappe.whitelist()
+def send_sms(mobiles , order):
+	setting = frappe.get_doc("Deductions")
+
+	doc = frappe.get_doc("Order",order)
+	# message = f"{setting.message}"
+
+	message = f"""
+		Hello '{doc.full_name}',
+		Your order no. '{doc.name}' successfully created
+	"""
+
+	url = f"{setting.url}?username={setting.username}&password={setting.password}&sendername={setting.sendername}&message={message}&mobiles={mobiles}"
+
+	payload = {}
+	headers = {}
+
+	response = requests.request("GET", url, headers=headers, data=payload)
+
+	print(response.text)
+
+
+@frappe.whitelist()
 def make_journal_entry(kwargs):
 	try:
 		# Create the Journal Entry document
@@ -273,44 +295,44 @@ def sms(reciever):
 
 
 
-@frappe.whitelist()
-def send_sms(reciever):
+# @frappe.whitelist()
+# def send_sms(reciever):
 
-	secret_key = "644D22EBED7B44D181B51EEBB8C80D2D"
-	url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
+# 	secret_key = "644D22EBED7B44D181B51EEBB8C80D2D"
+# 	url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
 
-	msg = "Hello"
-	account_id = "550163042"
-	password = "Vodafone.1"
-	sender_name = "Light&amp;Fast" 
+# 	msg = "Hello"
+# 	account_id = "550163042"
+# 	password = "Vodafone.1"
+# 	sender_name = "Light&amp;Fast" 
 
-	data = f"""AccountId={account_id}&Password={password}&SenderName={sender_name}&ReceiverMSISDN={reciever}&SMSText={msg}"""
+# 	data = f"""AccountId={account_id}&Password={password}&SenderName={sender_name}&ReceiverMSISDN={reciever}&SMSText={msg}"""
 
-	secure_hash = hmac.new(secret_key.encode(), data.encode(), hashlib.sha256).hexdigest()
+# 	secure_hash = hmac.new(secret_key.encode(), data.encode(), hashlib.sha256).hexdigest()
 
-	secure_hash =  secure_hash.encode('utf-8')
+# 	secure_hash =  secure_hash.encode('utf-8')
 
 
-	url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
+# 	url = "https://e3len.vodafone.com.eg/web2sms/sms/submit/"
 
-	payload = f"""<?xml version=\"1.0\" encoding=\"UTF-8\"?> <SubmitSMSRequest xmlns:=\"http://www.edafa.com/web2sms/sms/model/\"\n
-	xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.edafa.com/web2sms/sms/model/\nSMSAPI.xsd \" xsi:type=\"SubmitSMSRequest\">    \n
-	<AccountId>{account_id}</AccountId>\n    
-	<Password>{password}</Password>\n    
-	<SecureHash>{secure_hash}</SecureHash>\n
-	<SMSList>\n        
-		<SenderName>{sender_name}</SenderName>\n        
-		<ReceiverMSISDN>{reciever}</ReceiverMSISDN>\n        
-		<SMSText>{msg}</SMSText>\n    
-		</SMSList>\n
-	</SubmitSMSRequest>"""	
-	headers = {
-	'Content-Type': 'application/xml'
-	}
+# 	payload = f"""<?xml version=\"1.0\" encoding=\"UTF-8\"?> <SubmitSMSRequest xmlns:=\"http://www.edafa.com/web2sms/sms/model/\"\n
+# 	xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.edafa.com/web2sms/sms/model/\nSMSAPI.xsd \" xsi:type=\"SubmitSMSRequest\">    \n
+# 	<AccountId>{account_id}</AccountId>\n    
+# 	<Password>{password}</Password>\n    
+# 	<SecureHash>{secure_hash}</SecureHash>\n
+# 	<SMSList>\n        
+# 		<SenderName>{sender_name}</SenderName>\n        
+# 		<ReceiverMSISDN>{reciever}</ReceiverMSISDN>\n        
+# 		<SMSText>{msg}</SMSText>\n    
+# 		</SMSList>\n
+# 	</SubmitSMSRequest>"""	
+# 	headers = {
+# 	'Content-Type': 'application/xml'
+# 	}
 
-	response = requests.request("POST", url, headers=headers, data=payload)
+# 	response = requests.request("POST", url, headers=headers, data=payload)
 
-	return response
+# 	return response
 
 
 

@@ -7,6 +7,7 @@ def after_install():
 	create_domain_list()
 	create_customer_groups()
 	create_status()
+	translate()
 	
 
 def create_domain_list():
@@ -16,6 +17,17 @@ def create_domain_list():
 		dm1.insert()
 
 
+
+doc = {"language":"en","source_text":"Deductions","translated_text":"Light Fast Settings"}
+
+
+def translate():
+	if not frappe.db.exists("Translation",{"language":"en","source_text":"Deductions","translated_text":"Light Fast Settings"}): 
+		doc = frappe.new_doc("Translation")
+		doc.language = "en"
+		doc.source_text = "Deductions"
+		doc.translated_text="Light Fast Settings"
+		doc.insert()
 
 def create_customer_groups():
 	if frappe.db.exists("DocType","Customer Group"):
