@@ -292,8 +292,7 @@ def get_order_history(**kwargs):
 				`tabOrder` 
 			WHERE 
 				phone_number = %s
-			ORDER BY
-				creation DESC ;
+			
 
 		"""
 		params = [phone_number]
@@ -306,7 +305,7 @@ def get_order_history(**kwargs):
 			base_query += " AND status = %s"
 			params.append(status)
 
-		# frappe.log_error(message=f"SQL Query: {base_query}, Params: {params}", title="Debug: SQL Query")
+		base_query += " ORDER BY creation DESC ;"
 
 		orders = frappe.db.sql(base_query, params, as_dict=1)
 		
