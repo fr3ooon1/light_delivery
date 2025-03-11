@@ -153,6 +153,19 @@ def get_favorite(*args,**kwargs):
 		return res
 	
 
+@frappe.whitelist(allow_guest=True)
+def check_version(**kwargs):
+	version = kwargs.get("version")
+	customer_versions = frappe.get_list("Customer Version",{"parent":"Deductions"},pluck="version",ignore_permissions=True)
+	
+	if not version:
+		return False
+	else:
+		if version not in  customer_versions:
+			return False
+		else:
+			return True
+
 
 @frappe.whitelist(allow_guest=False)
 def add_to_favorite(*args, **kwargs):
