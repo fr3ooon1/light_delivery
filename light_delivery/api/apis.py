@@ -13,25 +13,28 @@ Deductions = "Deductions"
 
 
 @frappe.whitelist()
-def send_sms(mobiles , order):
+def send_sms(doc):
 	setting = frappe.get_doc("Deductions")
+	if setting.enable:
 
-	doc = frappe.get_doc("Order",order)
-	# message = f"{setting.message}"
+		# doc = frappe.get_doc("Order",order)
+		
+		message = f"""
+		استاذ {doc.full_name}
+		تم انشاء اوردر لسيادتكم من طرف {doc.store}.
+		لتتبع الاوردر و التواصل مع المندوب و الاستفادة من خدمات لايت اند فاست برجاء تنزيل التطبيق عبر الضغط على الرابط
 
-	message = f"""
-		Hello '{doc.full_name}',
-		Your order no. '{doc.name}' successfully created
-	"""
+		(لينك ابلكيشن العميل)
+		"""
 
-	url = f"{setting.url}?username={setting.username}&password={setting.password}&sendername={setting.sendername}&message={message}&mobiles={mobiles}"
+		url = f"{setting.url}?username={setting.username}&password={setting.password}&sendername={setting.sendername}&message={message}&mobiles={doc.phone_number}"
 
-	payload = {}
-	headers = {}
+		payload = {}
+		headers = {}
 
-	response = requests.request("GET", url, headers=headers, data=payload)
+		response = requests.request("GET", url, headers=headers, data=payload)
 
-	print(response.text)
+		print(response.text)
 
 
 @frappe.whitelist()

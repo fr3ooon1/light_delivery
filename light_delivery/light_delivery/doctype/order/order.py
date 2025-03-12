@@ -8,12 +8,14 @@ import json
 from frappe.utils import now_datetime , format_duration, get_datetime , time_diff_in_seconds
 from light_delivery.api.apis import osm_v2 ,osm_v1, make_journal_entry
 from datetime import datetime
+from light_delivery.api.apis import send_sms
 
 
 class Order(Document):
 
 	def before_naming(self):
 		self.begain_order()
+		send_sms(self)
 
 
 	def validate(self):
