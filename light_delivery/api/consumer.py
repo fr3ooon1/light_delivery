@@ -300,7 +300,8 @@ def get_order_history(**kwargs):
 				store,
 				delivery,
 				invoice,
-				reorder as enable_to_reorder
+				reorder as enable_to_reorder ,
+				net_delivery_fees as delivery_fees
 			FROM 
 				`tabOrder` 
 			WHERE 
