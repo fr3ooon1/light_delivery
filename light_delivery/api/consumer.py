@@ -68,9 +68,9 @@ def get_stores(*args,**kwargs):
 
 	if kwargs.get("category"):
 		category = kwargs.get("category")
-		stores = frappe.db.get_list("Store",{"store_category":category},['name as id'],order_by=order_by,start=start,page_length=page_length,ignore_permissions=True)
+		stores = frappe.db.get_list("Store",{"store_category":category,"status":"Active"},['name as id'],order_by=order_by,start=start,page_length=page_length,ignore_permissions=True)
 	else:
-		stores = frappe.db.get_list("Store",['name as id'],order_by=order_by,start=start,page_length=page_length,ignore_permissions=True)
+		stores = frappe.db.get_list("Store",{"status":"Active"},['name as id'],order_by=order_by,start=start,page_length=page_length,ignore_permissions=True)
 
 	res = []
 
@@ -99,7 +99,7 @@ def get_stores(*args,**kwargs):
 def get_home_stories():
 	try:
 		res = []
-		stores = frappe.get_list("Store",{"show_in_home":1},['name'],ignore_permissions=True)
+		stores = frappe.get_list("Store",{"show_in_home":1,"status":"Active"},['name'],ignore_permissions=True)
 		user = frappe.get_value("User",frappe.session.user,["username","full_name","mobile_no"],as_dict=True)
 		for store in stores:
 			doc = frappe.get_doc("Store",store.get("name"))

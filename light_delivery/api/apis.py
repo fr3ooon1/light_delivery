@@ -20,10 +20,10 @@ def send_sms(doc):
 		# doc = frappe.get_doc("Order",order)
 		
 		message = f"""
-		استاذ {doc.full_name}
-		تم انشاء اوردر لسيادتكم من طرف {doc.store}.
-		لتتبع الاوردر و التواصل مع المندوب و الاستفادة من خدمات لايت اند فاست برجاء تنزيل التطبيق عبر الضغط على الرابط
-
+		استاذ {doc.full_name}\n
+		تم انشاء اوردر لسيادتكم من طرف {doc.store}.\n
+		رقم الاوردر: {doc.name}\n
+		لتتبع الاوردر و التواصل مع المندوب و الاستفادة من خدمات لايت اند فاست برجاء تنزيل التطبيق عبر الضغط على الرابط\n
 		(لينك ابلكيشن العميل)
 		"""
 
@@ -35,6 +35,7 @@ def send_sms(doc):
 		response = requests.request("GET", url, headers=headers, data=payload)
 
 		print(response.text)
+		return response
 
 
 @frappe.whitelist()
