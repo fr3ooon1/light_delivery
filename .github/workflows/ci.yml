@@ -50,14 +50,14 @@ jobs:
           node-version: 18
           check-latest: true
 
-      - name: Cache pip
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/*requirements.txt', '**/pyproject.toml', '**/setup.py', '**/setup.cfg') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-            ${{ runner.os }}-
+      # - name: Cache pip
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ~/.cache/pip
+      #     key: ${{ runner.os }}-pip-${{ hashFiles('**/*requirements.txt', '**/pyproject.toml', '**/setup.py', '**/setup.cfg') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-pip-
+      #       ${{ runner.os }}-
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
