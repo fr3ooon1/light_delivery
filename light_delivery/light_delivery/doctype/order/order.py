@@ -12,13 +12,16 @@ from datetime import datetime
 
 
 class Order(Document):
-	from light_delivery.api.apis import send_sms
+	
 	def before_naming(self):
 		self.begain_order()
-		self.send_sms()
+		
 
 
 	def validate(self):
+		from light_delivery.api.apis import send_sms
+		if self.status == "Pending":
+			self.send_sms()
 		self.order_status()
 		self.get_previous_order_amount()
 		self.rate_delivery()

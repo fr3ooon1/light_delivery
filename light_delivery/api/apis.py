@@ -16,12 +16,11 @@ Deductions = "Deductions"
 def send_sms(doc):
 	setting = frappe.get_doc("Deductions")
 	if setting.enable:
-
-		# doc = frappe.get_doc("Order",order)
 		
+		store = frappe.get_value("Store", doc.store, "store_name")		
 		message = f"""
 		استاذ {doc.full_name}\n
-		تم انشاء اوردر لسيادتكم من طرف {doc.store}.\n
+		تم انشاء اوردر لسيادتكم من طرف {store}.\n
 		رقم الاوردر: {doc.name}\n
 		لتتبع الاوردر و التواصل مع المندوب و الاستفادة من خدمات لايت اند فاست برجاء تنزيل التطبيق عبر الضغط على الرابط\n
 		https://play.google.com/store/apps/details?id=com.dynamic.lightCustomer&hl=en
