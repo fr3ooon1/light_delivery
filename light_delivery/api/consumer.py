@@ -265,8 +265,16 @@ def search_for_store(*args,**kwargs):
 	frappe.local.response['data'] = res
 
 
-# @frappe.whitelist(allow_guest=True)
-# def profile
+@frappe.whitelist(allow_guest=False)
+def disable_user():
+	user = frappe.session.user
+	doc = frappe.get_doc("User",user)
+	doc.enabled = 0
+	doc.save(ignore_permissions=True)
+	frappe.db.commit()
+	frappe.local.response['http_status_code'] = 200
+	frappe.local.response['message'] = "User Disabled"
+
 
 def is_favorite(customer , store):
 	fav_stores = frappe.get_list("Stores",{"parent":customer},pluck='store',ignore_permissions=True)
