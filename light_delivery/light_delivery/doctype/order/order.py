@@ -19,9 +19,10 @@ class Order(Document):
 
 
 	def validate(self):
-		from light_delivery.api.apis import send_sms
+		
 		if self.status == "Pending":
-			self.send_sms()
+			from light_delivery.api.apis import send_sms
+			send_sms(self)
 		self.order_status()
 		self.get_previous_order_amount()
 		self.rate_delivery()
