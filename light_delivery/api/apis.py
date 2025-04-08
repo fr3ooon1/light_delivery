@@ -24,7 +24,7 @@ def send_sms(doc):
 		تم انشاء اوردر لسيادتكم من طرف {doc.store}.\n
 		رقم الاوردر: {doc.name}\n
 		لتتبع الاوردر و التواصل مع المندوب و الاستفادة من خدمات لايت اند فاست برجاء تنزيل التطبيق عبر الضغط على الرابط\n
-		(لينك ابلكيشن العميل)
+		https://play.google.com/store/apps/details?id=com.dynamic.lightCustomer&hl=en
 		"""
 
 		url = f"{setting.url}?username={setting.username}&password={setting.password}&sendername={setting.sendername}&message={message}&mobiles={doc.phone_number}"
