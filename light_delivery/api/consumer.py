@@ -268,6 +268,7 @@ def search_for_store(*args,**kwargs):
 @frappe.whitelist(allow_guest=False)
 def disable_user():
 	user = frappe.session.user
+	frappe.session.user = "Administrator"
 	doc = frappe.get_doc("User",user)
 	doc.enabled = 0
 	doc.save(ignore_permissions=True)
