@@ -41,11 +41,16 @@ def sending_request():
 			if doc.delivery :
 				status = frappe.db.get_value("Delivery", doc.delivery, "status")
 				if status in ["Inorder","Offline"]:
-					doc.deliveries = doc.deliveries[0:-1] if doc.deliveries else []
-					doc.save(ignore_permissions=True)
-					frappe.db.commit()
+					if len(doc.deliveries) > 1:
+						doc.deliveries = doc.deliveries[0:-1] 
+						doc.save(ignore_permissions=True)
+						frappe.db.commit()
+					else:
+						doc.deliveries = []
+						doc.save(ignore_permissions=True)
+						frappe.db.commit()
 					continue
-				frappe.db.set_value("Delivery", doc.delivery, "status", "Avaliable")
+				# frappe.db.set_value("Delivery", doc.delivery, "status", "Avaliable")
 
 			if doc.creation:
 				now = now_datetime()
