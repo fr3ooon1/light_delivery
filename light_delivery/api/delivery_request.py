@@ -45,6 +45,7 @@ def sending_request():
 					if not new_deliveries:
 						continue
 					
+					doc.deliveries = []
 					for delivery in new_deliveries:
 						doc.append("deliveries", {
 							"user": delivery.get("user"),
@@ -84,7 +85,6 @@ def sending_request():
 				if not new_deliveries:
 					continue
 				
-				doc.deliveries = []
 				for delivery in new_deliveries:
 					doc.append("deliveries", {
 						"user": delivery.get("user"),
