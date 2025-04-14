@@ -99,6 +99,19 @@ def sending_request():
 				delivery = doc.deliveries[-1]
 				delivery_obj = frappe.get_value("Delivery",delivery.get("delivery") , ["status","user"], as_dict=1)
 				if delivery_obj.get("status") != "Avaliable":
+					new_deliveries = search_delivary(cash=doc.cash, store=doc.store , order_type=order_type)
+					if not new_deliveries:
+						continue
+					
+					for delivery in new_deliveries:
+						doc.append("deliveries", {
+							"user": delivery.get("user"),
+							"delivery": delivery.get("name"),
+							"notification_key": delivery.get("notification_key"),
+							"distance":delivery.get("distance")
+					})
+					doc.save(ignore_permissions=True)
+					frappe.db.commit()
 					continue
 				
 				if delivery.get("notification_key"):
