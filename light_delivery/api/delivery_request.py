@@ -41,15 +41,29 @@ def sending_request():
 			if doc.delivery :
 				status = frappe.db.get_value("Delivery", doc.delivery, "status")
 				if status in ["Inorder","Offline"]:
-					if len(doc.deliveries) > 1:
-						doc.deliveries = doc.deliveries[0:-1] 
-						doc.save(ignore_permissions=True)
-						frappe.db.commit()
-					else:
-						doc.deliveries = []
-						doc.save(ignore_permissions=True)
-						frappe.db.commit()
-					continue
+					new_deliveries = search_delivary(cash=doc.cash, store=doc.store , order_type=order_type)
+					if not new_deliveries:
+						continue
+					
+					for delivery in new_deliveries:
+						doc.append("deliveries", {
+							"user": delivery.get("user"),
+							"delivery": delivery.get("name"),
+							"notification_key": delivery.get("notification_key"),
+							"distance":delivery.get("distance")
+					})
+					doc.save(ignore_permissions=True)
+					frappe.db.commit()
+
+					# if len(doc.deliveries) > 1:
+					# 	doc.deliveries = doc.deliveries[0:-1] 
+					# 	doc.save(ignore_permissions=True)
+					# 	frappe.db.commit()
+					# else:
+					# 	doc.deliveries = []
+					# 	doc.save(ignore_permissions=True)
+					# 	frappe.db.commit()
+					# continue
 				# frappe.db.set_value("Delivery", doc.delivery, "status", "Avaliable")
 
 			if doc.creation:
