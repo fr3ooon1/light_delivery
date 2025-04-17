@@ -47,7 +47,7 @@ def get_slider():
 		frappe.local.response['message'] = f"An error occurred: {e}"
 
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest=True)
 def get_stores(*args,**kwargs):
 	idx=0
 	if kwargs.get("category"):
@@ -225,7 +225,7 @@ def add_to_favorite(*args, **kwargs):
 
 
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest=True)
 def search_for_store(*args,**kwargs):
 	if not kwargs.get("search"):
 		return get_stores(*args,**kwargs)
@@ -430,7 +430,7 @@ def add_address(**kwargs):
 	frappe.local.response['message'] = "Address added successfully."
 
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest=True)
 def get_offers(*args,**kwargs):
 	user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
 
