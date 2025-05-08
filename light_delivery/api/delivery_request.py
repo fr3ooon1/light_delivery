@@ -34,6 +34,7 @@ def sending_request():
 	for request in requests:
 		try:
 			doc = frappe.get_doc("Request", request.get("name"))
+			order_type = frappe.get_value("Request Delivery",doc.name,"order_type")
 
 			# if doc.status == "Offline":
 			# 	return
@@ -77,7 +78,7 @@ def sending_request():
 					frappe.db.commit()
 					continue
 
-			order_type = frappe.get_value("Request Delivery",doc.name,"order_type")
+			
 			
 			if not doc.deliveries:
 				new_deliveries = search_delivary(cash=doc.cash, store=doc.store , order_type=order_type)
@@ -146,6 +147,7 @@ def delivery_accepted_request(*args , **kwargs):
 		request_delivery = frappe.get_doc("Request Delivery",request )
 		request = frappe.get_value("Request",request , "name")
 		delivery = frappe.get_value("Delivery",{"user":frappe.session.user},["name","pointer_x","pointer_y","user"], as_dict=1)
+		# return delivery
 
 		# doc = frappe.get_doc("Request" , request)
 

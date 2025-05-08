@@ -130,12 +130,12 @@ class Order(Document):
 		if self.order_type != "Replace":	
 			if self.status in ['Delivered','Return to store'] and self.order_finish == 0:
 				self.order_finish = 1
-				frappe.db.commit()
+				# frappe.db.commit()
 				self.finish_order()
 		else:
 			if self.status in ['Return to store'] and self.order_finish == 0:
 				self.order_finish = 1
-				frappe.db.commit()
+				# frappe.db.commit()
 				self.finish_order_with_rate(rate=1.5)
 	
 

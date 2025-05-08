@@ -680,10 +680,6 @@ def change_order_status_del(*args, **kwargs):
 					message=res.text, 
 					title=_("Error sending notification")
 				)
-				error = frappe.new_doc("Error Log")
-				error.method = "send_notification"
-				error.error = res.text
-				error.insert(ignore_permissions=True)
 
 		# Response on success
 		frappe.local.response['http_status_code'] = 200
