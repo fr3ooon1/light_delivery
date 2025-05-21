@@ -244,7 +244,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Offers & Deductions ",
-   "link_count": 3,
+   "link_count": 4,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -262,7 +262,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Deductions",
+   "label": "Light Fast Settings",
    "link_count": 0,
    "link_to": "Deductions",
    "link_type": "DocType",
@@ -278,9 +278,19 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Reset Password",
+   "link_count": 0,
+   "link_to": "Reset Password",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2025-02-03 17:08:33.450737",
+ "modified": "2025-05-21 10:46:43.258738",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Light Delivery",
