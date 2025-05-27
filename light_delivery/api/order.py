@@ -162,10 +162,10 @@ def new_order(*args , **kwargs):
 			frappe.local.response['message'] = _('الرجاء إدخال نوع الطلب')
 			return
 
-		if ( not data.get("zone_address") ) or data.get("zone_address") == ""  or data.get("zone_address") == None:
-			frappe.local.response['http_status_code'] = 404
-			frappe.local.response['message'] = _('الرجاء إدخال عنوان المنطقة')
-			return
+		# if ( not data.get("zone_address") ) or data.get("zone_address") == ""  or data.get("zone_address") == None:
+		# 	frappe.local.response['http_status_code'] = 404
+		# 	frappe.local.response['message'] = _('الرجاء إدخال عنوان المنطقة')
+		# 	return
 				
 
 		doc = frappe.new_doc("Order")
@@ -680,10 +680,6 @@ def change_order_status_del(*args, **kwargs):
 					message=res.text, 
 					title=_("Error sending notification")
 				)
-				error = frappe.new_doc("Error Log")
-				error.method = "send_notification"
-				error.error = res.text
-				error.insert(ignore_permissions=True)
 
 		# Response on success
 		frappe.local.response['http_status_code'] = 200

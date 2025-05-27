@@ -29,11 +29,12 @@ def update_location(*args,**kwargs):
 
 @frappe.whitelist()
 def sending_request():
-	requests = frappe.get_list("Request", {"status": "Waiting for Delivery"})
+	requests = frappe.get_list("Request", {"status": "Waiting for Delivery"},order_by="creation asc")
 	
 	for request in requests:
 		try:
 			doc = frappe.get_doc("Request", request.get("name"))
+			order_type = frappe.get_value("Request Delivery",doc.name,"order_type")
 
 			# if doc.status == "Offline":
 			# 	return
@@ -41,8 +42,31 @@ def sending_request():
 			if doc.delivery :
 				status = frappe.db.get_value("Delivery", doc.delivery, "status")
 				if status in ["Inorder","Offline"]:
-					continue
-				frappe.db.set_value("Delivery", doc.delivery, "status", "Avaliable")
+					new_deliveries = search_delivary(cash=doc.cash, store=doc.store , order_type=order_type)
+					if not new_deliveries:
+						continue
+					
+					doc.deliveries = []
+					for delivery in new_deliveries:
+						doc.append("deliveries", {
+							"user": delivery.get("user"),
+							"delivery": delivery.get("name"),
+							"notification_key": delivery.get("notification_key"),
+							"distance":delivery.get("distance")
+					})
+					doc.save(ignore_permissions=True)
+					frappe.db.commit()
+
+					# if len(doc.deliveries) > 1:
+					# 	doc.deliveries = doc.deliveries[0:-1] 
+					# 	doc.save(ignore_permissions=True)
+					# 	frappe.db.commit()
+					# else:
+					# 	doc.deliveries = []
+					# 	doc.save(ignore_permissions=True)
+					# 	frappe.db.commit()
+					# continue
+				# frappe.db.set_value("Delivery", doc.delivery, "status", "Avaliable")
 
 			if doc.creation:
 				now = now_datetime()
@@ -54,7 +78,7 @@ def sending_request():
 					frappe.db.commit()
 					continue
 
-			order_type = frappe.get_value("Request Delivery",doc.name,"order_type")
+			
 			
 			if not doc.deliveries:
 				new_deliveries = search_delivary(cash=doc.cash, store=doc.store , order_type=order_type)
@@ -77,6 +101,19 @@ def sending_request():
 				delivery = doc.deliveries[-1]
 				delivery_obj = frappe.get_value("Delivery",delivery.get("delivery") , ["status","user"], as_dict=1)
 				if delivery_obj.get("status") != "Avaliable":
+					new_deliveries = search_delivary(cash=doc.cash, store=doc.store , order_type=order_type)
+					if not new_deliveries:
+						continue
+					
+					for delivery in new_deliveries:
+						doc.append("deliveries", {
+							"user": delivery.get("user"),
+							"delivery": delivery.get("name"),
+							"notification_key": delivery.get("notification_key"),
+							"distance":delivery.get("distance")
+					})
+					doc.save(ignore_permissions=True)
+					frappe.db.commit()
 					continue
 				
 				if delivery.get("notification_key"):
@@ -110,6 +147,7 @@ def delivery_accepted_request(*args , **kwargs):
 		request_delivery = frappe.get_doc("Request Delivery",request )
 		request = frappe.get_value("Request",request , "name")
 		delivery = frappe.get_value("Delivery",{"user":frappe.session.user},["name","pointer_x","pointer_y","user"], as_dict=1)
+		# return delivery
 
 		# doc = frappe.get_doc("Request" , request)
 

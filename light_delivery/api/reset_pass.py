@@ -4,16 +4,9 @@ from frappe.utils.password import check_password
 from light_delivery.api import login
 import requests
 import json
-
-
-"""
-1-get forget pass request with email or phone
-2-get pass and repass  and reset pass 
-3-then make login
-
-
-https://smssmartegypt.com/sms/api/?username=H18dl27&password=CXbIU%3CDEYF1Q&sendername=Dynamic&mobiles=01022750334&message=hello
-"""
+import random
+from frappe.utils import now, get_datetime
+from datetime import timedelta
 
 
 @frappe.whitelist(allow_guest=True)
@@ -21,54 +14,54 @@ def ask_for_forget_password(**kwargs):
 	conditions = ' 1=1 '
 	if kwargs.get("username"):
 		conditions += " AND `tabUser`.username= '%s' "%kwargs.get("username")
-	elif kwargs.get("phone"):
-		conditions += " AND `tabUser`.phone= '%s' "%kwargs.get("phone")
+	elif kwargs.get("mobile_no"):
+		conditions += " AND `tabUser`.mobile_no= '%s' "%kwargs.get("mobile_no")
 	elif kwargs.get("email"):
 		conditions += " AND `tabUser`.email= '%s' "%kwargs.get("email")
 	sql = f"""
-		SELECT name,email,mobile_no FROM `tabUser` WHERE {conditions}
+		SELECT name,email,mobile_no,full_name FROM `tabUser` WHERE {conditions}
 	"""
 	user_data = frappe.db.sql(sql,as_dict=1)
 	if not len(user_data):
 		frappe.local.response['http_status_code'] = 400
 		frappe.response["message"] =_("Not User For This Creditintals")
 		return
+	
+	
+
 	else:
 		try:
-			code = kwargs.get('code')
-			signature = kwargs.get('signature')
+			
+			setting = frappe.get_doc("Deductions")
+			otp = random.randint(100000, 999999)
+			user = user_data[0]
+			message = f"""
+			استاذ {user.get("full_name")}
+			كلمة مرور لمرة واحدة:  {otp}
+			يرجى استخدام كلمة المرور لمرة واحدة لتسجيل الدخول إلى حسابك.
+			"""
 
-			mobile_no = int(user_data[0].get("mobile_no"))
-			# print(type(user_data[0].get("mobile_no")))
+			url = f"""{setting.url}?username={setting.username}&password={setting.password}&sendername={setting.sendername}&message={message}&mobiles={user.get("mobile_no")}"""
 
-			sms_obj = frappe.get_doc("Light Integration")
-			sms_url = sms_obj.sms_url
-			username = sms_obj.username
-			password = sms_obj.password
-			sendername = sms_obj.sendername
-			message = f"""Welcome to Dynamic\n your code: {code}\n app signature is : {signature}"""
+			payload = {}
+			headers = {}
 
-			# t = sms_obj
-			# mobile = "01141122335"
-			# mobile_no = "0"+str(mobile_no)
-			# print(mobile_no, mobile)
-			# print(mobile_no is mobile)
-			# print(mobile_no == mobile)
-			# print(type(mobile_no),type(mobile))
-
-			params = {
-				"username": username, 
-				"password": password,
-				"sendername": sendername,
-				"mobiles": mobile_no,
-				"message": message,
-			}
-
-			r = requests.get(f"""https://smssmartegypt.com/sms/api/?username={username}&password={password}&sendername={sendername}&mobiles={mobile_no}&message={message}""")
+			# response = requests.request("GET", url, headers=headers, data=payload)
+			# if response.status_code == 200:
+			doc = frappe.new_doc("Reset Password")
+			doc.user = user.get("name")
+			doc.otp = otp
+			now_time = get_datetime(now())
+			new_time = now_time + timedelta(minutes=5)
+			doc.validate_to = new_time
+			doc.save(ignore_permissions=True)
+			frappe.db.commit()
 			frappe.local.response['http_status_code'] = 200
-			frappe.local.response["message"] = _("Message Sent")
-			frappe.response["data"] = r.json()
-			return 
+			frappe.response["message"] = _("Code Sent To Your Mobile")
+			# else:
+			# 	frappe.local.response['http_status_code'] = 400
+			# 	frappe.response["message"] = _("Error In Sending Code")
+
 		except Exception as er:
 			frappe.local.response['http_status_code'] = 400
 			frappe.response["message"] = er
@@ -95,26 +88,70 @@ def validate_reset_request(**kwargs):
 
 		
 		return 
+	
+
 @frappe.whitelist(allow_guest=True)
 def reset_password(**kwargs):
 
-	password=kwargs.get('password')
+	# user = frappe.session.user
+
+	conditions = ' 1=1 '
+	if kwargs.get("username"):
+		conditions += " AND `tabUser`.username= '%s' "%kwargs.get("username")
+	elif kwargs.get("mobile_no"):
+		conditions += " AND `tabUser`.mobile_no= '%s' "%kwargs.get("mobile_no")
+	elif kwargs.get("email"):
+		conditions += " AND `tabUser`.email= '%s' "%kwargs.get("email")
+	sql = f"""
+		SELECT name,email,mobile_no,full_name FROM `tabUser` WHERE {conditions}
+	"""
+	user_data = frappe.db.sql(sql,as_dict=1)
+	if not len(user_data):
+		frappe.local.response['http_status_code'] = 400
+		frappe.response["message"] =_("Not User For This Creditintals")
+		return
+	
+
+	new_password = kwargs.get("password") 
+	user = user_data[0]
+
+	otp = kwargs.get("otp")
+
+	if not otp:
+		frappe.local.response['http_status_code'] = 400
+		frappe.response["message"] =_("Code Not Found")
+		return
+	
+	rest_pass_doc = frappe.get_last_doc('Reset Password',{"user":user.get("name") , "status":["in",["","Invalid",None]]})
+
+	if rest_pass_doc.otp != otp:
+		frappe.local.response['http_status_code'] = 400
+		frappe.response["message"] =_("Code Not Corect")
+		return
+
+	if get_datetime(now()) > rest_pass_doc.validate_to:
+		frappe.local.response['http_status_code'] = 400
+		frappe.response["message"] =_("Code Expired")
+		return
+
 
 	try:
-		user = frappe.get_doc('User',{"username":kwargs.get('username')})
-		user.new_password = password
-		user.save(ignore_permissions=True)
+
+		user_doc = frappe.get_doc("User", user)
+		user_doc.new_password = new_password
+		rest_pass_doc.status = "Valid"
+		rest_pass_doc.save(ignore_permissions=True)
+		user_doc.save(ignore_permissions=True)
+		
+
 		frappe.db.commit()
-
 		frappe.local.response['http_status_code'] = 200
-		frappe.response["message"] =_(f"Password Changed")
-	except Exception as er:
-		frappe.local.response['http_status_code'] = 400
-		frappe.response["message"] =_(f"Password Not Valid")
-		frappe.response["data"] = {
-			"error" : f"{er}"
-		}
+		frappe.response["message"] = _("Password Changed")
+	
+	except Exception as e:
 
+		frappe.local.response['http_status_code'] = 400
+		frappe.response["message"] = _(e)
 		return
 
 def respose_info(**kwargs):

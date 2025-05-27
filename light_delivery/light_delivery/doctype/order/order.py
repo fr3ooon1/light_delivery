@@ -12,13 +12,17 @@ from datetime import datetime
 
 
 class Order(Document):
-	from light_delivery.api.apis import send_sms
+	
 	def before_naming(self):
 		self.begain_order()
-		self.send_sms()
+		
 
 
 	def validate(self):
+		
+		if self.status == "Pending":
+			from light_delivery.api.apis import send_sms
+			send_sms(self)
 		self.order_status()
 		self.get_previous_order_amount()
 		self.rate_delivery()
@@ -126,12 +130,12 @@ class Order(Document):
 		if self.order_type != "Replace":	
 			if self.status in ['Delivered','Return to store'] and self.order_finish == 0:
 				self.order_finish = 1
-				frappe.db.commit()
+				# frappe.db.commit()
 				self.finish_order()
 		else:
 			if self.status in ['Return to store'] and self.order_finish == 0:
 				self.order_finish = 1
-				frappe.db.commit()
+				# frappe.db.commit()
 				self.finish_order_with_rate(rate=1.5)
 	
 
@@ -147,7 +151,9 @@ class Order(Document):
 						if not order.order == self.name:
 							status.append(frappe.get_value("Order", order.order, 'status'))
 						status.append(self.status)
-					if all(one in ['Delivered', 'Delivery Cancel', 'Store Cancel', "Return to store"] for one in status):
+
+					frappe.log_error("Status: " + str(status), "Order Status")
+					if all(one in ['Delivered', 'Delivery Cancel', 'Store Cancel', "Return to store","Cancel"] for one in status):
 						request.status = "Delivered"
 						request.save(ignore_permissions=True)
 						frappe.db.commit()
