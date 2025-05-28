@@ -84,8 +84,7 @@
    "fieldname": "delivery",
    "fieldtype": "Link",
    "label": "Delivery",
-   "options": "Delivery",
-   "read_only": 1
+   "options": "Delivery"
   },
   {
    "fieldname": "column_break_ylpa",
@@ -104,7 +103,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-05 14:49:04.849063",
+ "modified": "2025-05-25 15:52:08.120238",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Request",

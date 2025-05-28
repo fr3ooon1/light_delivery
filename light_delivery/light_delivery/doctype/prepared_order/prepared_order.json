@@ -17,7 +17,8 @@
   "phone_number",
   "total",
   "order_image",
-  "store"
+  "store",
+  "store_name"
  ],
  "fields": [
   {
@@ -83,12 +84,18 @@
    "fieldtype": "Link",
    "label": "Order",
    "options": "Order"
+  },
+  {
+   "fetch_from": "store.store_name",
+   "fieldname": "store_name",
+   "fieldtype": "Data",
+   "label": "Store Name"
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-05-21 15:29:42.537924",
+ "modified": "2025-05-22 11:09:58.608261",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Prepared Order",

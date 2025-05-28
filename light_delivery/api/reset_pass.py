@@ -46,21 +46,21 @@ def ask_for_forget_password(**kwargs):
 			payload = {}
 			headers = {}
 
-			# response = requests.request("GET", url, headers=headers, data=payload)
-			# if response.status_code == 200:
-			doc = frappe.new_doc("Reset Password")
-			doc.user = user.get("name")
-			doc.otp = otp
-			now_time = get_datetime(now())
-			new_time = now_time + timedelta(minutes=5)
-			doc.validate_to = new_time
-			doc.save(ignore_permissions=True)
-			frappe.db.commit()
-			frappe.local.response['http_status_code'] = 200
-			frappe.response["message"] = _("Code Sent To Your Mobile")
-			# else:
-			# 	frappe.local.response['http_status_code'] = 400
-			# 	frappe.response["message"] = _("Error In Sending Code")
+			response = requests.request("GET", url, headers=headers, data=payload)
+			if response.status_code == 200:
+				doc = frappe.new_doc("Reset Password")
+				doc.user = user.get("name")
+				doc.otp = otp
+				now_time = get_datetime(now())
+				new_time = now_time + timedelta(minutes=5)
+				doc.validate_to = new_time
+				doc.save(ignore_permissions=True)
+				frappe.db.commit()
+				frappe.local.response['http_status_code'] = 200
+				frappe.response["message"] = _("Code Sent To Your Mobile")
+			else:
+				frappe.local.response['http_status_code'] = 400
+				frappe.response["message"] = _("Error In Sending Code")
 
 		except Exception as er:
 			frappe.local.response['http_status_code'] = 400

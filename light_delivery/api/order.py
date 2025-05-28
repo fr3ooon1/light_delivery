@@ -2,7 +2,7 @@ import frappe
 from frappe import _
 from frappe.utils import nowdate , get_first_day_of_week , get_first_day ,  get_datetime, now_datetime, time_diff_in_seconds
 from datetime import datetime
-from light_delivery.api.apis import get_url , download_image , send_notification , Deductions
+from light_delivery.api.apis import get_url , download_image , send_notification , Deductions , haversine
 
 
 
@@ -651,6 +651,54 @@ def change_order_status_del(*args, **kwargs):
 				notification_key = frappe.get_value("User", user, "notification_key")
 
 		# Handle refused status with time constraints
+
+		# if status in ["Delivered", "Return to store"]
+		customer_user = frappe.get_value("User", {"mobile_no":doc.phone_number} ,["username","full_name"],as_dict=True)
+		if customer_user:
+			customer = frappe.get_value("Customer",customer_user.get("username"),'name')
+			address = frappe.db.sql(f"""select a.name , a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}' and a.address_line1 = '{doc.address}' ; """,as_dict=True)
+			if  address:
+				address = address[-1] if address else None
+				if address:
+					coordi = [float(address.get("latitude")),float(address.get("longitude"))]
+					delivery_coord = [
+							float(frappe.get_value("Delivery", doc.delivery, "pointer_y")),
+							float(frappe.get_value("Delivery", doc.delivery, "pointer_x"))
+							]
+					if (doc.order_type == "Delivery" and status == "Arrived For Destination") :
+						
+						distance = haversine(
+								delivery_coord, 
+								coordi
+						)
+						if (float(distance)*1000) > 15:
+							frappe.local.response['http_status_code'] = 400
+							frappe.local.response['message'] = _(f"""لا يمكن تغيير الحالة إلى "تم الوصول" بسبب بعد المسافة. KM {round(distance)}""")
+							frappe.log_error(
+								message=f"{round(distance * 1000)} {delivery_coord} {coordi} {str(address)}", 
+								title=_("Distance Error in change_order_status_del")
+							)
+							return
+					elif (doc.order_type in ["Replace" , "Refund"] and status == "Return to store"):
+						
+						store_coordi = [
+							float(frappe.get_value("Store", doc.store, "pointer_y")),
+							float(frappe.get_value("Store", doc.store, "pointer_x"))
+						]
+						distance = haversine(
+								delivery_coord, 
+								store_coordi
+						)
+						if (float(distance)*1000) > 15:
+							frappe.local.response['http_status_code'] = 400
+							frappe.local.response['message'] = _(f"""لا يمكن تغيير الحالة إلى "تم الوصول" بسبب بعد المسافة. KM {round(distance)}""")
+							frappe.log_error(
+								message=f"{round(distance * 1000)} {delivery_coord} {coordi} {str(address)}", 
+								title=_("Distance Error in change_order_status_del")
+							)
+							return
+
+
 		if status == "Refused" and doc.order_type == "Delivery":
 			order_logs = frappe.db.sql(
 				"""SELECT status, time FROM `tabOrder Log` WHERE parent = %s""",

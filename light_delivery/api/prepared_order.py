@@ -29,7 +29,7 @@ def delete_order():
 				frappe.local.response['http_status_code'] = 400
 				frappe.response["message"] = _("Order ID is already submitted can't be deleted")
 				return
-			# return id
+
 			frappe.delete_doc("Prepared Order", id)
 			frappe.local.response['http_status_code'] = 200
 			frappe.response["message"] = _("Prepared Order Deleted")
@@ -121,7 +121,7 @@ def get_order():
 		
 		filters["done"] = 0
 		
-		doc = frappe.get_list("Prepared Order", filters=filters , fields=["name","full_name","mobile_no","order_type","note","order_date","phone_number","store","total"], order_by="creation desc")
+		doc = frappe.get_list("Prepared Order", filters=filters , fields=["name","full_name","mobile_no","order_type","note","creation as order_date","phone_number","store","total" ,"store_name" ], order_by="creation desc")
 		if doc:
 			for i in doc:
 				images = frappe.get_all("Order Image", filters={"parent":i.get("name")}, fields=["image"])

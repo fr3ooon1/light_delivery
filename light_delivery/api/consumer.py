@@ -40,7 +40,7 @@ def get_slider():
 				duration = haversine(
 					[float(doc.pointer_y or 0), float(doc.pointer_x or 0)], 
 					coordi
-				)*1000
+				)
 
 			res.append({
 				"ads":store.get("ads"),
@@ -109,7 +109,7 @@ def get_stores(*args,**kwargs):
 			duration = haversine(
 				[float(doc.pointer_y or 0), float(doc.pointer_x or 0)], 
 				coordi
-			)*1000
+			)
 
 		res.append({
 			"id":doc.name,
@@ -151,7 +151,7 @@ def get_home_stories():
 				duration = haversine(
 					[float(doc.pointer_y or 0), float(doc.pointer_x or 0)], 
 					coordi
-				)*1000
+				)
 			res.append({
 				"id":doc.name,
 				"is_favorite":is_favorite(user.get("username") , store.get("name")),
@@ -195,7 +195,7 @@ def get_favorite(*args,**kwargs):
 				duration = haversine(
 					[float(doc.pointer_y or 0), float(doc.pointer_x or 0)], 
 					coordi
-				)*1000
+				)
 
 			res.append({
 				"id":doc.name,
@@ -328,7 +328,7 @@ def search_for_store(*args,**kwargs):
 				duration = haversine(
 					[float(doc.pointer_y or 0), float(doc.pointer_x or 0)], 
 					coordi
-				)*1000
+				)
 			
 			res.append({
 				"id":doc.name,
@@ -567,7 +567,7 @@ def get_offers(*args,**kwargs):
 				duration = haversine(
 					[float(doc.pointer_y or 0), float(doc.pointer_x or 0)], 
 					coordi
-				)*1000
+				)
 			store['store'] = {
 				"id":doc.name,
 				"is_favorite":is_favorite(user.get("username") , store.get("id")),
