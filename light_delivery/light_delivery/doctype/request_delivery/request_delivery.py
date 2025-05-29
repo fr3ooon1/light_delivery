@@ -40,7 +40,8 @@ class RequestDelivery(Document):
 			
 		if self.status == "Collect Money" and self.payed_to_store == 0:
 			if self.order_type == "Delivery":
-				self.pay_to_store()
+				self.payed_to_store = 1
+				# self.pay_to_store()
 
 		
 

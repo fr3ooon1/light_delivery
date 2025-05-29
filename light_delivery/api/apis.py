@@ -138,89 +138,91 @@ def get_balance(party):
 
 @frappe.whitelist(allow_guest=False)
 def search_delivary(cash, store=None, order_type=None):
-    try:
-        cash = float(cash or 0)
+	try:
+		cash = float(cash or 0)
 
-        # Get the store assigned to the current user if not provided
-        if not store:
-            store = frappe.get_value("Store", {"user": frappe.session.user}, "name")
+		# Get the store assigned to the current user if not provided
+		if not store:
+			store = frappe.get_value("Store", {"user": frappe.session.user}, "name")
 
-        if frappe.db.exists("Store", store):
-            try:
-                store_doc = frappe.get_value("Store", store, ["pointer_x", "pointer_y"], as_dict=1)
-                store_coord = [float(store_doc.get("pointer_x") or 0), float(store_doc.get("pointer_y") or 0)]
-            except (KeyError, ValueError, IndexError):
-                frappe.throw(_("Invalid store location format for Store: {0}").format(store))
+		if frappe.db.exists("Store", store):
+			try:
+				store_doc = frappe.get_value("Store", store, ["pointer_x", "pointer_y"], as_dict=1)
+				store_coord = [float(store_doc.get("pointer_x") or 0), float(store_doc.get("pointer_y") or 0)]
+			except (KeyError, ValueError, IndexError):
+				frappe.throw(_("Invalid store location format for Store: {0}").format(store))
 
-            # Adjust condition based on order_type
-            if order_type == "Refund":
-                cash_condition = f" AND d.cash >= {cash}"
-            else:
-                cash_condition = f"""
-                AND (d.cash + COALESCE(
-                    (SELECT 
-                        SUM(jea.credit_in_account_currency) - SUM(jea.debit_in_account_currency)
-                    FROM 
-                        `tabJournal Entry Account` AS jea
-                    WHERE 
-                        jea.party = d.delivery_name), 0)) >= {cash}
-                """
+			# Adjust condition based on order_type
+			# if order_type == "Refund":
+			
+			# else:
+			#     cash_condition = f"""
+			#     AND (d.cash + COALESCE(
+			#         (SELECT 
+			#             SUM(jea.credit_in_account_currency) - SUM(jea.debit_in_account_currency)
+			#         FROM 
+			#             `tabJournal Entry Account` AS jea
+			#         WHERE 
+			#             jea.party = d.delivery_name), 0)) >= {cash}
+			#     """
 
-            # Fetch deliveries
-            deliveries = frappe.db.sql(f"""
-            SELECT 
-                d.name AS name, 
-                d.user AS user, 
-                d.pointer_x AS pointer_x, 
-                d.pointer_y AS pointer_y, 
-                u.notification_key AS notification_key, 
-                d.cash AS cash
-            FROM 
-                `tabDelivery` d
-            JOIN 
-                `tabUser` u ON d.user = u.name
-            WHERE 
-                d.status = 'Avaliable' 
-                {cash_condition}
-            """, as_dict=True)
+			# Fetch deliveries
 
-            # Calculate distances and filter deliveries
-            distance = []
-            searching_area = frappe.db.get_single_value('Deductions', 'searching_area')
-            for delivery in deliveries:
-                if delivery['pointer_x'] is not None and delivery['pointer_y'] is not None:
-                    del_coord = [float(delivery['pointer_x']), float(delivery['pointer_y'])]
-                    dist = float(haversine(coord1=del_coord, coord2=store_coord) or 0) * 1000  # Convert to meters
-                    if dist <= float(searching_area or 0):  
-                        distance.append({
-                            'distance': dist,
-                            'user': delivery.get('user'),
-                            'name': delivery.get('name'),
-                            'coordination': del_coord,
-                            'notification_key': delivery.get("notification_key"),
-                        })
+			cash_condition = f" AND d.cash >= {cash}"
+			deliveries = frappe.db.sql(f"""
+			SELECT 
+				d.name AS name, 
+				d.user AS user, 
+				d.pointer_x AS pointer_x, 
+				d.pointer_y AS pointer_y, 
+				u.notification_key AS notification_key, 
+				d.cash AS cash
+			FROM 
+				`tabDelivery` d
+			JOIN 
+				`tabUser` u ON d.user = u.name
+			WHERE 
+				d.status = 'Avaliable' 
+				{cash_condition}
+			""", as_dict=True)
 
-            sorted_deliveries = sorted(distance, key=lambda x: x['distance'], reverse=True)
+			# Calculate distances and filter deliveries
+			distance = []
+			searching_area = frappe.db.get_single_value('Deductions', 'searching_area')
+			for delivery in deliveries:
+				if delivery['pointer_x'] is not None and delivery['pointer_y'] is not None:
+					del_coord = [float(delivery['pointer_x']), float(delivery['pointer_y'])]
+					dist = float(haversine(coord1=del_coord, coord2=store_coord) or 0) * 1000  # Convert to meters
+					if dist <= float(searching_area or 0):  
+						distance.append({
+							'distance': dist,
+							'user': delivery.get('user'),
+							'name': delivery.get('name'),
+							'coordination': del_coord,
+							'notification_key': delivery.get("notification_key"),
+						})
 
-            if not sorted_deliveries:
-                frappe.local.response['http_status_code'] = 400
-                return []
+			sorted_deliveries = sorted(distance, key=lambda x: x['distance'], reverse=True)
 
-            return sorted_deliveries
+			if not sorted_deliveries:
+				frappe.local.response['http_status_code'] = 400
+				return []
 
-        else:
-            frappe.local.response['http_status_code'] = 400
-            return {
-                "message": _("There is no store assigned to this user: {0}").format(frappe.session.user)
-            }
+			return sorted_deliveries
 
-    except Exception as e:
-        frappe.log_error(message=str(e), title=_('Error in search_delivary'))
-        frappe.local.response['http_status_code'] = 400
-        return {
-            "status_code": 500,
-            "message": str(e)
-        }
+		else:
+			frappe.local.response['http_status_code'] = 400
+			return {
+				"message": _("There is no store assigned to this user: {0}").format(frappe.session.user)
+			}
+
+	except Exception as e:
+		frappe.log_error(message=str(e), title=_('Error in search_delivary'))
+		frappe.local.response['http_status_code'] = 400
+		return {
+			"status_code": 500,
+			"message": str(e)
+		}
 
 
 
