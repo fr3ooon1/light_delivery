@@ -166,13 +166,20 @@ def new_order(*args , **kwargs):
 		# 	frappe.local.response['http_status_code'] = 404
 		# 	frappe.local.response['message'] = _('الرجاء إدخال عنوان المنطقة')
 		# 	return
-				
+		
+		order_type = None
+		if data.get("order_type") == "تسليم":
+			order_type = "Delivery"
+		elif data.get("order_type") == "استبدال":
+			order_type = "Replace"
+		elif data.get("order_type") == "استرجاع":
+			order_type = "Refund"
 
 		doc = frappe.new_doc("Order")
 		doc.full_name =  data.get('full_name')
 		doc.phone_number = data.get('phone_number')
 		doc.address= data.get('address')
-		doc.order_type= data.get('order_type')
+		doc.order_type= order_type
 		if data.get("order_type") in ["Refund" , "Replacing"]:
 			doc.order_reference = data.get("order_reference")
 			doc.previous_order_amount = data.get("previous_order_amount")
