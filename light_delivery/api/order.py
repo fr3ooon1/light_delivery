@@ -168,11 +168,11 @@ def new_order(*args , **kwargs):
 		# 	return
 		
 		order_type = None
-		if data.get("order_type") == "تسليم":
+		if data.get("order_type") in [ "تسليم", "Delivery", "توصيل"]:
 			order_type = "Delivery"
-		elif data.get("order_type") == "استبدال":
+		elif data.get("order_type") in ["استبدال", "Replace"]:
 			order_type = "Replace"
-		elif data.get("order_type") == "استرجاع":
+		elif data.get("order_type") in ["استرجاع", "Refund"]:
 			order_type = "Refund"
 
 		doc = frappe.new_doc("Order")
