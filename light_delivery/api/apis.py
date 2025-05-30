@@ -25,6 +25,13 @@ def send_sms(doc):
 		لتتبع الاوردر و التواصل مع المندوب و الاستفادة من خدمات لايت اند فاست برجاء تنزيل التطبيق عبر الضغط على الرابط\n
 		https://play.google.com/store/apps/details?id=com.dynamic.lightCustomer&hl=en
 		"""
+		message = (
+			f"استاذ {doc.full_name}\n"
+			f"تم انشاء اوردر لسيادتكم من طرف {store}.\n"
+			f"رقم الاوردر: {doc.name}\n"
+			"لتتبع الاوردر و التواصل مع المندوب و الاستفادة من خدمات لايت اند فاست برجاء تنزيل التطبيق عبر الضغط على الرابط\n"
+			"https://play.google.com/store/apps/details?id=com.dynamic.lightCustomer&hl=en"
+		)
 
 		url = f"{setting.url}?username={setting.username}&password={setting.password}&sendername={setting.sendername}&message={message}&mobiles={doc.phone_number}"
 
