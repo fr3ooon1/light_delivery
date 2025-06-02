@@ -2,6 +2,32 @@
 // For license information, please see license.txt
 
 frappe.query_reports["Acc-Rej per Delivery"] = {
+    onload: function (report) {
+        report.page.add_inner_button("Reset Filters", function () {
+            // Loop through filters and reset
+            report.filters.forEach((filter) => {
+                if (filter.fieldname === "delivery") {
+                    filter.set_value("");
+                }
+                if (filter.fieldname === "from_date") {
+                    filter.set_value(
+                        frappe.defaults.get_user_default("year_start_date") ||
+                            frappe.datetime.year_start()
+                    );
+                }
+                if (filter.fieldname === "to_date") {
+                    filter.set_value(
+                        frappe.defaults.get_user_default("year_end_date") ||
+                            frappe.datetime.get_today()
+                    );
+                }
+            });
+
+            // Refresh report with cleared filters
+            listview.refresh();
+            frappe.query_report.refresh();
+        });
+    },
     filters: [
         {
             fieldname: "delivery",
@@ -15,8 +41,7 @@ frappe.query_reports["Acc-Rej per Delivery"] = {
             fieldtype: "Date",
             reqd: 1,
             default:
-                frappe.defaults.get_user_default("year_start_date") ||
-                frappe.datetime.month_start(),
+                frappe.defaults.get_user_default("year_start_date") || frappe.datetime.year_start(),
         },
         {
             fieldname: "to_date",

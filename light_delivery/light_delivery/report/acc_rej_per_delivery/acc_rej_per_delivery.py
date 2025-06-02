@@ -14,8 +14,8 @@ def execute(filters=None):
     return columns, data
 
 
+
 def validate_filters(filters):
-    print("Validating filters:", filters)
     if not filters.from_date:
         filters.from_date = filters.year_start_date
 
@@ -24,68 +24,101 @@ def validate_filters(filters):
 
     filters.from_date = getdate(filters.from_date)
     filters.to_date = getdate(filters.to_date)
-
+    
     if filters.from_date > filters.to_date:
         frappe.throw(_("From Date cannot be greater than To Date"))
 
 
 
 def get_data(filters):
-    query = """
-    SELECT 
-        t1.delivery,
-        COUNT( t1.parent ) AS total_requests,
-        COUNT( CASE WHEN t1.status = 'Accepted' THEN t1.parent END) AS accepted_requests,
-        COUNT( CASE WHEN t1.status = 'Reject' THEN t1.parent END) AS rejected_requests,
-        COUNT( DISTINCT t1.parent ) AS total_requests_dis,
-        ROUND(COUNT( CASE WHEN t1.status ='Accepted' THEN t1.delivery END)*100/COUNT(t1.delivery),2) AS accepted_percentage,
-        ROUND(COUNT( CASE WHEN t1.status ='Reject' THEN t1.delivery END)*100/COUNT(t1.delivery),2) AS rejected_percentage,
-            
-        t2.accepted_requests_dis AS accepted_requests_dis,
-        t2.rejected_requests_dis AS rejected_requests_dis,
-        t2.accepted_percentage_dis AS accepted_percentage_dis,
-        t2.rejected_percentage_dis AS rejected_percentage_dis
-    FROM 
-        tabLog AS t1
-    JOIN (
-        SELECT 
-            delivery,
-            COUNT( CASE WHEN status ='Accepted' THEN delivery END) AS accepted_requests_dis,
-            COUNT( CASE WHEN status ='Reject' THEN delivery END) AS rejected_requests_dis,
-            ROUND(COUNT( CASE WHEN status ='Accepted' THEN delivery END)*100/COUNT(delivery),2) AS accepted_percentage_dis,
-            ROUND(COUNT( CASE WHEN status ='Reject' THEN delivery END)*100/COUNT(delivery),2) AS rejected_percentage_dis
-        FROM 
-            tabLog
-        WHERE 
-            parent IN ( SELECT request_delivery FROM `tabRequest Log` )
-            AND (parent, delivery, time) IN ( SELECT parent, delivery, MAX(time) FROM tabLog GROUP BY parent, delivery )
-        GROUP BY 
-            delivery
-    ) AS t2 ON t1.delivery = t2.delivery
-    WHERE 
-        parent 
-            IN(
-                SELECT
-                    request_delivery 
-                FROM 
-                    `tabRequest Log`
-            )
-    """
+    available_request_logs = frappe.get_all("Request Log", pluck='name')
+    available_logs = frappe.get_all("Log", {"parent": ["IN", available_request_logs]}, pluck='parent')
+
+    logs_filters = {
+        "parent": ["IN", available_logs],
+        "time": ["BETWEEN", [filters.from_date, filters.to_date]],
+    }
+
+    if filters.delivery:
+        logs_filters["delivery"] = filters.delivery
+
+    logs = frappe.get_all("Log",
+        filters=logs_filters,
+        fields=['name', 'parent', 'delivery', 'status', 'time'],
+        order_by='time desc'
+    )
+
+    latest_by_pair, all_acc_requests, all_rej_requests, acc_latest, rej_latest, final_data = {},[],[],[],[],[]
     
-    # Where clause
-    filters_values = [filters.from_date, filters.to_date]
-    if filters.delivery is not None:
-        query += " AND t1.delivery = %s"
-        filters_values.insert(0, filters.delivery)
-    query += " AND t1.creation BETWEEN %s AND %s"
-    query += """
-    GROUP BY
-        t1.delivery;
-    """
-    data = frappe.db.sql(query, filters_values, as_dict=True)
-    return data
+    for log in logs:
+        pair_key = (log.parent, log.delivery)
+        if pair_key not in latest_by_pair:
+            latest_by_pair[pair_key] = log
+
+        if log.status == 'Accepted':
+            all_acc_requests.append(log)
+        elif log.status == 'Reject':
+            all_rej_requests.append(log)
+
+    latest_logs = list(latest_by_pair.values())
+
+    for log in latest_logs:
+        if log.status == 'Accepted':
+            acc_latest.append(log)
+        elif log.status == 'Reject':
+            rej_latest.append(log)
+
+    
+    acc_all = group_by_delivery(all_acc_requests)
+    rej_all = group_by_delivery(all_rej_requests)
+    latest_all = group_by_delivery(latest_logs)
+    acc_latest_by_delivery = group_by_delivery(acc_latest)
+    rej_latest_by_delivery = group_by_delivery(rej_latest)
+
+    all_deliveries = set(list(acc_all.keys()) + list(rej_all.keys()) + list(latest_all.keys()))
+    
+    for delivery in all_deliveries:
+        total_requests = len(acc_all.get(delivery, [])) + len(rej_all.get(delivery, []))
+        accepted_requests = len(acc_all.get(delivery, []))
+        rejected_requests = len(rej_all.get(delivery, []))
+
+        total_requests_dis = len(latest_all.get(delivery, []))
+        accepted_requests_dis = len(acc_latest_by_delivery.get(delivery, []))
+        rejected_requests_dis = len(rej_latest_by_delivery.get(delivery, []))
+
+        accepted_percentage = round((accepted_requests / total_requests) * 100, 2) if total_requests else 0
+        rejected_percentage = round((rejected_requests / total_requests) * 100, 2) if total_requests else 0
+
+        accepted_percentage_dis = round((accepted_requests_dis / total_requests_dis) * 100, 2) if total_requests_dis else 0
+        rejected_percentage_dis = round((rejected_requests_dis / total_requests_dis) * 100, 2) if total_requests_dis else 0
+
+        final_data.append({
+            "delivery": delivery,
+            "total_requests": total_requests,
+            "accepted_requests": accepted_requests,
+            "rejected_requests": rejected_requests,
+            "accepted_percentage": accepted_percentage,
+            "rejected_percentage": rejected_percentage,
+            "total_requests_dis": total_requests_dis,
+            "accepted_requests_dis": accepted_requests_dis,
+            "rejected_requests_dis": rejected_requests_dis,
+            "accepted_percentage_dis": accepted_percentage_dis,
+            "rejected_percentage_dis": rejected_percentage_dis,
+        })
+
+    return final_data
 
 
+
+def group_by_delivery(logs_list):
+        grouped = {}
+        for log in logs_list:
+            delivery = log.delivery
+            if delivery not in grouped:
+                grouped[delivery] = []
+            grouped[delivery].append(log)
+        
+        return grouped
 
 
 
