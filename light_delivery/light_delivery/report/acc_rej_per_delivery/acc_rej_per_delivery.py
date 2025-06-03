@@ -38,7 +38,6 @@ def get_data(filters):
         "parent": ["IN", available_logs],
         "time": ["BETWEEN", [filters.from_date, filters.to_date]],
     }
-
     if filters.delivery:
         logs_filters["delivery"] = filters.delivery
 
@@ -48,8 +47,7 @@ def get_data(filters):
         order_by='time desc'
     )
 
-    latest_by_pair, all_acc_requests, all_rej_requests, acc_latest, rej_latest, final_data = {},[],[],[],[],[]
-    
+    latest_by_pair, all_acc_requests, all_rej_requests, final_data = {}, [], [], []
     for log in logs:
         pair_key = (log.parent, log.delivery)
         if pair_key not in latest_by_pair:
@@ -61,20 +59,41 @@ def get_data(filters):
             all_rej_requests.append(log)
 
     latest_logs = list(latest_by_pair.values())
-
-    for log in latest_logs:
-        if log.status == 'Accepted':
-            acc_latest.append(log)
-        elif log.status == 'Reject':
-            rej_latest.append(log)
-
     
     acc_all = group_by_delivery(all_acc_requests)
     rej_all = group_by_delivery(all_rej_requests)
     latest_all = group_by_delivery(latest_logs)
-    acc_latest_by_delivery = group_by_delivery(acc_latest)
-    rej_latest_by_delivery = group_by_delivery(rej_latest)
 
+    filters_values = []
+    where_clauses = [
+        "parent IN (SELECT request_delivery FROM `tabRequest Log`)",
+        "(parent, delivery, time) IN (SELECT parent, delivery, MAX(time) FROM tabLog GROUP BY parent, delivery)"
+    ]
+
+    if filters.delivery:
+        where_clauses.append("delivery = %s")
+        filters_values.append(filters.delivery)
+
+    where_clauses.append("creation BETWEEN %s AND %s")
+    filters_values += [filters.from_date, filters.to_date]
+
+    query = f"""
+    SELECT 
+        delivery,
+        COUNT(CASE WHEN status = 'Accepted' THEN 1 END) AS accepted_requests_dis,
+        COUNT(CASE WHEN status = 'Reject' THEN 1 END) AS rejected_requests_dis,
+        ROUND(COUNT(CASE WHEN status = 'Accepted' THEN 1 END) * 100.0 / COUNT(*), 2) AS accepted_percentage_dis,
+        ROUND(COUNT(CASE WHEN status = 'Reject' THEN 1 END) * 100.0 / COUNT(*), 2) AS rejected_percentage_dis
+    FROM 
+        tabLog
+    WHERE 
+        {" AND ".join(where_clauses)}
+    GROUP BY
+        delivery
+    """
+
+    query_data = frappe.db.sql(query, filters_values, as_dict=True)
+    query_data_map = {row["delivery"]: row for row in query_data}
     all_deliveries = set(list(acc_all.keys()) + list(rej_all.keys()) + list(latest_all.keys()))
     
     for delivery in all_deliveries:
@@ -82,15 +101,15 @@ def get_data(filters):
         accepted_requests = len(acc_all.get(delivery, []))
         rejected_requests = len(rej_all.get(delivery, []))
 
-        total_requests_dis = len(latest_all.get(delivery, []))
-        accepted_requests_dis = len(acc_latest_by_delivery.get(delivery, []))
-        rejected_requests_dis = len(rej_latest_by_delivery.get(delivery, []))
-
         accepted_percentage = round((accepted_requests / total_requests) * 100, 2) if total_requests else 0
         rejected_percentage = round((rejected_requests / total_requests) * 100, 2) if total_requests else 0
 
-        accepted_percentage_dis = round((accepted_requests_dis / total_requests_dis) * 100, 2) if total_requests_dis else 0
-        rejected_percentage_dis = round((rejected_requests_dis / total_requests_dis) * 100, 2) if total_requests_dis else 0
+        dis_row = query_data_map.get(delivery, {})
+        total_requests_dis = dis_row.get("accepted_requests_dis", 0) + dis_row.get("rejected_requests_dis", 0)
+        accepted_requests_dis = dis_row.get("accepted_requests_dis", 0)
+        rejected_requests_dis = dis_row.get("rejected_requests_dis", 0)
+        accepted_percentage_dis = dis_row.get("accepted_percentage_dis", 0.0)
+        rejected_percentage_dis = dis_row.get("rejected_percentage_dis", 0.0)
 
         final_data.append({
             "delivery": delivery,
