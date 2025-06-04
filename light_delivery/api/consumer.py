@@ -84,6 +84,8 @@ def get_slider():
 				"duration":duration
 			})
 		
+		res = sorted(res, key=lambda x: x['duration'], reverse=False)
+		
 		frappe.local.response['http_status_code'] = 200
 		frappe.local.response['message'] = res
 
@@ -154,6 +156,7 @@ def get_stores(*args,**kwargs):
 			"menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True),
 			"duration":f"{round(duration , 2)} KM"
 		})
+	res = sorted(res, key=lambda x: x['duration'], reverse=False)
 	frappe.local.response['http_status_code'] = 200
 	frappe.local.response['data'] = res
 	frappe.local.response['message'] = pages
@@ -199,9 +202,9 @@ def get_home_stories():
 				"menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True),
 				"duration":f"{round(duration , 2)} KM"
 			})
-
-			frappe.local.response['http_status_code'] = 200
-			frappe.local.response['message'] = res
+		res = sorted(res, key=lambda x: x['duration'], reverse=False)
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = res
 			
 	except Exception as e:
 		frappe.local.response['http_status_code'] = 400
@@ -250,6 +253,7 @@ def get_favorite(*args,**kwargs):
 				"menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True),
 				"duration":f"{round(duration , 2)} KM"
 			})
+		res = sorted(res, key=lambda x: x['duration'], reverse=False)
 		return res
 	else:
 		fav = frappe.new_doc("Favorite")
@@ -389,6 +393,7 @@ def search_for_store(*args,**kwargs):
 				"menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True),
 				"duration":f"{round(duration , 2)} KM"
 			})
+		res = sorted(res, key=lambda x: x['duration'], reverse=False)
 		frappe.local.response['http_status_code'] = 200
 		frappe.local.response['data'] = res
 	except Exception as e:
