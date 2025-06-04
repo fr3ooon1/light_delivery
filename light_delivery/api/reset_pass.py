@@ -40,6 +40,13 @@ def ask_for_forget_password(**kwargs):
 			كلمة مرور لمرة واحدة:  {otp}
 			يرجى استخدام كلمة المرور لمرة واحدة لتسجيل الدخول إلى حسابك.
 			"""
+			user_full_name = user.get("full_name")
+			message = (
+				f"استاذ {user_full_name}\n"
+				f"كلمة مرور لمرة واحدة: {otp}\n"
+				"يرجى استخدام كلمة المرور لمرة واحدة لتسجيل الدخول إلى حسابك."
+			)
+
 
 			url = f"""{setting.url}?username={setting.username}&password={setting.password}&sendername={setting.sendername}&message={message}&mobiles={user.get("mobile_no")}"""
 
