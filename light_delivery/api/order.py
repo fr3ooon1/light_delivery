@@ -121,7 +121,7 @@ def search_by_phone_with_total(phone_number , order_type = False):
 			# address_name = frappe.get_value("Dynamic Link",{"link_name":customer_name,"name":["!=" , customer.get("name")]},["name","parent"],as_dict=1)
 			# address_st = frappe.get_value("Address",address_name.get("parent"),"address_line1")
 			# address.insert(0, address_st)
-			address = frappe.db.sql("""SELECT a.address_line1 FROM `tabDynamic Link` dl JOIN `tabAddress` a on a.name = dl.parent WHERE dl.link_name = %s """, (customer_name), pluck='address_line1')
+			address = frappe.db.sql("""SELECT a.address_line1 FROM `tabDynamic Link` dl JOIN `tabAddress` a on a.name = dl.parent WHERE  a.is_current_location = 0 and dl.link_name = %s """, (customer_name), pluck='address_line1')
 
 		res['address'] = address
 		res['full_name'] = frappe.get_value("Contact",{"mobile_no":phone_number},"first_name")
@@ -665,6 +665,25 @@ def change_order_status_del(*args, **kwargs):
 							float(frappe.get_value("Delivery", doc.delivery, "pointer_y")),
 							float(frappe.get_value("Delivery", doc.delivery, "pointer_x"))
 							]
+
+					if (doc.order_type == "Delivery" and status == "Arrived"):
+						store_coordi = [
+							float(frappe.get_value("Store", doc.store, "pointer_y")),
+							float(frappe.get_value("Store", doc.store, "pointer_x"))
+						]
+						distance = haversine(
+								delivery_coord, 
+								store_coordi
+						)
+						if (float(distance)*1000) > 15:
+							frappe.local.response['http_status_code'] = 400
+							frappe.local.response['message'] = _(f"""لا يمكن تغيير الحالة إلى "تم الوصول" بسبب بعد المسافة. KM {round(distance)}""")
+							frappe.log_error(
+								message=f"{round(distance * 1000)} {delivery_coord} {coordi} {str(address)}", 
+								title=_("Distance Error in change_order_status_del")
+							)
+							return
+						
 					if (doc.order_type == "Delivery" and status == "Arrived For Destination") :
 						
 						distance = haversine(

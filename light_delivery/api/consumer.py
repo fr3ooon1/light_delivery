@@ -7,6 +7,30 @@ from light_delivery.api.apis import search_by_zone , download_image , haversine
 
 
 
+
+@frappe.whitelist()
+def validate(self , method):
+	getcontact(self)
+
+def getcontact(self):
+	if not self.mobile_no:
+		if frappe.db.exists("Dynamic Link", {"parenttype": "Contact", "link_doctype": "Customer", "link_name": self.name}):
+			dynamic_link = frappe.get_value(
+				"Dynamic Link", 
+				{
+					"parenttype":"Contact", 
+					"link_doctype":"Customer", 
+					"link_name":self.name
+				},
+				["parent"])
+			if dynamic_link:
+				self.customer_primary_contact = dynamic_link
+				self.mobile_no = frappe.get_value("Contact", dynamic_link, "mobile_no")
+				self.email_id = frappe.get_value("Contact", dynamic_link, "email_id")
+
+		
+		
+
 @frappe.whitelist(allow_guest=True)
 def get_slider():
 	today = nowdate() 
@@ -23,7 +47,10 @@ def get_slider():
 		)
 		user = frappe.get_value("User", frappe.session.user ,["username","full_name"],as_dict=True)
 		customer = frappe.get_value("Customer",user.get("username"),'name')
-		address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}'""",as_dict=True)
+		address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where a.is_current_location = 1 and dl.link_name = '{customer}'""",as_dict=True)
+		if not address:
+			address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}'""",as_dict=True)
+		
 		if not address:
 			frappe.local.response['http_status_code'] = 400
 			frappe.local.response['message'] = "Latitude and Longitude are required."
@@ -94,12 +121,15 @@ def get_stores(*args,**kwargs):
 
 	user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
 	customer = frappe.get_value("Customer",user.get("username"),'name')
-	address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}'""",as_dict=True)
 
-		
+	address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where a.is_current_location = 1 and dl.link_name = '{customer}'""",as_dict=True)
+	if not address:
+		address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}'""",as_dict=True)
+	
+	
 	address = address[-1] if address else None
+	
 	coordi = [float(address.get("latitude")),float(address.get("longitude"))] if address else [None,None]
-
 	
 	for store in stores:
 		doc = frappe.get_doc("Store",store.get("id"))
@@ -137,11 +167,15 @@ def get_home_stories():
 		user = frappe.get_value("User",frappe.session.user,["username","full_name","mobile_no"],as_dict=True)
 
 		customer = frappe.get_value("Customer",user.get("username"),'name')
-		address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}'""",as_dict=True)
+
+		address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where a.is_current_location = 1 and dl.link_name = '{customer}'""",as_dict=True)
+		if not address:
+			address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}'""",as_dict=True)
+		
 		
 		address = address[-1] if address else None
+		
 		coordi = [float(address.get("latitude")),float(address.get("longitude"))] if address else [None,None]
-
 		for store in stores:
 			doc = frappe.get_doc("Store",store.get("name"))
 
@@ -183,8 +217,14 @@ def get_favorite(*args,**kwargs):
 	if frappe.db.exists("Favorite",user.get("username")):
 		stores = frappe.get_list("Stores",{"parent":user.get("username")},['store'],ignore_permissions=True)
 		customer = frappe.get_value("Customer",user.get("username"),'name')
-		address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}'""",as_dict=True)
+
+		address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where a.is_current_location = 1 and dl.link_name = '{customer}'""",as_dict=True)
+		if not address:
+			address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}'""",as_dict=True)
+		
+		
 		address = address[-1] if address else None
+		
 		coordi = [float(address.get("latitude")),float(address.get("longitude"))] if address else [None,None]
 		for store in stores:
 			doc = frappe.get_doc("Store",store.get("store"))
@@ -315,8 +355,14 @@ def search_for_store(*args,**kwargs):
 		user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
 
 		customer = frappe.get_value("Customer",user.get("username"),'name')
-		address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}'""",as_dict=True)
+
+		address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where a.is_current_location = 1 and dl.link_name = '{customer}'""",as_dict=True)
+		if not address:
+			address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}'""",as_dict=True)
+		
+		
 		address = address[-1] if address else None
+		
 		coordi = [float(address.get("latitude")),float(address.get("longitude"))] if address else [None,None]
 		
 		for store in stores:
@@ -651,6 +697,27 @@ def post_reorder():
 		frappe.log_error(message=str(e), title=_('Error in post_reorder'))
 
 
+@frappe.whitelist(allow_guest=False , methods=["POST"])
+def make_address_default(**kwargs):
+	id = kwargs.get("id")
+	if not id:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = "Address ID is required."
+		return
+	
+	try:
+		doc = frappe.get_doc("Address", id)
+		doc.flags.ignore_permissions = True
+		doc.is_default = 1
+		doc.save(ignore_permissions=True)
+		frappe.db.commit()
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = "Address set as default successfully."
+	except Exception as e:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = f"An error occurred: {e}"
+		frappe.log_error(message=str(e), title=_('Error in make_address_default'))
+
 
 @frappe.whitelist(allow_guest=True)
 def address(**kwargs):
@@ -658,12 +725,13 @@ def address(**kwargs):
 	address = kwargs.get("address")
 	latitude = kwargs.get("latitude")
 	longitude = kwargs.get("longitude")
+	is_default = kwargs.get("is_default")
 		
 	if frappe.request.method == 'GET':
 		res = get_address()
 	elif frappe.request.method == 'PUT':
 		
-		res = edit_address(id , address , latitude , longitude)
+		res = edit_address(id , address , latitude , longitude , is_default)
 	elif frappe.request.method == 'DELETE': 
 		res = delete_address(id)
 	return res
@@ -681,7 +749,7 @@ def delete_address(id):
 		frappe.local.response['message'] = f"An error occurred: {e}"
 		frappe.log_error(message=str(e), title=_('Error in delete_address'))
 
-def edit_address(id , address =None, latitude =None,longitude =None):
+def edit_address(id , address =None, latitude =None,longitude =None , is_default = None):
 	try:
 		if not id:
 			frappe.local.response['http_status_code'] = 400
@@ -693,6 +761,7 @@ def edit_address(id , address =None, latitude =None,longitude =None):
 		doc.address_line1 = address if address else doc.address_line1
 		doc.latitude = latitude if latitude else doc.latitude
 		doc.longitude = longitude if longitude else doc.longitude
+		doc.is_default = 1 if is_default else doc.is_default
 		doc.save(ignore_permissions=True)
 		frappe.db.commit()
 		return "Address Updated"
@@ -707,9 +776,42 @@ def get_address():
 	user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
 
 	customer = frappe.get_value("Customer",user.get("username"),'name')
-	address = frappe.db.sql(f"""select a.name as id ,a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}'""",as_dict=True)
+	address = frappe.db.sql(f"""select a.name as id ,a.address_line1 , a.is_default , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where a.is_current_location = 0 and dl.link_name = '{customer}'""",as_dict=True)
 	if not address:
 		frappe.local.response['http_status_code'] = 200
 		frappe.local.response['message'] = []
 		return
 	return address
+
+
+
+@frappe.whitelist(allow_guest=False , methods=["POST"])
+def post_current_location():
+	user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
+
+	customer = frappe.get_value("Customer",user.get("username"),'name')
+	address = frappe.db.sql(f"""select a.name as id , a.address_line1 , a.is_default , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where a.is_current_location = 1 and dl.link_name = '{customer}' ;""",as_dict=True)
+	if not address:
+		address_obj = frappe.new_doc("Address")
+		address_obj.address_type = "Personal"
+		address_obj.address_line1 = "Current Location"
+		address_obj.is_current_location = 1
+		address_obj.city = "temp"
+		address_obj.country = "Egypt"
+		address_obj.latitude = frappe.form_dict.get("latitude")
+		address_obj.longitude = frappe.form_dict.get("longitude")
+		address_obj.append("links", {
+			"link_doctype": "Customer",
+			"link_name": user.get("username")
+		})
+		address_obj.save(ignore_permissions=True)
+		frappe.db.commit()
+	else:
+		address_obj = frappe.get_doc("Address", address[0].get("id"))
+		address_obj.latitude = frappe.form_dict.get("latitude")
+		address_obj.longitude = frappe.form_dict.get("longitude")
+		address_obj.save(ignore_permissions=True)
+		frappe.db.commit()
+	frappe.local.response['http_status_code'] = 200
+	frappe.local.response['message'] = "Current location updated successfully."
+	
