@@ -415,7 +415,9 @@ def osm_v1(start_point, end_point):
 
 	end1 = end_point[0]
 	end2 = end_point[1]
-	url = f"""https://routing.openstreetmap.de/routed-car/route/v1/driving/{start1},{start2};{end1},{end2}?alternatives=false&overview=full&steps=true"""
+	bike = "routed-bike"
+	car = "routed-car"
+	url = f"""https://routing.openstreetmap.de/{bike}/route/v1/driving/{start1},{start2};{end1},{end2}?alternatives=false&overview=full&steps=true"""
 	response = requests.get(url)
 	return response
 	
