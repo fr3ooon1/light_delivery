@@ -23,23 +23,23 @@ def delete_order():
 		if id:
 			if not frappe.db.exists("Prepared Order", id):
 				frappe.local.response['http_status_code'] = 400
-				frappe.response["message"] = _("Order ID is not valid")
+				frappe.local.response["message"] = _("Order ID is not valid")
 				return
 			if frappe.db.get_value("Prepared Order", id, "done") == 1:
 				frappe.local.response['http_status_code'] = 400
-				frappe.response["message"] = _("Order ID is already submitted can't be deleted")
+				frappe.local.response["message"] = _("Order ID is already submitted can't be deleted")
 				return
 
 			frappe.delete_doc("Prepared Order", id)
 			frappe.local.response['http_status_code'] = 200
-			frappe.response["message"] = _("Prepared Order Deleted")
+			frappe.local.response["message"] = _("Prepared Order Deleted")
 		else:
 			frappe.local.response['http_status_code'] = 400
-			frappe.response["message"] = _("Order ID is required")
+			frappe.local.response["message"] = _("Order ID is required")
 	except Exception as er:
 		frappe.log_error("error in prepared order", str(er))
 		frappe.local.response['http_status_code'] = 400
-		frappe.response["message"] = _(f"{er}")
+		frappe.local.response["message"] = _(f"{er}")
 
 def update_order():
 	try:
@@ -56,14 +56,14 @@ def update_order():
 				order.save(ignore_permissions=True)
 				frappe.db.commit()
 				frappe.local.response['http_status_code'] = 200
-				frappe.response["message"] = _("Prepared Order Updated")
+				frappe.local.response["message"] = _("Prepared Order Updated")
 
 		elif type == "submit":
 			data = data.get("order")
 			order = frappe.get_doc("Prepared Order", id)
 			if order.done == 1:
 				frappe.local.response['http_status_code'] = 400
-				frappe.response["message"] = _("Order ID is already submitted")
+				frappe.local.response["message"] = _("Order ID is already submitted")
 				return
 			
 			if order:
@@ -97,12 +97,12 @@ def update_order():
 
 				frappe.db.commit()
 				frappe.local.response['http_status_code'] = 200
-				frappe.response["message"] = _("Prepared Order Submitted")
+				frappe.local.response["message"] = _("Prepared Order Submitted")
 		return 
 	except Exception as er:
 		frappe.log_error("error in prepared order", str(er))
 		frappe.local.response['http_status_code'] = 400
-		frappe.response["message"] = _(f"{er}")
+		frappe.local.response["message"] = _(f"{er}")
 
 def get_order():
 	try:
@@ -131,14 +131,14 @@ def get_order():
 				else:
 					i["order_image"] = []
 			frappe.local.response['http_status_code'] = 200
-			frappe.response["data"] = doc
+			frappe.local.response["data"] = doc
 		else:
-			frappe.local.response['http_status_code'] = 400
-			frappe.response["message"] = _("No Orders Found")
+			frappe.local.response['http_status_code'] = 200
+			frappe.local.response["message"] = []
 	except Exception as er:
 		frappe.log_error("error in prepared order", str(er))
 		frappe.local.response['http_status_code'] = 400
-		frappe.response["message"] = _(f"{er}")
+		frappe.local.response["message"] = _(f"{er}")
 
 
 
@@ -176,9 +176,9 @@ def post_order():
 		doc.save(ignore_permissions=True)
 		frappe.db.commit()
 		frappe.local.response['http_status_code'] = 200
-		frappe.response["message"] = _("Prepared Order Created")
+		frappe.local.response["message"] = _("Prepared Order Created")
 	except Exception as er:
 		frappe.log_error("error in prepared order", str(er))
 		frappe.local.response['http_status_code'] = 400
-		frappe.response["message"] = _(f"{er}")
+		frappe.local.response["message"] = _(f"{er}")
 
