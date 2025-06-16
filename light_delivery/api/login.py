@@ -276,6 +276,11 @@ def registration (*args , **kwargs):
 			})
 			contact.insert(ignore_permissions=True)
 			contact.save(ignore_permissions=True)
+			customer_obj.customer_primary_contact = contact.name
+			customer_obj.mobile_no = kwargs.get('phone')
+			customer_obj.email_id = kwargs.get('email')
+			customer_obj.save(ignore_permissions=True)
+			frappe.db.commit()
 		else:
 			supplier = frappe.new_doc("Supplier")
 			supplier.supplier_name = data.full_name
@@ -299,6 +304,11 @@ def registration (*args , **kwargs):
 			})
 			contact.insert(ignore_permissions=True)
 			contact.save(ignore_permissions=True)
+			supplier.supplier_primary_contact = contact.name
+			supplier.mobile_no = kwargs.get('phone')
+			supplier.email_id = kwargs.get('email')
+			supplier.save(ignore_permissions=True)
+			frappe.db.commit()
 
 
 		frappe.db.commit()

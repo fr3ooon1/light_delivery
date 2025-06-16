@@ -37,6 +37,18 @@ data = {
 				"insert_after": "latitude" ,
                 "read_only":0
 				},
+                {
+				"label": "is Defult",
+				"fieldname": "is_default",
+				"fieldtype": "Check",
+				"insert_after": "disabled" ,
+				},
+				{
+				"label": "is Current Location",
+				"fieldname": "is_current_location",
+				"fieldtype": "Check",
+				"insert_after": "is_default" ,
+				},
 			]
 	},
 		"properties": [

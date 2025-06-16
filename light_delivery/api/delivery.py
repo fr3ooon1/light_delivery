@@ -72,6 +72,19 @@ def get_all_customers(user = None):
 def get_profile():
 	try:
 		user = frappe.get_value("User",frappe.session.user,['full_name','mobile_no','email','username','first_name'],as_dict=True)
+		customer = frappe.db.sql("""  
+						select 
+							cc.link_name as link_name
+						from 
+						   `tabContact` as c  
+						join 
+						   `tabDynamic Link` as cc 
+						on 
+							cc.parent = c.name 
+						where 
+						   c.user = %s ; """, values=(user.get("email"),), as_dict=True)
+		if customer:
+			customer = customer[0].get("link_name")
 
 		address = frappe.db.sql(f"""select a.name as id , a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{user.get("username")}'""",as_dict=True)
 		
@@ -83,7 +96,7 @@ def get_profile():
 			res['date_of_joining'] = delivery.get("date_of_joining")
 			res['license_expire'] = delivery.get("license_expire")
 			res['national_id'] = delivery.get("national_id")
-			res['wallet'] = float(get_balance(user.get("first_name")) or 0)
+			res['wallet'] = float(get_balance(customer) or 0) if customer else 0.0
 			res['price_list'] = price_list
 			# res['image'] = delivery.get("image")
 			res['image'] = frappe.get_value("Delivery",{"user":frappe.session.user},'image')

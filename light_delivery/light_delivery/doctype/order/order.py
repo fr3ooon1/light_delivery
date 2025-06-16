@@ -144,7 +144,7 @@ class Order(Document):
 		status = []
 		if self.request:
 			if self.order_type != "Replace":
-				if self.status in ["Delivered" , "Return to store"]:
+				if self.status in ["Delivered" , "Return to store","Delivery Cancel", "Store Cancel", "Cancel"]:
 					request = frappe.get_doc("Request Delivery", self.request)
 					orders = request.get("order_request")
 
@@ -167,7 +167,7 @@ class Order(Document):
 						if not order.order == self.name:
 							status.append(frappe.get_value("Order", order.order, 'status'))
 						status.append(self.status)
-					if all(one in ['Delivered', 'Delivery Cancel', 'Store Cancel', "Return to store"] for one in status):
+					if all(one in ['Delivered', 'Delivery Cancel', 'Store Cancel', "Return to store",'Cancel'] for one in status):
 						request.status = "Delivered"
 						request.save(ignore_permissions=True)
 						frappe.db.commit()

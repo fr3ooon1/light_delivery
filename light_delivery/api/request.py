@@ -84,9 +84,24 @@ def request_history(*args, **kwargs):
 
 @frappe.whitelist(allow_guest=False)
 def delivery_request_status(*args , **kwargs):
-	delivery = frappe.get_value("Delivery", {"user": frappe.session.user}, ['name','delivery_category','status','cash','delivery_name'],as_dict=1)
+	delivery = frappe.get_value("Delivery", {"user": frappe.session.user}, ['name','delivery_category','status','cash','delivery_name','user'],as_dict=1)
 	res = {}
-	wallet = get_balance(delivery.get("delivery_name")) if delivery else 0
+
+	customer = frappe.db.sql("""  
+					select 
+						cc.link_name as link_name
+					from 
+						`tabContact` as c  
+					join 
+						`tabDynamic Link` as cc 
+					on 
+						cc.parent = c.name 
+					where 
+						c.user = %s ; """, values=(delivery.get("user"),), as_dict=True)
+	if customer:
+		customer = customer[0].get("link_name")
+
+	wallet = float(get_balance(customer) or 0) if customer else 0.0
 	
 	if delivery:
 
@@ -470,14 +485,24 @@ def get_request_details_for_del(*args, **kwargs):
 
 
 
-		
-		order = frappe.db.sql(f"""
-			SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order , o.phone_number , o.status
-			FROM `tabOrder` as o
-			JOIN `tabRequest Delivery` as rd ON rd.name = '{request_name}'
-			JOIN `tabOrder Request` as orq ON orq.parent = rd.name AND orq.order = o.name
-			WHERE rd.name = '{request_name}'
-			AND o.status NOT IN ('Pending','Store Cancel','Delivery Cancel','Cancel','Return to store') ;
+		order_type =request[0].get("order_type")
+		if order_type == "Delivery":
+			order = frappe.db.sql(f"""
+				SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order , o.phone_number , o.status
+				FROM `tabOrder` as o
+				JOIN `tabRequest Delivery` as rd ON rd.name = '{request_name}'
+				JOIN `tabOrder Request` as orq ON orq.parent = rd.name AND orq.order = o.name
+				WHERE rd.name = '{request_name}'
+				AND o.status NOT IN ('Pending','Store Cancel','Delivery Cancel','Cancel','Return to store', 'Delivered') ;
+		""", as_dict=1)
+		else:
+			order = frappe.db.sql(f"""
+				SELECT o.name, o.full_name, o.order_type, o.address, o.zone_address, o.invoice, o.total_order , o.phone_number , o.status
+				FROM `tabOrder` as o
+				JOIN `tabRequest Delivery` as rd ON rd.name = '{request_name}'
+				JOIN `tabOrder Request` as orq ON orq.parent = rd.name AND orq.order = o.name
+				WHERE rd.name = '{request_name}'
+				AND o.status NOT IN ('Pending','Store Cancel','Delivery Cancel','Cancel','Return to store') ;
 		""", as_dict=1)
 		
 		for i in order:

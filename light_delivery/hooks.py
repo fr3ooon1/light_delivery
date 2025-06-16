@@ -146,6 +146,12 @@ website_context = {
 # 	}
 # }
 
+doc_events = {
+	"Customer": {
+		"validate": "light_delivery.api.consumer.validate",
+	}
+}
+
 # Scheduled Tasks
 # ---------------
 
