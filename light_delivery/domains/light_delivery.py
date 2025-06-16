@@ -49,6 +49,13 @@ data = {
 				"fieldtype": "Check",
 				"insert_after": "is_default" ,
 				},
+                {
+				"label": "Distance",
+				"fieldname": "distance",
+				"fieldtype": "Table",
+				"options": "Distance",
+				"insert_after": "is_current_location" ,
+				},
 			]
 	},
 		"properties": [
