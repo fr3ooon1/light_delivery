@@ -1,6 +1,6 @@
 import frappe
 from frappe import _
-from light_delivery.api.apis import download_image
+from light_delivery.api.apis import download_image , send_notification
 
 
 @frappe.whitelist(allow_guest=False)
@@ -175,6 +175,9 @@ def post_order():
 
 		doc.save(ignore_permissions=True)
 		frappe.db.commit()
+		store_user = frappe.get_value("Store", store, "user")
+		notification_key = frappe.get_value("User", store_user, "notification_key")
+		send_notification(notification_key,"customer_preorder")
 		frappe.local.response['http_status_code'] = 200
 		frappe.local.response["message"] = _("Prepared Order Created")
 	except Exception as er:
