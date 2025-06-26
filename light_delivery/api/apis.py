@@ -686,6 +686,25 @@ def send_notification(UsersArray , content ):
 			"android_sound": "onesignal_default_sound.wav",
 			"android_channel_id": "0c37b127-303f-45a4-b298-b8af0f81c9f0",
 		}
+	elif content == "customer_preorder":
+		payload = {
+			"app_id": "e75df22c-56df-4e69-8a73-fc80c73c4337",
+			# "priority": 8,
+			"headings": { 
+				"en": "New Order"
+			},
+			"title": { 
+				"en": "New Order Available"
+			},
+			"contents": { 
+				"en": "You have a new Order"
+			},
+			"data": { "postID": "userRequest" },
+			"include_player_ids": [UsersArray],
+			"target_channel": "push",
+			"android_sound": "onesignal_default_sound.wav",
+			"android_channel_id": "0c37b127-303f-45a4-b298-b8af0f81c9f0",
+		}
 	url = "https://onesignal.com/api/v1/notifications"
 
 	headers = {

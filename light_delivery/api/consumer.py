@@ -96,70 +96,72 @@ def get_slider():
 
 @frappe.whitelist(allow_guest=True)
 def get_stores(*args,**kwargs):
-	idx=0
-	if kwargs.get("category"):
-		category = kwargs.get("category")
-		tot_stores = frappe.db.count('Store',{"store_category":category})
-	else:
-		tot_stores = frappe.db.count('Store')
-	pages = (tot_stores/10)
-	if pages%10 > 0:
-		pages = int(pages) +1
+	try:
+		idx=0
+		if kwargs.get("category"):
+			category = kwargs.get("category")
+			tot_stores = frappe.db.count('Store',{"store_category":category})
+		else:
+			tot_stores = frappe.db.count('Store')
+		pages = (tot_stores/10)
+		if pages%10 > 0:
+			pages = int(pages) +1
 
-	if kwargs.get("idx"):
-		idx = float(kwargs.get("idx") or 0) -1
+		if kwargs.get("idx"):
+			idx = float(kwargs.get("idx") or 0) -1
 
-	start = idx * 10
-	page_length=10
-	order_by = "creation desc"
+		start = idx * 10
+		page_length=10
+		order_by = "idx"
 
-	if kwargs.get("category"):
-		category = kwargs.get("category")
-		stores = frappe.db.get_list("Store",{"store_category":category,"status":"Active"},['name as id'],order_by=order_by,start=start,page_length=page_length,ignore_permissions=True)
-	else:
-		stores = frappe.db.get_list("Store",{"status":"Active"},['name as id'],order_by=order_by,start=start,page_length=page_length,ignore_permissions=True)
+		if kwargs.get("category"):
+			category = kwargs.get("category")
+			stores = frappe.db.get_list("Distance",{"store_category":category},['store as id' , 'distance'],order_by=order_by,start=start,page_length=page_length,ignore_permissions=True)
+		else:
+			stores = frappe.db.get_list("Distance",['store as id' , 'distance'],order_by=order_by,start=start,page_length=page_length,ignore_permissions=True)
 
-	res = []
+		res = []
 
-	user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
-	customer = frappe.get_value("Customer",user.get("username"),'name')
+		user = frappe.get_value("User",frappe.session.user,["username","full_name"],as_dict=True)
+		customer = frappe.get_value("Customer",user.get("username"),'name')
 
-	address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where a.is_current_location = 1 and dl.link_name = '{customer}'""",as_dict=True)
-	if not address:
-		address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}'""",as_dict=True)
-	
-	
-	address = address[-1] if address else None
-	
-	coordi = [float(address.get("latitude")),float(address.get("longitude"))] if address else [None,None]
-	
-	for store in stores:
-		doc = frappe.get_doc("Store",store.get("id"))
-		duration = 0
+		address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where a.is_current_location = 1 and dl.link_name = '{customer}'""",as_dict=True)
+		if not address:
+			address = frappe.db.sql(f"""select a.address_line1 , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where dl.link_name = '{customer}'""",as_dict=True)
+		
+		
+		# address = address[-1] if address else None
+		
+		# coordi = [float(address.get("latitude")),float(address.get("longitude"))] if address else [None,None]
+		
+		for store in stores:
+			doc = frappe.get_doc("Store",store.get("id"))
+			duration = 0
 
-		if  (doc.pointer_y and  doc.pointer_x) and (coordi[0] and coordi[1]):
-			duration = haversine(
-				[float(doc.pointer_y or 0), float(doc.pointer_x or 0)], 
-				coordi
-			)
+			if  (doc.pointer_y and  doc.pointer_x) :
+				duration = float(store.get("distance") or 0)
 
-		res.append({
-			"id":doc.name,
-			"is_favorite":is_favorite(user.get("username") , store.get("id")),
-			"cover":doc.store_cover,
-			"logo":doc.store_logo,
-			"store_name":frappe.get_value("User",doc.user,"full_name"),
-			"location":[doc.pointer_y,doc.pointer_x] if doc.pointer_y and doc.pointer_x else [],
-			"address":doc.address,
-			"phone": frappe.get_value("User",doc.user,"mobile_no"),
-			"delivery_time":10,
-			"menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True),
-			"duration":f"{round(duration , 2)} KM"
-		})
-	res = sorted(res, key=lambda x: x['duration'], reverse=False)
-	frappe.local.response['http_status_code'] = 200
-	frappe.local.response['data'] = res
-	frappe.local.response['message'] = pages
+			res.append({
+				"id":doc.name,
+				"is_favorite":is_favorite(user.get("username") , store.get("id")),
+				"cover":doc.store_cover,
+				"logo":doc.store_logo,
+				"store_name":frappe.get_value("User",doc.user,"full_name"),
+				"location":[doc.pointer_y,doc.pointer_x] if doc.pointer_y and doc.pointer_x else [],
+				"address":doc.address,
+				"phone": frappe.get_value("User",doc.user,"mobile_no"),
+				"delivery_time":10,
+				"menu":frappe.get_list("Menu",{"parent":doc.name},pluck='menu',ignore_permissions=True),
+				"duration":f"{round(duration , 2)} KM"
+			})
+		# res = sorted(res, key=lambda x: x['duration'], reverse=False)
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['data'] = res
+		frappe.local.response['message'] = pages
+	except Exception as e:
+		frappe.local.response['http_status_code'] = 400
+		frappe.local.response['message'] = f"An error occurred: {e}"
+		frappe.log_error(message=str(e), title=_('Error in get_stores'))
 
 
 @frappe.whitelist(allow_guest=True)
@@ -796,6 +798,8 @@ def post_current_location():
 
 	customer = frappe.get_value("Customer",user.get("username"),'name')
 	address = frappe.db.sql(f"""select a.name as id , a.address_line1 , a.is_default , a.latitude , a.longitude from `tabAddress` a join `tabDynamic Link` dl on a.name = dl.parent where a.is_current_location = 1 and dl.link_name = '{customer}' ;""",as_dict=True)
+
+	stores = calculate_store_distance(latitude  = frappe.form_dict.get("latitude"), longitude = frappe.form_dict.get("longitude"))
 	if not address:
 		address_obj = frappe.new_doc("Address")
 		address_obj.address_type = "Personal"
@@ -805,18 +809,51 @@ def post_current_location():
 		address_obj.country = "Egypt"
 		address_obj.latitude = frappe.form_dict.get("latitude")
 		address_obj.longitude = frappe.form_dict.get("longitude")
+		address_obj.distance = []
 		address_obj.append("links", {
 			"link_doctype": "Customer",
 			"link_name": user.get("username")
 		})
+		# address_obj.distance = stores
+		for i in stores:
+			address_obj.append("distance", {
+				"store": i.get("store"),
+				"distance": i.get("distance")
+			})
 		address_obj.save(ignore_permissions=True)
 		frappe.db.commit()
 	else:
 		address_obj = frappe.get_doc("Address", address[0].get("id"))
 		address_obj.latitude = frappe.form_dict.get("latitude")
 		address_obj.longitude = frappe.form_dict.get("longitude")
+		address_obj.distance = []
+		for i in stores:
+			address_obj.append("distance", {
+				"store": i.get("store"),
+				"distance": i.get("distance")
+			})
 		address_obj.save(ignore_permissions=True)
 		frappe.db.commit()
 	frappe.local.response['http_status_code'] = 200
 	frappe.local.response['message'] = "Current location updated successfully."
 	
+
+@frappe.whitelist(allow_guest=False)
+def calculate_store_distance(latitude , longitude):
+	stores = frappe.get_list("Store",{"status":"Active"},['name','pointer_y','pointer_x'],ignore_permissions=True)
+	res = []
+
+	if not stores:
+		frappe.local.response['http_status_code'] = 200
+		frappe.local.response['message'] = []
+		return
+
+	for i in stores:
+		if i.pointer_y and i.pointer_x:
+			distance = haversine([float(i.pointer_y), float(i.pointer_x)], [float(latitude), float(longitude)])
+			res.append({
+				"store": i.name,
+				"distance": distance
+			})
+	res = sorted(res, key=lambda x: x['distance'], reverse=False)
+	return res
