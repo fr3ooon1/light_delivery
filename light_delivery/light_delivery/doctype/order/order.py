@@ -118,7 +118,6 @@ class Order(Document):
 							status.append(frappe.get_value("Order", order.order, 'status'))
 						status.append(self.status)
 
-					frappe.log_error("Status: " + str(status), "Order Status")
 					if all(one in ['Delivered', 'Delivery Cancel', 'Store Cancel', "Return to store","Cancel"] for one in status):
 						request.status = "Delivered"
 						request.save(ignore_permissions=True)
