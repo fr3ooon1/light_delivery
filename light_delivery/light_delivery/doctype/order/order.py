@@ -61,7 +61,7 @@ class Order(Document):
 			start_coordi = float(self.start_lat) , float(self.start_lon)
 			end_coordi = float(frappe.db.get_value("Delivery",self.delivery,"pointer_x")) , float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))
 			
-			res = osm_v2(start_coordi,end_coordi)
+			# res = osm_v2(start_coordi,end_coordi)
 			# res = osm_v2(str(f"""{self.start_lat},{self.start_lon}"""),str(f"""{frappe.db.get_value("Delivery",self.delivery,"pointer_x")},{frappe.db.get_value("Delivery",self.delivery,"pointer_y")}"""))
 
 			# if res.status_code == 200:
