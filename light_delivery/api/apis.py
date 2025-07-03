@@ -14,6 +14,8 @@ Deductions = "Deductions"
 
 @frappe.whitelist()
 def send_sms(doc):
+	if len(doc.phone_number) < 10:
+		return
 	setting = frappe.get_doc("Deductions")
 	if setting.enable:
 		

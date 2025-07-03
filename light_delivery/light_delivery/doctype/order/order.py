@@ -60,42 +60,7 @@ class Order(Document):
 
 			start_coordi = float(self.start_lat) , float(self.start_lon)
 			end_coordi = float(frappe.db.get_value("Delivery",self.delivery,"pointer_x")) , float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))
-			
-			# res = osm_v2(start_coordi,end_coordi)
-			# res = osm_v2(str(f"""{self.start_lat},{self.start_lon}"""),str(f"""{frappe.db.get_value("Delivery",self.delivery,"pointer_x")},{frappe.db.get_value("Delivery",self.delivery,"pointer_y")}"""))
 
-			# if res.status_code == 200:
-			# 	res = res.json()
-			# 	features = res.get("features",None)
-			# 	if features:
-			# 		geometry = features[0].get("geometry",None)
-			# 		if geometry:
-			# 			coordinations = geometry.get("coordinates" , [])
-			# 			if coordinations:
-			# 				coordinates = {
-			# 					"type":"FeatureCollection",
-			# 					"features":[
-			# 						{
-			# 							"type":"Feature",
-			# 							"properties":{},
-			# 							"geometry":{
-			# 								"type":"LineString",
-			# 								"coordinates":coordinations
-			# 							}
-			# 						}
-			# 					]
-			# 				}
-			# 				self.road_map = json.dumps(coordinates)
-			# 				frappe.db.commit()
-			# 		properties = features[0].get("properties",None)
-			# 		if properties:
-			# 			segments = properties.get("segments",None)
-			# 			if segments:
-			# 				distance = segments[0].get("distance",0)
-			# 				duration = segments[0].get("duration",0)
-			# 				self.duration  = format_duration(duration)
-			# 				self.total_distance = distance
-			# else:
 			res = osm(start_coordi,end_coordi)
 			res = res.json()
 			routes = res.get("routes")
