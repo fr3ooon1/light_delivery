@@ -405,21 +405,78 @@ def search_by_zone(coord1):
 	
 	return result
 
+
+
+@frappe.whitelist()
+def osm (start_point, end_point):
+	"""
+	Calculate distance and duration between start and end coordinates using OpenStreetMap.
+	
+	Args:
+		start_point (list): Start coordinates in [longitude, latitude] format.
+		end_point (list): End coordinates in [longitude, latitude] format.
+	
+	Returns:
+		Response: Response object from the OpenStreetMap API.
+	"""
+	light_integration = frappe.get_doc("Deductions")
+	if light_integration.version == "V1":
+		return osm_v1(start_point, end_point)
+	elif light_integration.version == "V2":
+		return osm_v2(start_point, end_point)
+	elif light_integration.version == "Both":
+		return osm_both(start_point, end_point)
 	
 
 
+@frappe.whitelist(allow_guest=1)
+def osm_both(start, end):
+	"""
+	Calculate distance and duration between start and end coordinates using OpenRouteService.
+	
+	Args:
+		start (str): Start coordinates in "longitude,latitude" format.
+		end (str): End coordinates in "longitude,latitude" format.
+	
+	Returns:
+		dict: Distance and duration data from the response.
+	"""
+	try:
+
+		light_integration = frappe.get_doc("Deductions")
+		api_key = light_integration.api_key
+		api_url = light_integration.api_url
+
+		request_url = f"{api_url}?api_key={api_key}&start={start}&end={end}"
+
+		response = requests.get(request_url)
+		if response.status_code != 200:
+			frappe.log_error(f"Error in osm_both: {response.text}", "OSM API Error")
+			return osm_v1(start, end)  # Fallback to osm_v1 if OpenRouteService fails
+
+		return response
+
+	except Exception as e:
+		frappe.log_error(f"Exception in osm_v2: {str(e)}")
+		osm_v1(start, end)
+		return {"error": "An exception occurred while processing the request."}
+
 @frappe.whitelist(allow_guest=0)
 def osm_v1(start_point, end_point):
-	start1 = start_point[0]
-	start2 = start_point[1]
+	try:
+		start1 = start_point[0]
+		start2 = start_point[1]
 
-	end1 = end_point[0]
-	end2 = end_point[1]
-	bike = "routed-bike"
-	car = "routed-car"
-	url = f"""https://routing.openstreetmap.de/{bike}/route/v1/driving/{start1},{start2};{end1},{end2}?alternatives=false&overview=full&steps=true"""
-	response = requests.get(url)
-	return response
+		end1 = end_point[0]
+		end2 = end_point[1]
+		light_integration = frappe.get_doc("Deductions")
+		osm_type = light_integration.v1_type
+		url = f"""https://routing.openstreetmap.de/{osm_type}/route/v1/driving/{start1},{start2};{end1},{end2}?alternatives=false&overview=full&steps=true"""
+		response = requests.get(url)
+		return response
+	except Exception as e:
+		frappe.log_error(f"Exception in osm_v1: {str(e)}")
+		return {"error": "An exception occurred while processing the request."}
 	
 
 @frappe.whitelist(allow_guest=1)
@@ -436,7 +493,7 @@ def osm_v2(start, end):
 	"""
 	try:
 
-		light_integration = frappe.get_doc("Light Integration")
+		light_integration = frappe.get_doc("Deductions")
 		api_key = light_integration.api_key
 		api_url = light_integration.api_url
 

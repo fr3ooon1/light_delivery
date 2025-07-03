@@ -6,7 +6,7 @@ from frappe.model.document import Document
 from frappe import _
 import json
 from frappe.utils import now_datetime , format_duration, get_datetime , time_diff_in_seconds
-from light_delivery.api.apis import osm_v2 ,osm_v1, make_journal_entry
+from light_delivery.api.apis import osm_v2 ,osm_v1, make_journal_entry , osm
 from datetime import datetime
 
 
@@ -96,7 +96,7 @@ class Order(Document):
 			# 				self.duration  = format_duration(duration)
 			# 				self.total_distance = distance
 			# else:
-			res = osm_v1(start_coordi,end_coordi)
+			res = osm(start_coordi,end_coordi)
 			res = res.json()
 			routes = res.get("routes")
 			steps = routes[0].get("legs")[0].get("steps")

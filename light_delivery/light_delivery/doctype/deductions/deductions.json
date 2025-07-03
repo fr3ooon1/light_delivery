@@ -52,7 +52,12 @@
   "column_break_leap",
   "password",
   "column_break_nlzq",
-  "sendername"
+  "sendername",
+  "osm_tab",
+  "version",
+  "v1_type",
+  "api_key",
+  "api_url"
  ],
  "fields": [
   {
@@ -294,13 +299,47 @@
   {
    "fieldname": "section_break_bokd",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "osm_tab",
+   "fieldtype": "Tab Break",
+   "label": "OSM"
+  },
+  {
+   "fieldname": "version",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Version",
+   "options": "\nV1\nV2\nBoth",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.version!='V2' ",
+   "fieldname": "v1_type",
+   "fieldtype": "Select",
+   "label": "V1 Type",
+   "mandatory_depends_on": "eval:doc.version !='V2'",
+   "options": "\nrouted-car\nrouted-bike"
+  },
+  {
+   "depends_on": "eval:doc.version !='V1'",
+   "fieldname": "api_key",
+   "fieldtype": "Data",
+   "label": "API Key",
+   "mandatory_depends_on": "eval:doc.version !='V1'"
+  },
+  {
+   "depends_on": "eval:doc.version !='V1'",
+   "fieldname": "api_url",
+   "fieldtype": "Data",
+   "label": "API URL",
+   "mandatory_depends_on": "eval:doc.version !='V1'"
   }
  ],
- "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-03-12 10:22:54.133675",
+ "modified": "2025-07-03 16:35:45.429125",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Deductions",
