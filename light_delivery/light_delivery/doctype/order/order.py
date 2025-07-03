@@ -64,65 +64,65 @@ class Order(Document):
 			res = osm_v2(start_coordi,end_coordi)
 			# res = osm_v2(str(f"""{self.start_lat},{self.start_lon}"""),str(f"""{frappe.db.get_value("Delivery",self.delivery,"pointer_x")},{frappe.db.get_value("Delivery",self.delivery,"pointer_y")}"""))
 
-			if res.status_code == 200:
-				res = res.json()
-				features = res.get("features",None)
-				if features:
-					geometry = features[0].get("geometry",None)
-					if geometry:
-						coordinations = geometry.get("coordinates" , [])
-						if coordinations:
-							coordinates = {
-								"type":"FeatureCollection",
-								"features":[
-									{
-										"type":"Feature",
-										"properties":{},
-										"geometry":{
-											"type":"LineString",
-											"coordinates":coordinations
-										}
-									}
-								]
-							}
-							self.road_map = json.dumps(coordinates)
-							frappe.db.commit()
-					properties = features[0].get("properties",None)
-					if properties:
-						segments = properties.get("segments",None)
-						if segments:
-							distance = segments[0].get("distance",0)
-							duration = segments[0].get("duration",0)
-							self.duration  = format_duration(duration)
-							self.total_distance = distance
-			else:
-				res = osm_v1(start_coordi,end_coordi)
-				res = res.json()
-				routes = res.get("routes")
-				steps = routes[0].get("legs")[0].get("steps")
-				locations = []
-				for step in steps:
-					for intersection in step["intersections"]:
-						locations.append(intersection["location"])
-						
-				coordinates = {
-					"type":"FeatureCollection",
-					"features":[
-						{
-							"type":"Feature",
-							"properties":{},
-							"geometry":{
-								"type":"LineString",
-								"coordinates":locations
-							}
+			# if res.status_code == 200:
+			# 	res = res.json()
+			# 	features = res.get("features",None)
+			# 	if features:
+			# 		geometry = features[0].get("geometry",None)
+			# 		if geometry:
+			# 			coordinations = geometry.get("coordinates" , [])
+			# 			if coordinations:
+			# 				coordinates = {
+			# 					"type":"FeatureCollection",
+			# 					"features":[
+			# 						{
+			# 							"type":"Feature",
+			# 							"properties":{},
+			# 							"geometry":{
+			# 								"type":"LineString",
+			# 								"coordinates":coordinations
+			# 							}
+			# 						}
+			# 					]
+			# 				}
+			# 				self.road_map = json.dumps(coordinates)
+			# 				frappe.db.commit()
+			# 		properties = features[0].get("properties",None)
+			# 		if properties:
+			# 			segments = properties.get("segments",None)
+			# 			if segments:
+			# 				distance = segments[0].get("distance",0)
+			# 				duration = segments[0].get("duration",0)
+			# 				self.duration  = format_duration(duration)
+			# 				self.total_distance = distance
+			# else:
+			res = osm_v1(start_coordi,end_coordi)
+			res = res.json()
+			routes = res.get("routes")
+			steps = routes[0].get("legs")[0].get("steps")
+			locations = []
+			for step in steps:
+				for intersection in step["intersections"]:
+					locations.append(intersection["location"])
+					
+			coordinates = {
+				"type":"FeatureCollection",
+				"features":[
+					{
+						"type":"Feature",
+						"properties":{},
+						"geometry":{
+							"type":"LineString",
+							"coordinates":locations
 						}
-					]
-				}
-				self.road_map = json.dumps(coordinates)
-				duration = routes[0].get("duration")
-				# self.duration = float(duration or 0) / 60
-				self.duration = format_duration(duration)
-				self.total_distance = routes[0].get("distance")
+					}
+				]
+			}
+			self.road_map = json.dumps(coordinates)
+			duration = routes[0].get("duration")
+			# self.duration = float(duration or 0) / 60
+			self.duration = format_duration(duration)
+			self.total_distance = routes[0].get("distance")
 				
 			frappe.db.commit()
 
