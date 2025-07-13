@@ -29,6 +29,7 @@ class Order(Document):
 		self.change_request_status()
 		self.calculate_distance_duration()	
 		self.cancellation_from_delivery()
+		self.finish()
 
 
 	def cancellation_from_delivery(self):
@@ -92,7 +93,8 @@ class Order(Document):
 			frappe.db.commit()
 
 
-			
+
+	def finish(self):	
 		if self.order_type != "Replace":	
 			if self.status in ['Delivered','Return to store'] and self.order_finish == 0:
 				self.order_finish = 1
