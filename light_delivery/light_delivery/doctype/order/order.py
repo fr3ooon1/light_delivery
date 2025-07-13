@@ -6,7 +6,7 @@ from frappe.model.document import Document
 from frappe import _
 import json
 from frappe.utils import now_datetime , format_duration, get_datetime , time_diff_in_seconds
-from light_delivery.api.apis import osm_v2 ,osm_v1, make_journal_entry
+from light_delivery.api.apis import osm_v2 ,osm_v1, make_journal_entry , osm
 from datetime import datetime
 
 
@@ -29,6 +29,7 @@ class Order(Document):
 		self.change_request_status()
 		self.calculate_distance_duration()	
 		self.cancellation_from_delivery()
+		self.finish()
 
 
 	def cancellation_from_delivery(self):
@@ -60,74 +61,40 @@ class Order(Document):
 
 			start_coordi = float(self.start_lat) , float(self.start_lon)
 			end_coordi = float(frappe.db.get_value("Delivery",self.delivery,"pointer_x")) , float(frappe.db.get_value("Delivery",self.delivery,"pointer_y"))
-			
-			res = osm_v2(start_coordi,end_coordi)
-			# res = osm_v2(str(f"""{self.start_lat},{self.start_lon}"""),str(f"""{frappe.db.get_value("Delivery",self.delivery,"pointer_x")},{frappe.db.get_value("Delivery",self.delivery,"pointer_y")}"""))
 
-			if res.status_code == 200:
-				res = res.json()
-				features = res.get("features",None)
-				if features:
-					geometry = features[0].get("geometry",None)
-					if geometry:
-						coordinations = geometry.get("coordinates" , [])
-						if coordinations:
-							coordinates = {
-								"type":"FeatureCollection",
-								"features":[
-									{
-										"type":"Feature",
-										"properties":{},
-										"geometry":{
-											"type":"LineString",
-											"coordinates":coordinations
-										}
-									}
-								]
-							}
-							self.road_map = json.dumps(coordinates)
-							frappe.db.commit()
-					properties = features[0].get("properties",None)
-					if properties:
-						segments = properties.get("segments",None)
-						if segments:
-							distance = segments[0].get("distance",0)
-							duration = segments[0].get("duration",0)
-							self.duration  = format_duration(duration)
-							self.total_distance = distance
-			else:
-				res = osm_v1(start_coordi,end_coordi)
-				res = res.json()
-				routes = res.get("routes")
-				steps = routes[0].get("legs")[0].get("steps")
-				locations = []
-				for step in steps:
-					for intersection in step["intersections"]:
-						locations.append(intersection["location"])
-						
-				coordinates = {
-					"type":"FeatureCollection",
-					"features":[
-						{
-							"type":"Feature",
-							"properties":{},
-							"geometry":{
-								"type":"LineString",
-								"coordinates":locations
-							}
+			res = osm(start_coordi,end_coordi)
+			res = res.json()
+			routes = res.get("routes")
+			steps = routes[0].get("legs")[0].get("steps")
+			locations = []
+			for step in steps:
+				for intersection in step["intersections"]:
+					locations.append(intersection["location"])
+					
+			coordinates = {
+				"type":"FeatureCollection",
+				"features":[
+					{
+						"type":"Feature",
+						"properties":{},
+						"geometry":{
+							"type":"LineString",
+							"coordinates":locations
 						}
-					]
-				}
-				self.road_map = json.dumps(coordinates)
-				duration = routes[0].get("duration")
-				# self.duration = float(duration or 0) / 60
-				self.duration = format_duration(duration)
-				self.total_distance = routes[0].get("distance")
+					}
+				]
+			}
+			self.road_map = json.dumps(coordinates)
+			duration = routes[0].get("duration")
+			# self.duration = float(duration or 0) / 60
+			self.duration = format_duration(duration)
+			self.total_distance = routes[0].get("distance")
 				
 			frappe.db.commit()
 
 
-			
+
+	def finish(self):	
 		if self.order_type != "Replace":	
 			if self.status in ['Delivered','Return to store'] and self.order_finish == 0:
 				self.order_finish = 1
@@ -153,7 +120,6 @@ class Order(Document):
 							status.append(frappe.get_value("Order", order.order, 'status'))
 						status.append(self.status)
 
-					frappe.log_error("Status: " + str(status), "Order Status")
 					if all(one in ['Delivered', 'Delivery Cancel', 'Store Cancel', "Return to store","Cancel"] for one in status):
 						request.status = "Delivered"
 						request.save(ignore_permissions=True)
@@ -285,8 +251,9 @@ class Order(Document):
 		if self.store:
 			store = frappe.get_doc("Store" , self.store)
 			amount = (float(self.total_distance) / 1000) * float(store.rate_of_km or 0) 
-			if store.minimum_price > amount:
-				total = float(store.minimum_price or 0) if self.status == "Delivered" else float(store.minimum_price or 0) * float(Deductions.rate2 or 1)
+			if store.minimum_distance > float(self.total_distance):
+				TEMP=store.minimum_distance-float(self.total_distance)
+				total = store.minimum_price +(TEMP*store.rate_of_km) if self.status == "Delivered" else float(store.minimum_price or 0) * float(Deductions.rate2 or 1)
 			else:
 				total = amount if self.status == "Delivered" else float(amount or 0) * float(Deductions.rate2 or 1)
 
