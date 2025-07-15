@@ -343,9 +343,9 @@ class Order(Document):
 			)
 			if self.total_distance > delivery_category.minimum_distance:
 				temp = self.total_distance - delivery_category.minimum_distance
-				total = delivery_category.minimum_price + (temp * delivery_category.rate_of_km)
+				total = delivery_category.minimum_rate + (temp * delivery_category.rate_of_km)
 			else:
-				total = delivery_category.minimum_price
+				total = delivery_category.minimum_rate
 
 			total = total - (total / 100 * self.discount)
 			self.delivery_fees = total
