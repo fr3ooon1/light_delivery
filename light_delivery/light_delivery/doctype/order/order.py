@@ -306,9 +306,9 @@ class Order(Document):
 		temp = 0
 		total = 0
 		store = frappe.get_doc("Store" , self.store)
-
-		if self.total_distance > store.minimum_distance:
-			temp = self.total_distance - store.minimum_distance
+		doc_total_distance = float(self.total_distance or 0) / 1000  # Convert to km
+		if doc_total_distance > store.minimum_distance:
+			temp = doc_total_distance - store.minimum_distance
 			total = store.minimum_price + (temp * store.rate_of_km) 
 		else:
 			total = store.minimum_price
@@ -341,8 +341,9 @@ class Order(Document):
 				"Delivery Category" , 
 				frappe.get_value("Delivery" , self.delivery , 'delivery_category')
 			)
-			if self.total_distance > delivery_category.minimum_distance:
-				temp = self.total_distance - delivery_category.minimum_distance
+			doc_total_distance = float(self.total_distance or 0) / 1000  # Convert to km
+			if doc_total_distance > delivery_category.minimum_distance:
+				temp = doc_total_distance - delivery_category.minimum_distance
 				total = delivery_category.minimum_rate + (temp * delivery_category.rate_of_km)
 			else:
 				total = delivery_category.minimum_rate
