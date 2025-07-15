@@ -224,51 +224,18 @@ class Order(Document):
 			})
 
 
+
+
+
 	def finish_order(self):
-		amount = 0
-		total = 0
+		
 		Deductions = frappe.get_doc("Deductions")
 
 		if self.delivery:
-			if frappe.db.exists("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category')):
-				delivery_category = frappe.get_doc(
-					"Delivery Category" , 
-					frappe.get_value("Delivery" , self.delivery , 'delivery_category')
-				)
-				amount = (float(self.total_distance) / 1000) * float(delivery_category.rate_of_km or 0) 
-				if delivery_category.minimum_rate > amount:
-					total = float(delivery_category.minimum_rate or 0) if self.status == "Delivered" else float(delivery_category.minimum_rate or 0) * float(Deductions.rate2 or 1)
-				else:
-					total = amount if self.status == "Delivered" else float(amount or 0) * float(Deductions.rate2 or 1)
-				total = total - (total / 100 * self.discount)
-				self.delivery_fees = total
-				
-				self.net_delivery_fees = total
-
-				delivery_name = frappe.get_value("Delivery",self.delivery,'delivery_name')
-				delivery_id = frappe.get_value("Supplier",{"supplier_name":delivery_name},'name')
+			delivery_id = self.calculate_amount_for_delivery(Deductions)
 
 		if self.store:
-			store = frappe.get_doc("Store" , self.store)
-			amount = (float(self.total_distance) / 1000) * float(store.rate_of_km or 0) 
-			if store.minimum_price > amount:
-				total = float(store.minimum_price or 0) if self.status == "Delivered" else float(store.minimum_price or 0) * float(Deductions.rate2 or 1)
-			else:
-				total = amount if self.status == "Delivered" else float(amount or 0) * float(Deductions.rate2 or 1)
-
-			tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
-
-			tax_rate = (total * tax / 100)
-
-			total_with_tax = total + tax_rate
-			discount = total_with_tax - (total_with_tax / 100 * self.discount)
-
-			self.net_store_fees = total
-			self.tax = tax_rate
-			self.store_fees = discount
-
-			store_username = frappe.get_value("Store",self.store,'username')
-			store_id = frappe.get_value("Customer",{"customer_name":store_username},'name')
+			store_id = self.calculte_amount_for_store(Deductions)
 
 		store = {
 			"account_credit": Deductions.light_account,
@@ -329,11 +296,69 @@ class Order(Document):
 		if self.delivery_fees > 0 and not self.reference_of_store_fees :
 			self.reference_of_store_fees = make_journal_entry(prof_delivery)
 		
+	def calculte_amount_for_store(self , Deductions):
+		"""
+		Calculates the amount for the store based on the total distance and store's rate.
+		Also calculates the tax and store fees.
+		Returns the store ID.
+		"""
 
+		temp = 0
+		store = frappe.get_doc("Store" , self.store)
+		amount = (float(self.total_distance) / 1000) * float(store.rate_of_km or 0) 
+		if store.minimum_distance > float(self.total_distance):
+			temp=store.minimum_distance-float(self.total_distance)
+			total = store.minimum_price +(temp*store.rate_of_km) if self.status == "Delivered" else float(store.minimum_price or 0) * float(Deductions.rate2 or 1)
+		else:
+			total = amount if self.status == "Delivered" else float(amount or 0) * float(Deductions.rate2 or 1)
+
+		tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
+
+		tax_rate = (total * tax / 100)
+
+		total_with_tax = total + tax_rate
+		discount = total_with_tax - (total_with_tax / 100 * self.discount)
+
+		self.net_store_fees = total
+		self.tax = tax_rate
+		self.store_fees = discount
+
+		store_username = frappe.get_value("Store",self.store,'username')
+		store_id = frappe.get_value("Customer",{"customer_name":store_username},'name')
+		return store_id
+	
+	def calculate_amount_for_delivery(self , Deductions):
+		"""
+		Calculates the delivery fees based on the total distance and delivery category rate.
+		Also calculates the net delivery fees.
+		Returns the delivery ID.
+		"""
+		amount = 0
+		total = 0
+		if frappe.db.exists("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category')):
+			delivery_category = frappe.get_doc(
+				"Delivery Category" , 
+				frappe.get_value("Delivery" , self.delivery , 'delivery_category')
+			)
+			amount = (float(self.total_distance) / 1000) * float(delivery_category.rate_of_km or 0) 
+			if delivery_category.minimum_rate > amount:
+				total = float(delivery_category.minimum_rate or 0) if self.status == "Delivered" else float(delivery_category.minimum_rate or 0) * float(Deductions.rate2 or 1)
+			else:
+				total = amount if self.status == "Delivered" else float(amount or 0) * float(Deductions.rate2 or 1)
+			total = total - (total / 100 * self.discount)
+			self.delivery_fees = total
+			
+			self.net_delivery_fees = total
+
+			delivery_name = frappe.get_value("Delivery",self.delivery,'delivery_name')
+			delivery_id = frappe.get_value("Supplier",{"supplier_name":delivery_name},'name')
+			return delivery_id
+		
+		
 	def finish_order_with_rate(self , rate ):
 
 		total = 0
-
+		temp = 0
 		Deductions = frappe.get_doc("Deductions")
 
 		if self.delivery:
@@ -347,33 +372,23 @@ class Order(Document):
 
 				total =(total - (total / 100 * self.discount))
 				self.delivery_fees = total 
-
-				# tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
-				# tax_rate = (total * tax / 100)
-				# self.tax = tax_rate
-				# total = total - tax_rate 
-
 				
 				self.net_delivery_fees = total
 
 				delivery_name = frappe.get_value("Delivery",self.delivery,'delivery_name')
 				delivery_id = frappe.get_value("Supplier",{"supplier_name":delivery_name},'name')
-				
-
-				# doc = frappe.new_doc("Transactions")
-				# doc.party = "Delivery"
-				# doc.party_type = self.delivery
-				# doc.in_wallet = total
-				# doc.aganist = "Store"
-				# doc.aganist_from = self.store
-				# doc.order = self.name
-				# doc.save(ignore_permissions=True)
-				# doc.submit()
+			
 		
 		if self.store:
 			store = frappe.get_doc("Store" , self.store)
-
-			total = float(store.minimum_price or 0) * rate
+			if self.store:
+				store = frappe.get_doc("Store" , self.store)
+				amount = (float(self.total_distance) / 1000) * float(store.rate_of_km or 0) 
+				if store.minimum_distance > float(self.total_distance):
+					temp=store.minimum_distance-float(self.total_distance)
+					total = store.minimum_price +(temp*store.rate_of_km) if self.status == "Delivered" else float(store.minimum_price or 0) * float(Deductions.rate2 or 1)
+			else:
+				total = amount if self.status == "Delivered" else float(amount or 0) * float(Deductions.rate2 or 1)
 			
 			tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
 
@@ -388,17 +403,6 @@ class Order(Document):
 
 			store_username = frappe.get_value("Store",self.store,'username')
 			store_id = frappe.get_value("Customer",{"customer_name":store_username},'name')
-
-			# doc = frappe.new_doc("Transactions")
-			# doc.party = "Store"
-			# doc.party_type = self.store
-			# doc.out = total
-			# doc.aganist = "Delivery"
-			# doc.aganist_from = self.delivery
-			# doc.order = self.name
-			# doc.save(ignore_permissions=True)
-			# doc.submit()
-		# frappe.db.commit()
 
 
 		store = {
