@@ -10,6 +10,7 @@
   "section_break_gvox",
   "minimum_orders",
   "minimum_rate",
+  "minimum_distance",
   "rate_of_km",
   "column_break_rpkn",
   "maximum_orders",
@@ -59,11 +60,16 @@
   {
    "fieldname": "column_break_hshm",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "minimum_distance",
+   "fieldtype": "Float",
+   "label": "Minimum Distance"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-30 12:50:18.608176",
+ "modified": "2025-07-13 15:19:10.124621",
  "modified_by": "Administrator",
  "module": "Light Delivery",
  "name": "Delivery Category",

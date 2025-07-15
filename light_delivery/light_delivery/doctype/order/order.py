@@ -304,13 +304,14 @@ class Order(Document):
 		"""
 
 		temp = 0
+		total = 0
 		store = frappe.get_doc("Store" , self.store)
-		amount = (float(self.total_distance) / 1000) * float(store.rate_of_km or 0) 
-		if store.minimum_distance > float(self.total_distance):
-			temp=store.minimum_distance-float(self.total_distance)
-			total = store.minimum_price +(temp*store.rate_of_km) if self.status == "Delivered" else float(store.minimum_price or 0) * float(Deductions.rate2 or 1)
+
+		if self.total_distance > store.minimum_distance:
+			temp = self.total_distance - store.minimum_distance
+			total = store.minimum_price + (temp * store.rate_of_km) 
 		else:
-			total = amount if self.status == "Delivered" else float(amount or 0) * float(Deductions.rate2 or 1)
+			total = store.minimum_price
 
 		tax = frappe.db.get_single_value('Deductions', 'rate_of_tax')
 
@@ -333,18 +334,19 @@ class Order(Document):
 		Also calculates the net delivery fees.
 		Returns the delivery ID.
 		"""
-		amount = 0
 		total = 0
+		temp = 0
 		if frappe.db.exists("Delivery Category" , frappe.get_value("Delivery" , self.delivery , 'delivery_category')):
 			delivery_category = frappe.get_doc(
 				"Delivery Category" , 
 				frappe.get_value("Delivery" , self.delivery , 'delivery_category')
 			)
-			amount = (float(self.total_distance) / 1000) * float(delivery_category.rate_of_km or 0) 
-			if delivery_category.minimum_rate > amount:
-				total = float(delivery_category.minimum_rate or 0) if self.status == "Delivered" else float(delivery_category.minimum_rate or 0) * float(Deductions.rate2 or 1)
+			if self.total_distance > delivery_category.minimum_distance:
+				temp = self.total_distance - delivery_category.minimum_distance
+				total = delivery_category.minimum_price + (temp * delivery_category.rate_of_km)
 			else:
-				total = amount if self.status == "Delivered" else float(amount or 0) * float(Deductions.rate2 or 1)
+				total = delivery_category.minimum_price
+
 			total = total - (total / 100 * self.discount)
 			self.delivery_fees = total
 			
